@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Chemistry Practice: Haloarenes & Phenols</title>
+    <style>
+        /* Modern Layout Fixes for Phenol Practice */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .flashcard-container {
+            width: 100%;
+            height: 350px;
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard-inner {
+            position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px; border-radius: var(--border-radius); background-color: var(--card-bg);
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg); background-color: var(--light-bg);
+            align-items: flex-start; text-align: left;
+        }
+
+        .option-button {
+            display: block; width: 100%; text-align: left; padding: 1.2rem; margin-bottom: 1rem;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            background-color: var(--card-bg); color: var(--text-primary); cursor: pointer; transition: var(--transition);
+        }
+        .option-button:hover:not(:disabled) { background-color: var(--light-bg); transform: translateX(5px); }
+        
+        .correct-option { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .incorrect-option { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+
+        .feedback-explanation {
+            margin-top: 1.5rem; padding: 1.5rem; background-color: var(--light-bg);
+            border-radius: var(--border-radius); border-left: 5px solid var(--primary-color);
+        }
+
+        .hidden { display: none !important; }
+        .flex-center { display: flex; flex-direction: column; align-items: center; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Chemistry Practice</h1>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Haloarenes & Phenols</p>
+
+        <!-- Topic Selection Area -->
+        <div id="topic-selection" class="flex-center">
+            <p style="margin-bottom: 1.5rem; font-weight: 500;">Choose a topic to begin:</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <button onclick="selectTopic('Chlorobenzene & Haloarenes')" class="btn" style="background-color: #0891b2;">Haloarenes</button>
+                <button onclick="selectTopic('Phenols')" class="btn" style="background-color: #7c3aed;">Phenols</button>
+            </div>
+        </div>
+
+        <!-- Mode Selection Area -->
+        <div id="mode-selection" class="hidden flex-center">
+            <p id="mode-topic-display" style="font-weight: 600; color: var(--primary-color); margin-bottom: 1.5rem;"></p>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="selectMode('mcq')" class="btn" style="background-color: #3b82f6;">MCQ Quiz</button>
+                <button onclick="selectMode('flashcard')" class="btn" style="background-color: #10b981;">Flashcards</button>
+            </div>
+            <button onclick="showTopicSelectionView()" style="margin-top: 1.5rem; color: var(--text-secondary); background: none; border: none; cursor: pointer; text-decoration: underline;">Change Topic</button>
+        </div>
+
+        <!-- Content Area -->
+        <div id="content-area" class="hidden">
+            <div id="top-bar" style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem;">
+                <span id="topic-title-display"></span>
+                <span id="progress-indicator"></span>
+                <span id="score-display" style="font-weight: 700; color: var(--success-color);"></span>
+            </div>
+
+            <!-- MCQ Mode -->
+            <div id="mcq-mode" class="hidden">
+                <div id="mcq-question" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; padding: 1.5rem; background-color: var(--light-bg); border-radius: var(--border-radius);"></div>
+                <div id="mcq-options"></div>
+                <div id="mcq-feedback-explanation" class="feedback-explanation hidden">
+                    <strong id="feedback-status" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem;"></strong>
+                    <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <!-- Flashcard Mode -->
+            <div id="flashcard-mode" class="hidden flex-center">
+                <div class="flashcard-container flashcard cursor-pointer" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p id="flashcard-question" style="font-size: 1.2rem; font-weight: 500;"></p>
+                            <span style="font-size: 0.8rem; color: #94a3b8; margin-top: 2rem;">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p id="flashcard-answer-text" style="font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;"></p>
+                            <p id="flashcard-explanation-text" style="font-size: 0.95rem; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button id="flip-btn" onclick="flipCard(document.querySelector('.flashcard'))" class="btn" style="background-color: #f59e0b;">Flip / Show Answer</button>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                 <button id="next-btn" class="btn">Next Question →</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <button onclick="showTopicSelectionView()" style="color: var(--text-secondary); background: none; border: none; cursor: pointer; text-decoration: underline;">Change Mode / Topic</button>
+            </div>
+        </div>
+
+        <div id="results-display" class="hidden flex-center" style="text-align: center; margin-top: 2rem;"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Educational Resources | Chemistry Practice</p>
+    </footer>
+
+    <script>
+        const chlorobenzeneQuestions = [
+            { topic: "Chlorobenzene & Haloarenes", question: "Why is the chloro group in chlorobenzene ortho/para-directing?", options: ["Inductive effect", "Resonance effect (+R)", "Steric hindrance", "Hyperconjugation"], correctAnswer: 1, explanation: "The lone pairs on chlorine can delocalize into the benzene ring via resonance, increasing electron density at ortho and para positions." },
+            { topic: "Chlorobenzene & Haloarenes", question: "Why is chlorobenzene less reactive than benzene towards electrophilic substitution?", options: ["Resonance effect dominates", "Inductive effect (-I) dominates", "Chlorine is activating", "Steric hindrance"], correctAnswer: 1, explanation: "Although resonance directs o/p, the strong electron-withdrawing inductive effect (-I) of chlorine decreases the overall electron density of the ring." },
+            { topic: "Chlorobenzene & Haloarenes", question: "Reaction of chlorobenzene with Na in dry ether (Fittig Reaction) gives:", options: ["Toluene", "Anisole", "Diphenyl (Biphenyl)", "Benzene"], correctAnswer: 2, explanation: "The Fittig reaction involves coupling of two aryl halides using sodium metal in dry ether." },
+            { topic: "Chlorobenzene & Haloarenes", question: "Chlorobenzene reacts with CH3Cl/Anhydrous AlCl3 to give:", options: ["o/p-Dichlorobenzene", "m-Chlorotoluene", "o/p-Chlorotoluene", "Benzyl chloride"], correctAnswer: 2, explanation: "This is Friedel-Crafts alkylation. The chloro group is o/p-directing." },
+            { topic: "Chlorobenzene & Haloarenes", question: "Heating chlorobenzene with aqueous NaOH at high T/P (Dow Process) yields:", options: ["Aniline", "Benzene", "Phenol", "Diphenyl ether"], correctAnswer: 2, explanation: "The Dow process is an industrial method for phenol synthesis involving nucleophilic substitution." }
+        ];
+
+        const phenolQuestions = [
+            { topic: "Phenols", question: "Benzene diazonium chloride (BDC) on boiling with water produces compound A. What is A?", options: ["Aniline", "Nitrobenzene", "Phenol", "Chlorobenzene"], correctAnswer: 2, explanation: "Boiling BDC with water replace the diazonium group with -OH, forming Phenol." },
+            { topic: "Phenols", question: "What happens when Phenol is heated with chloroform (CHCl3) and alcoholic KOH, followed by acidification?", options: ["Salicylic Acid is formed", "Aspirin is formed", "Salicylaldehyde is formed", "Benzoquinone is formed"], correctAnswer: 2, explanation: "This is the Reimer-Tiemann reaction forming Salicylaldehyde." },
+            { topic: "Phenols", question: "What reagent converts Phenol to Benzene?", options: ["NaOH", "Zn dust / Heat", "H2 / Ni", "Conc. H2SO4"], correctAnswer: 1, explanation: "Heating Phenol with Zinc dust removes the -OH group yielding Benzene." },
+            { topic: "Phenols", question: "Phenol + NaOH -> A; A + CO2 (125C, pressure) -> acidify -> B. What is B?", options: ["Aspirin", "Phenolphthalein", "Salicylaldehyde", "Salicylic Acid"], correctAnswer: 3, explanation: "This is Kolbe's reaction forming Salicylic Acid." },
+            { topic: "Phenols", question: "Salicylic Acid reacts with Acetic Anhydride to form:", options: ["Phenol", "Aspirin (Acetylsalicylic Acid)", "Salol (Phenyl Salicylate)", "Oil of Wintergreen (Methyl Salicylate)"], correctAnswer: 1, explanation: "This acetylation reaction forms Aspirin." }
+        ];
+
+        let currentTopic = null;
+        let activeQuestionSet = [];
+        let currentMode = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        function showTopicSelectionView() {
+            document.getElementById('topic-selection').classList.remove('hidden');
+            document.getElementById('mode-selection').classList.add('hidden');
+            document.getElementById('content-area').classList.add('hidden');
+            document.getElementById('results-display').classList.add('hidden');
+        }
+
+        function selectTopic(topicName) {
+            currentTopic = topicName;
+            activeQuestionSet = (topicName === 'Phenols') ? phenolQuestions : chlorobenzeneQuestions;
+            document.getElementById('topic-selection').classList.add('hidden');
+            document.getElementById('mode-selection').classList.remove('hidden');
+            document.getElementById('mode-topic-display').textContent = `Topic: ${topicName}`;
+        }
+
+        function selectMode(mode) {
+            currentMode = mode;
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffledQuestions = [...activeQuestionSet].sort(() => Math.random() - 0.5);
+            userAnswers = new Array(shuffledQuestions.length).fill(null);
+            document.getElementById('mode-selection').classList.add('hidden');
+            document.getElementById('content-area').classList.remove('hidden');
+            document.getElementById('next-btn').textContent = (shuffledQuestions.length === 1) ? 'Finish' : 'Next';
+            
+            if (mode === 'mcq') {
+                document.getElementById('mcq-mode').classList.remove('hidden');
+                document.getElementById('flashcard-mode').classList.add('hidden');
+                loadMCQ();
+            } else {
+                document.getElementById('mcq-mode').classList.add('hidden');
+                document.getElementById('flashcard-mode').classList.remove('hidden');
+                loadFlashcard();
+            }
+            updateTopBar();
+        }
+
+        function updateTopBar() {
+            document.getElementById('topic-title-display').textContent = `Topic: ${currentTopic}`;
+            document.getElementById('progress-indicator').textContent = `${currentMode === 'mcq' ? 'Q' : 'Card'} ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`;
+            document.getElementById('score-display').textContent = currentMode === 'mcq' ? `Score: ${score}` : '';
+        }
+
+        function loadMCQ() {
+            const q = shuffledQuestions[currentQuestionIndex];
+            document.getElementById('mcq-question').textContent = q.question;
+            const container = document.getElementById('mcq-options');
+            container.innerHTML = '';
+            document.getElementById('mcq-feedback-explanation').classList.add('hidden');
+            document.getElementById('next-btn').disabled = true;
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-button';
+                btn.textContent = opt;
+                btn.onclick = () => handleMCQAnswer(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleMCQAnswer(idx) {
+            if (userAnswers[currentQuestionIndex] !== null) return;
+            userAnswers[currentQuestionIndex] = idx;
+            const q = shuffledQuestions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-button');
+            const isCorrect = idx === q.correctAnswer;
+            
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === q.correctAnswer) btn.classList.add('correct-option');
+                else if (i === idx) btn.classList.add('incorrect-option');
+            });
+
+            document.getElementById('mcq-feedback-explanation').classList.remove('hidden');
+            document.getElementById('feedback-status').textContent = isCorrect ? "Correct!" : "Incorrect.";
+            document.getElementById('feedback-status').style.color = isCorrect ? "#10b981" : "#ef4444";
+            document.getElementById('explanation-text').textContent = q.explanation;
+            
+            if (isCorrect) score++;
+            updateTopBar();
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function loadFlashcard() {
+            const q = shuffledQuestions[currentQuestionIndex];
+            document.getElementById('flashcard-question').textContent = q.question;
+            document.getElementById('flashcard-answer-text').textContent = `Answer: ${q.options[q.correctAnswer]}`;
+            document.getElementById('flashcard-explanation-text').textContent = `Explanation: ${q.explanation}`;
+            document.querySelector('.flashcard').classList.remove('flipped');
+            document.getElementById('next-btn').disabled = false;
+            updateTopBar();
+        }
+
+        function flipCard(el) { el.classList.toggle('flipped'); }
+
+        document.getElementById('next-btn').onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                if (currentMode === 'mcq') loadMCQ();
+                else loadFlashcard();
+                if (currentQuestionIndex === shuffledQuestions.length - 1) document.getElementById('next-btn').textContent = 'Finish';
+            } else {
+                showFinalResults();
+            }
+        };
+
+        function showFinalResults() {
+            document.getElementById('content-area').classList.add('hidden');
+            const res = document.getElementById('results-display');
+            res.classList.remove('hidden');
+            res.innerHTML = `
+                <h2>Session Complete!</h2>
+                <p style="margin: 1.5rem 0;">You finished ${currentTopic}. ${currentMode === 'mcq' ? `Your score: ${score} / ${shuffledQuestions.length}` : ''}</p>
+                <button onclick="showTopicSelectionView()" class="btn">Start Over</button>
+            `;
+        }
+    </script>
+    <script src="../js/main.js"></script>
+</body>
+</html>

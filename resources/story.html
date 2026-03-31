@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Short Story Analysis Collection</title>
+    <style>
+        /* Custom Styles for Enhanced Dark Mode - Replicated from previous examples */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #d1d5db; /* Tailwind gray-300 */
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, summary, .story-select-button { /* Added button to font rule */
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .gradient-text {
+             background: linear-gradient(90deg, #fcd34d 0%, #fbbf24 50%, #f59e0b 100%); /* Amber/Orange gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Header Styling - Using a gradient instead of specific image */
+        header {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(124, 58, 237, 0.7) 100%); /* Dark Gray/Purple gradient */
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+         /* Ensure header content is visible */
+        header > div {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Section Background Gradients - Adjusted slightly for variety */
+        .sunrise-gradient {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.7) 0%, rgba(124, 58, 237, 0.2) 100%);
+        }
+        .sunset-gradient {
+             background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(17, 24, 39, 0.7) 100%);
+        }
+
+        /* Content Card Styling */
+        .content-card {
+            background-color: rgba(31, 41, 55, 0.6); /* Tailwind gray-800 with opacity */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 with opacity */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+        }
+
+        /* Details/Summary (Q&A) Styling */
+        details {
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1rem 1.25rem; /* Tailwind p-4 pr-5 */
+            background-color: rgba(55, 65, 81, 0.5); /* Tailwind gray-700 base with opacity */
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif; /* Use Poppins for question text */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            position: relative;
+        }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::before {
+            content: '+';
+            position: absolute;
+            right: 1.25rem; /* Tailwind right-5 */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #9ca3af; /* Tailwind gray-400 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary { background-color: rgba(75, 85, 99, 0.7); } /* Tailwind gray-600 open */
+        details[open] > summary::before { content: '−'; }
+        details > div { /* Q&A Answer Content Styling */
+             padding: 1.25rem; /* Tailwind p-5 */
+             margin-top: 0;
+             border-top: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 separator */
+             background-color: rgba(17, 24, 39, 0.5); /* Tailwind gray-900 darker background */
+             color: #d1d5db; /* Tailwind gray-300 */
+             font-size: 0.95rem;
+        }
+
+        /* Keyword Highlighting Styles - Reused */
+        .kw-imagery { color: #f472b6; font-weight: 600; } /* Pink-500 */
+        .kw-theme { color: #34d399; font-weight: 600; } /* Emerald-400 */
+        .kw-concept { color: #60a5fa; font-weight: 600; } /* Blue-400 */
+        .kw-time { color: #fb923c; font-weight: 600; } /* Orange-400 */
+        .kw-person { color: #facc15; font-weight: 600; } /* Yellow-500 */
+        .kw-place { color: #22d3ee; font-weight: 600; } /* Cyan-400 */
+
+
+        /* Section Title Colors - Adjusted slightly */
+        .text-orange-title { color: #fbbf24; } /* Amber-400 */
+        .text-yellow-title { color: #fde047; } /* Yellow-300 */
+
+        /* Footer Styling */
+        footer {
+            background-color: #1f2937; /* Tailwind gray-800 */
+            border-top: 1px solid #374151; /* Tailwind gray-700 */
+            color: #9ca3af; /* Tailwind gray-400 */
+        }
+
+        /* Styles for Story Selection */
+        #story-selection {
+            text-align: center;
+        }
+        .story-select-button {
+            background-color: rgba(55, 65, 81, 0.7); /* Tailwind gray-700 semi-transparent */
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 border */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin: 0.5rem; /* Tailwind m-2 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block; /* Fit content */
+            backdrop-filter: blur(5px);
+        }
+        .story-select-button:hover {
+            background-color: rgba(75, 85, 99, 0.9); /* Tailwind gray-600 darker on hover */
+            border-color: rgba(110, 121, 134, 0.7); /* Lighter border on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Style for Back Button */
+        .back-button {
+             background-color: rgba(75, 85, 99, 0.7); /* Tailwind gray-600 semi-transparent */
+             border: 1px solid rgba(92, 103, 117, 0.5);
+             color: #e5e7eb;
+             padding: 0.5rem 1rem;
+             border-radius: 0.5rem;
+             margin-top: 1.5rem; /* Tailwind mt-6 */
+             cursor: pointer;
+             transition: all 0.3s ease;
+             font-family: 'Inter', sans-serif; /* Use Inter for button text */
+             font-weight: 600;
+        }
+        .back-button:hover {
+            background-color: rgba(92, 103, 117, 0.9);
+            transform: translateY(-1px);
+        }
+
+        /* Hide content sections by default */
+        .story-content {
+            display: none;
+        }
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="antialiased">
+
+    <header class="min-h-[40vh] md:min-h-[50vh] flex items-center justify-center text-center p-8">
+        <div class="max-w-3xl">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4 gradient-text">Short Story Analysis</h1>
+            <p class="text-xl md:text-2xl text-gray-100 italic mt-2">A Collection</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-200 leading-relaxed">
+                Select a story below to view its summary and analysis.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6 md:p-10 space-y-16">
+
+        <section id="story-selection" class="p-6 md:p-8 content-card sunrise-gradient">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-8 text-orange-title">Choose a Story</h2>
+            <div id="selection-buttons">
+                <button class="story-select-button" onclick="showStory('neighbours')">Neighbours</button>
+                <button class="story-select-button" onclick="showStory('respectable-woman')">A Respectable Woman</button>
+                <button class="story-select-button" onclick="showStory('devoted-son')">A Devoted Son</button>
+                <button class="story-select-button" onclick="showStory('treasure-forest')">The Treasure in the Forest</button>
+                <button class="story-select-button" onclick="showStory('my-old-home')">My Old Home</button>
+                <button class="story-select-button" onclick="showStory('half-closed-eyes')">The Half-closed Eyes...</button>
+                <button class="story-select-button" onclick="showStory('old-man-wings')">A Very Old Man with Enormous Wings</button>
+            </div>
+        </section>
+
+        <!-- Neighbours Content -->
+        <div id="neighbours" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: Neighbours (by Tim Winton)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>The story follows a <span class="kw-person">young couple</span> who move into a <span class="kw-place">new home</span> in a <span class="kw-place">suburban neighbourhood</span> densely populated with <span class="kw-person">European immigrants</span>. <span class="kw-time">Initially</span>, they feel uneasy and perceive their <span class="kw-person">neighbours'</span> customs (like the <span class="kw-person">Macedonian family's</span> <span class="kw-imagery">yelling</span> or the <span class="kw-person">Polish widower's</span> <span class="kw-imagery">hammering</span>) as strange. The <span class="kw-person">neighbours</span> also find the <span class="kw-person">couple</span> odd, particularly the <span class="kw-person">young man</span> staying home to write his <span class="kw-concept">thesis</span> while his wife works. However, barriers begin to break down in <span class="kw-time">autumn</span> when the <span class="kw-person">couple</span> starts a <span class="kw-imagery">garden</span> and receives help. The <span class="kw-person">widower</span> rebuilds their failed <span class="kw-imagery">henhouse</span>. Over time, the <span class="kw-person">couple</span> overcomes their <span class="kw-theme">prejudices</span> as they interact more, learning skills like slaughtering from the <span class="kw-person">Macedonians</span>. When the <span class="kw-person">woman</span> becomes <span class="kw-time">pregnant</span>, the <span class="kw-person">neighbours</span> notice before the <span class="kw-person">couple</span> tells anyone and shower them with <span class="kw-imagery">gifts</span> and well wishes. The <span class="kw-time">birth of the baby</span> brings the entire <span class="kw-theme">community</span> together. At this moment, the <span class="kw-person">young man</span> cries, realizing his earlier <span class="kw-theme">prejudices</span> and understanding that his academic <span class="kw-concept">thesis</span> hadn't prepared him for the human connections and realities of real life. The story highlights how <span class="kw-theme">cultural and linguistic barriers</span> can be overcome by <span class="kw-theme">community</span>, <span class="kw-theme">love</span>, and <span class="kw-theme">compassion</span>, showing the positive contribution of <span class="kw-person">immigrants</span> to <span class="kw-place">Australia's</span> social fabric and how <span class="kw-theme">prejudice</span> stems from a lack of knowledge.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the attitude of the young man towards his neighbours and write what event changed his prejudiced mind?</summary>
+                        <div>At first, the <span class="kw-person">young man</span> disliked his <span class="kw-person">neighbours</span>. He thought they were noisy, strange, and invaded his privacy. He had <span class="kw-theme">prejudices</span> against the <span class="kw-person">immigrants</span>. The event that changed his mind was the <span class="kw-time">birth of his baby</span>. Seeing all his <span class="kw-person">neighbours</span> gathered outside, cheering and happy for him and his wife, made him realize their genuine warmth and <span class="kw-theme">kindness</span>, breaking his earlier negative views.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the feeling of the young couple when they first arrived at a new place. or What made the young couple feel like sojourners in a foreign land when they first moved in their new house?</summary>
+                        <div>When the <span class="kw-person">young couple</span> first arrived, they felt uneasy and like outsiders ("sojourners") because the <span class="kw-place">neighbourhood</span> was full of <span class="kw-person">European immigrants</span>. They were used to quiet suburbs. They were shocked by the noise (<span class="kw-imagery">shouting</span>, <span class="kw-imagery">hammering</span>) and different habits of their <span class="kw-person">neighbours</span>. They felt their privacy was disturbed and were uncomfortable with the unfamiliar environment.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What does 'fractured dialogue' mean in the story?</summary>
+                        <div>"<span class="kw-concept">Fractured dialogue</span>" means broken conversation. In the story, it describes how the <span class="kw-person">young couple</span> and their <span class="kw-person">neighbours</span> talked when they didn't share the same language well. Their conversations were likely made of simple words, maybe some gestures, and were not smooth or complete. It shows the difficulty they had communicating clearly because of the different <span class="kw-theme">cultural backgrounds</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did the young man begin to weep at the end of the story?</summary>
+                        <div>The <span class="kw-person">young man</span> wept at the <span class="kw-time">end</span> because he was deeply moved by his <span class="kw-person">neighbours'</span> <span class="kw-theme">kindness</span>. When his <span class="kw-imagery">baby</span> was born, he saw all the <span class="kw-person">neighbours</span> gathered at his fence, cheering happily. He finally understood their genuine care and <span class="kw-theme">community spirit</span>, which he had misjudged before. His tears were likely from <span class="kw-concept">gratitude</span> and realizing his own past <span class="kw-theme">prejudice</span> was wrong.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How did the neighbours help the young couple ? Did they expose their positive attitude to them?</summary>
+                        <div>Yes, the <span class="kw-person">neighbours</span> showed a very <span class="kw-concept">positive attitude</span> and helped the <span class="kw-person">young couple</span> many times. They gave advice on their <span class="kw-imagery">garden</span> and shared garlic. The <span class="kw-person">Polish man</span> rebuilt their <span class="kw-imagery">henhouse</span>. The <span class="kw-person">Macedonian family</span> taught them how to prepare a duck. They gave <span class="kw-imagery">gifts</span> and smiled when the wife was <span class="kw-time">pregnant</span>, and celebrated the <span class="kw-imagery">baby's birth</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why were the people in the neighborhood surprised at the role of the young man and his wife in their family??</summary>
+                        <div>The <span class="kw-person">neighbours</span> were likely surprised because the <span class="kw-person">young couple's</span> roles seemed different from their traditional ways. The <span class="kw-person">young man</span> stayed home during the day to write his <span class="kw-concept">thesis</span>, while the <span class="kw-person">young woman</span> went out to work at a hospital. For the <span class="kw-person">immigrant neighbours</span>, this might have seemed unusual or like a reversal of typical husband and wife roles.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How did the young couple identify their neighbours in the beginning of their arrival?</summary>
+                        <div>In the <span class="kw-time">beginning</span>, the <span class="kw-person">young couple</span> identified their <span class="kw-person">neighbours</span> mainly by their actions, which seemed loud and strange to them. They heard the <span class="kw-person">Macedonians</span> <span class="kw-imagery">shouting</span> and assumed they were fighting. They saw the <span class="kw-person">Polish widower</span> <span class="kw-imagery">hammering</span> constantly. They noticed unfamiliar habits like spitting. They formed a negative first impression based on these outward behaviours.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does the young man understand the value of neighbours at the end of the story?</summary>
+                        <div>The <span class="kw-person">young man</span> finally understood the value of <span class="kw-person">neighbours</span> after experiencing their consistent <span class="kw-theme">kindness</span>, especially culminating at the <span class="kw-time">birth of his son</span>. Seeing them share in his joy, remembering how they helped with the <span class="kw-imagery">garden</span>, the <span class="kw-imagery">henhouse</span>, and offered <span class="kw-imagery">gifts</span> and support during the pregnancy, he realized that <span class="kw-theme">community connection</span> and mutual care were more important than his previous ideas about privacy learned from books.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">The author has dealt with an issue of multiculturalism in the story. Why do you think multiculturalism has become a major issue in the present world?</summary>
+                        <div><span class="kw-person">Tim Winton's</span> "Neighbours" shows <span class="kw-theme">multiculturalism</span> - people from different cultures living together. This is a major topic in today's world for several reasons.<br><br>When diverse groups live side-by-side, challenges can arise. <span class="kw-concept">Language barriers</span>, like those <span class="kw-time">initially</span> faced by the <span class="kw-person">couple</span>, make communication and understanding difficult. Different customs and ways of life can seem strange, leading to <span class="kw-theme">prejudice</span> or fear, just as the <span class="kw-person">young couple</span> first felt. People might stay separate in their own groups, leading to a lack of <span class="kw-concept">social harmony</span>. Sometimes, these differences can cause misunderstandings in workplaces or public spaces. Finding ways for everyone to feel included, respected, and able to keep their own culture while being part of a larger society is a complex but important goal.<br><br>While <span class="kw-theme">multiculturalism</span> adds richness and diversity, overcoming these challenges of communication, <span class="kw-theme">prejudice</span>, and integration requires constant effort and understanding, making it a significant global issue.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- A Respectable Woman Content -->
+        <div id="respectable-woman" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: A Respectable Woman (by Kate Chopin)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Mrs. Baroda</span> is <span class="kw-time">initially</span> displeased that her husband <span class="kw-person">Gaston</span>'s friend, <span class="kw-person">Gouvernail</span>, is visiting their <span class="kw-place">plantation</span>, as she desired private time with her husband. Although she has <span class="kw-concept">preconceived notions</span>, she finds herself unexpectedly <span class="kw-theme">attracted</span> to <span class="kw-person">Gouvernail</span> upon meeting him, though he seems quiet and unassuming, unlike her expectations. This <span class="kw-theme">attraction</span> creates an <span class="kw-theme">inner conflict</span>, as she feels bound by her role as "<span class="kw-theme">a respectable woman</span>." During a <span class="kw-time">late-night</span> conversation outdoors, she feels a strong impulse towards him but resists. To avoid <span class="kw-theme">temptation</span>, she abruptly leaves for the <span class="kw-place">city</span> the <span class="kw-time">next morning</span> and stays away until <span class="kw-person">Gouvernail</span> departs. <span class="kw-time">Initially</span>, she refuses <span class="kw-person">Gaston</span>'s suggestion for <span class="kw-person">Gouvernail</span> to visit again, but <span class="kw-time">later</span>, surprisingly, she changes her mind, telling her husband she has "<span class="kw-concept">overcome everything</span>" and will be nice to him, implying a potential shift in her resolve or intentions.</p>
+                </div>
+            </section>
+             <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you think that Mrs. Baroda, towards the end of the story, really wanted to invite Mr. Gouvernail back to her home ? Give your reasons.</summary>
+                        <div>It's unclear, but <span class="kw-person">Mrs. Baroda</span>'s suggestion to invite <span class="kw-person">Gouvernail</span> back is surprising. She might genuinely want him back, perhaps planning to explore her feelings for him now that she feels stronger. Or, she might just be saying it to prove to her husband (and herself) that she is no longer bothered by <span class="kw-person">Gouvernail</span>, showing she's in control as a "<span class="kw-theme">respectable woman</span>".</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Mrs. Baroda told her husband she had overcome everything. What do you think she had overcome?</summary>
+                        <div>When <span class="kw-person">Mrs. Baroda</span> says she has "<span class="kw-concept">overcome everything</span>," it could mean two things. She might mean she has overcome her confusing romantic feelings for <span class="kw-person">Gouvernail</span> and can now treat him normally. Or, she might mean she has overcome her fear of society's rules and her own desires, suggesting she is now ready to act on her feelings without caring what others think.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was there a change in the perception of Mrs. Baroda towards Gouvernail'?</summary>
+                        <div><span class="kw-person">Mrs. Baroda</span>'s <span class="kw-concept">perception</span> of <span class="kw-person">Gouvernail</span> changed after spending time with him, especially during their quiet talk on the bench. <span class="kw-time">Initially</span>, she found him boring and different from her husband's description. But listening to his low voice and feeling drawn to him made her see him differently. His quietness became appealing, and she developed unexpected romantic feelings for him.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">"Before she reached the house, Gouvernail had lighted a fresh cigar and ended his apostrophe to the night." Does this expression indicate a possible conflict that went in Gouvernail's mind? Explain your view.</summary>
+                        <div>This expression doesn't strongly suggest a <span class="kw-theme">conflict</span> in <span class="kw-person">Gouvernail</span>'s mind. It mostly shows he was calmly enjoying the night and didn't seem aware of <span class="kw-person">Mrs. Baroda</span>'s inner struggle or sudden departure. Finishing his talk to the night and lighting a cigar seems like normal, relaxed behaviour, suggesting he was unaware he had caused any strong feelings in her.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does Mrs. Baroda not disclose her feelings towards Gouvernail to her husband?</summary>
+                        <div><span class="kw-person">Mrs. Baroda</span> doesn't tell her husband about her feelings because she is a "<span class="kw-theme">respectable woman</span>" and knows society wouldn't approve of feelings for another man, especially her husband's friend. She feels it's a personal battle she must fight alone. Telling <span class="kw-person">Gaston</span> would go against the rules of how a married woman should behave and think.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Do you think that Mrs. Baroda, towards the end of the story, really wanted to invite Mr. Gouvernail back to her home? Give your reasons.</summary>
+                        <div>It's hard to be sure if <span class="kw-person">Mrs. Baroda</span> truly wanted <span class="kw-person">Gouvernail</span> back. She might have. Maybe she felt ready to face her feelings for him. Or, maybe she just wanted to act strong for her husband and show she wasn't bothered anymore. Her saying she had "<span class="kw-concept">overcome everything</span>" is unclear, leaving her real reason a bit of a mystery.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was Mrs. Baroda indifferent upon the visit of her husband's friend Gouvernail? [2]</summary>
+                        <div><span class="kw-person">Mrs. Baroda</span> wasn't exactly indifferent (uncaring), but she was unhappy and annoyed about <span class="kw-person">Gouvernail</span>'s visit. She had planned for quiet time alone with her husband <span class="kw-person">Gaston</span>. <span class="kw-person">Gouvernail</span>'s arrival ruined these plans. Also, she didn't know him and had formed a negative idea of him in her mind even before meeting him.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was Mrs. Baroda unhappy with the information about Gouvernail's visit to their farm?</summary>
+                        <div><span class="kw-person">Mrs. Baroda</span> was unhappy about <span class="kw-person">Gouvernail</span>'s visit because it interrupted her plans. She wanted a peaceful time with her husband after a busy winter. She didn't know <span class="kw-person">Gouvernail</span> personally, only heard about him. His unexpected, long visit felt like an intrusion on her private time with <span class="kw-person">Gaston</span>, which made her feel provoked and displeased.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">"Before she reached the house, Gouvernail had lighted a fresh cigar and ended his apostrophe to the night." Does this expression indicate a possible conflict that went in Gouvernail's mind? Explain your view. [5]</summary>
+                        <div>In <span class="kw-person">Kate Chopin</span>'s story "A Respectable Woman," the description of <span class="kw-person">Gouvernail</span> lighting a cigar and finishing his talk to the night probably does not show a big <span class="kw-theme">conflict</span> in his mind, especially not about <span class="kw-person">Mrs. Baroda</span> at that moment.<br><br>His actions – calmly lighting a cigar and ending his quiet thoughts about the night – seem relaxed and peaceful. This happens right after <span class="kw-person">Mrs. Baroda</span> has quickly left the bench because she was feeling strong, confusing emotions about him. However, the description suggests <span class="kw-person">Gouvernail</span> wasn't aware of her inner turmoil or why she left so suddenly. He seems lost in his own world, enjoying the moment and perhaps thinking about the past he was just sharing. His behaviour looks more like someone unwinding and comfortable, rather than someone struggling with <span class="kw-theme">inner conflict</span> over the situation or <span class="kw-person">Mrs. Baroda</span> herself.<br><br>Therefore, this expression likely shows <span class="kw-person">Gouvernail</span> was unaware and relaxed, continuing his quiet enjoyment of the evening, instead of indicating an internal struggle or <span class="kw-theme">conflict</span> related to <span class="kw-person">Mrs. Baroda</span>'s feelings or departure.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Sketch the character of Gouvernail and contrast it with Gaston."</summary>
+                        <div>In <span class="kw-person">Kate Chopin</span>'s "A Respectable Woman," <span class="kw-person">Gouvernail</span> is presented as a quiet, thoughtful, and somewhat mysterious character, different from what <span class="kw-person">Mrs. Baroda</span> expected. He is a journalist, not very tall or cynical. He enjoys relaxing on the <span class="kw-place">plantation</span>, listening rather than talking much, and seems uninterested in typical activities like hunting. He doesn't try hard to impress anyone and seems content just observing life. However, he can be surprisingly intimate and open when he feels comfortable, as seen during his night conversation with <span class="kw-person">Mrs. Baroda</span> about his past and desires.<br><br><span class="kw-person">Gaston Baroda</span>, his friend and host, is quite different. He is sociable, active, and runs the sugar <span class="kw-place">plantation</span>. He enjoys hunting and seems more energetic and involved in the world around him. He is also shown to be affectionate towards his wife, though perhaps a bit controlling or unobservant of her feelings. While <span class="kw-person">Gouvernail</span> is reserved and seeks quiet, <span class="kw-person">Gaston</span> is outgoing and seems more typical of a <span class="kw-place">plantation</span> owner.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What is the cause of conflict in Mrs. Baroda's mind? What role does Mrs. Baroda "being a respectable woman" play in the story?</summary>
+                        <div>The main <span class="kw-theme">conflict</span> in <span class="kw-person">Mrs. Baroda</span>'s mind in <span class="kw-person">Kate Chopin</span>'s "A Respectable Woman" is the clash between her unexpected romantic <span class="kw-theme">feelings for Gouvernail</span> and her identity as a "<span class="kw-theme">respectable woman</span>."<br><br>She finds herself drawn to her husband's friend, wanting to touch him and be close to him, which deeply confuses and disturbs her. This <span class="kw-theme">attraction</span> goes against everything she believes about how a married woman should behave. The idea of being a "<span class="kw-theme">respectable woman</span>" plays a huge role. It represents the social rules and expectations that control her actions. She knows society would judge her harshly for having these feelings. This social pressure forces her to suppress her desires, even making her want to run away. Her struggle is between her inner desire and her outer social <span class="kw-theme">duty</span>.<br><br>Ultimately, her identity as a "<span class="kw-theme">respectable woman</span>" <span class="kw-time">initially</span> forces her to control her impulses and hide her feelings, causing her significant inner turmoil.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- A Devoted Son Content -->
+        <div id="devoted-son" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: A Devoted Son (by Anita Desai)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>The story centres on <span class="kw-person">Dr. Rakesh</span>, the son of <span class="kw-person">Varma</span>, a poor kerosene vendor. <span class="kw-person">Rakesh</span> is the first in his family to get an education, excelling academically and winning a scholarship to study medicine in the <span class="kw-place">USA</span>. Despite success and job offers there, <span class="kw-person">Rakesh</span>, a <span class="kw-theme">devoted son</span>, returns home, marries an uneducated local girl (<span class="kw-person">Veena</span>) chosen by his parents, and establishes a successful medical practice, eventually becoming Director of the city <span class="kw-place">hospital</span>. He takes good care of his parents. After his mother's <span class="kw-theme">death</span>, <span class="kw-person">Varma</span> becomes weak and sick. <span class="kw-person">Rakesh</span>, applying his medical knowledge diligently, imposes a <span class="kw-concept">strict diet</span> on his father, forbidding oily foods and sweets. <span class="kw-person">Varma</span>, however, resents this strictness, viewing it as disrespect and mistreatment. He complains to <span class="kw-person">neighbours</span> and even bribes his grandson for forbidden sweets. The father-son relationship deteriorates, with <span class="kw-person">Varma</span> hating his son and daughter-in-law. He rejects <span class="kw-person">Rakesh</span>'s medicines, wishing only for <span class="kw-theme">death</span>. The story highlights the complexities of familial <span class="kw-theme">duty</span>, the clash between traditional expectations and modern knowledge, and the misinterpretations that can arise between generations, especially concerning care in <span class="kw-time">old age</span>.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why do you think Rakesh came back to his birthplace despite having various prospects in the USA?</summary>
+                        <div><span class="kw-person">Rakesh</span> came back home from the <span class="kw-place">USA</span> mainly because he was a <span class="kw-theme">devoted son</span>. He loved his family more than the opportunities in America. He wanted to make his parents proud and fulfill their wishes. He also agreed to marry the <span class="kw-place">village</span> girl his mother chose for him. His sense of <span class="kw-theme">duty</span> and love for his parents brought him back to his <span class="kw-place">birthplace</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe how Rakesh rises in his career.</summary>
+                        <div><span class="kw-person">Rakesh</span> was a brilliant student who came first in the country in his medical exams. He won a scholarship to study in the <span class="kw-place">USA</span> at top hospitals. After returning, he worked at the city <span class="kw-place">hospital</span> and quickly became the Director. Later, he opened his own successful private <span class="kw-place">clinic</span>, bought a car, and became known as the best and richest doctor in <span class="kw-place">town</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Briefly describe the character of Rakesh as an 'anti-hero'.</summary>
+                        <div>While <span class="kw-person">Rakesh</span> seems like a hero because he is <span class="kw-theme">devoted</span> and successful, he can be seen as an '<span class="kw-concept">anti-hero</span>'. This is because his actions, meant to help his father, actually cause great <span class="kw-theme">suffering</span>. His strict medical <span class="kw-theme">control</span> over his father's <span class="kw-concept">diet</span> and life becomes <span class="kw-theme">cruel</span>. He ignores his father's feelings and happiness. Good intentions lead to bad results, making him complex, not purely heroic.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What was the atmosphere of the celebration in the Varma family?</summary>
+                        <div>The atmosphere was full of joy, <span class="kw-concept">pride</span>, and excitement when <span class="kw-person">Rakesh</span> topped his exams. Many visitors came to the small house to congratulate the family. There were <span class="kw-imagery">garlands</span>, sweets like <span class="kw-imagery">halwa</span>, and <span class="kw-imagery">gifts</span> like fountain pens and even a watch. <span class="kw-person">Rakesh</span>'s father, <span class="kw-person">Varma</span>, was especially proud, telling everyone how <span class="kw-person">Rakesh</span> touched his feet first.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is the impact of Rakesh's mother's death on his father?</summary>
+                        <div>After his mother's <span class="kw-theme">death</span>, <span class="kw-person">Rakesh</span>'s father (<span class="kw-person">Varma</span>) became very sad and lonely. He retired from work and his health quickly got worse. He started getting sick often with strange problems ("peevish whim"). He lost interest in life and spent most of his time sadly sitting on his bed, showing how much he missed his wife and depended on her.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How did the community celebrate Rakesh's success?</summary>
+                        <div>The <span class="kw-theme">community</span> celebrated by visiting <span class="kw-person">Rakesh</span>'s small yellow house all day. They congratulated his parents, especially <span class="kw-person">Varma</span>. The house and garden were filled with noise and colour. People brought <span class="kw-imagery">garlands</span>, sweets (<span class="kw-imagery">halwa</span>), and <span class="kw-imagery">gifts</span> like fountain pens and a watch. They were amazed that <span class="kw-person">Rakesh</span>, after his success, still respectfully touched his father's feet.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why was Rakesh's success a special matter of discussion in the neighbourhood?</summary>
+                        <div><span class="kw-person">Rakesh</span>'s success was special because he came from a very poor, illiterate family. His father sold kerosene. <span class="kw-person">Rakesh</span> was the first son in the family to get an education. Topping the country's medical exams and getting a scholarship to the <span class="kw-place">USA</span> was an incredible achievement for someone from their poor neighbourhood, making everyone talk about it with wonder and some envy.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did the old man try to bribe his grandchildren?</summary>
+                        <div>The <span class="kw-person">old man</span> (<span class="kw-person">Varma</span>) tried to bribe his grandchildren because his son, <span class="kw-person">Rakesh</span>, had put him on a very <span class="kw-concept">strict diet</span>. <span class="kw-person">Varma</span> missed eating sweets like <span class="kw-imagery">jalebis</span>, which <span class="kw-person">Rakesh</span> forbade. So, he secretly gave his grandchildren money, asking them to buy the sweets for him and keep the change, as a trick to get the food he craved.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How was Gouvernail different from Mrs. Baroda's expectation?</summary>
+                        <div><span class="kw-person">Gouvernail</span> was very different from what <span class="kw-person">Mrs. Baroda</span> expected. She imagined him as tall, thin, mean-looking (cynical), wearing glasses, and keeping his hands in his pockets. But when she met him, he was slim but not tall or cynical, didn't wear glasses, and she found him surprisingly quiet, polite, and actually quite likable.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does Mrs. Baroda compare Gouvernail with her husband?</summary>
+                        <div><span class="kw-person">Mrs. Baroda</span> doesn't compare them directly, but her thoughts show differences. She finds <span class="kw-person">Gouvernail</span> quiet, polite, and maybe a bit boring at first, but she grows attracted to him. She sees her husband, <span class="kw-person">Gaston</span>, as more lively, talkative, and perhaps bossy (he invites <span class="kw-person">Gouvernail</span> without asking her). She seems attracted to <span class="kw-person">Gouvernail</span>'s quietness, which is different from <span class="kw-person">Gaston</span>.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Justify the title of the story 'A Devoted Son'.</summary>
+                        <div><span class="kw-person">Anita Desai</span>'s story 'A Devoted Son' has a title that fits <span class="kw-person">Rakesh</span>'s character well, especially in the <span class="kw-time">beginning</span>. The title highlights his strong sense of <span class="kw-theme">duty</span> towards his parents.<br><br><span class="kw-person">Rakesh</span> works hard to fulfill his parents' dream by becoming a successful doctor, bringing them great <span class="kw-concept">pride</span>. He shows respect by touching his father's feet after seeing his good results. Even after studying in the <span class="kw-place">USA</span>, he returns home, unlike many others. He marries the simple <span class="kw-place">village</span> girl his mother chooses. He takes excellent care of his mother in her final illness. Later, he looks after his aging father, bringing him tea and arranging his bed. These actions clearly show his <span class="kw-theme">devotion</span> and commitment to his family duties.<br><br>Although his <span class="kw-concept">strict medical care</span> later causes problems, his life choices are driven by what he sees as his <span class="kw-theme">duty</span>, making "A Devoted Son" a suitable, though perhaps ironic, title.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was the success of Rakesh a matter of discussion in the neighbourhood?</summary>
+                        <div>In <span class="kw-person">Anita Desai</span>'s 'A Devoted Son', <span class="kw-person">Rakesh</span>'s success was a huge topic of discussion in his <span class="kw-place">neighbourhood</span> because it was so unusual and inspiring for his <span class="kw-theme">community</span>.<br><br>His family was very poor; his father, <span class="kw-person">Varma</span>, sold kerosene and his parents were illiterate. <span class="kw-person">Rakesh</span> was the first person in his entire family to get a proper education. Achieving the top rank in the whole country's medical exams was an amazing feat for someone from such a humble background. Going to the <span class="kw-place">USA</span> on a scholarship was also very impressive. His achievements brought glory not just to his family but to the whole shabby <span class="kw-place">colony</span>. People were proud but also a little envious, as their own children hadn't achieved such heights.<br><br>Therefore, <span class="kw-person">Rakesh</span>'s journey from a poor family to a famous doctor was remarkable, making his success a natural subject for neighborhood talk and wonder.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you call Rakesh a devoted son? Discuss critically.</summary>
+                        <div>In <span class="kw-person">Anita Desai</span>'s 'A Devoted Son', whether <span class="kw-person">Rakesh</span> is truly <span class="kw-theme">devoted</span> is complicated. While he acts out of a sense of <span class="kw-theme">duty</span>, his actions towards his father in <span class="kw-time">old age</span> seem more <span class="kw-theme">controlling</span> than loving.<br><br><span class="kw-time">Initially</span>, <span class="kw-person">Rakesh</span> is clearly <span class="kw-theme">devoted</span>. He excels in studies for his parents, respects them (touching feet), returns from the <span class="kw-place">USA</span>, marries as they wish, and cares for his dying mother. However, when his father (<span class="kw-person">Varma</span>) becomes old and ill, <span class="kw-person">Rakesh</span>'s role as a doctor clashes with his role as a son. He imposes a very <span class="kw-concept">strict diet</span>, taking away all his father's favorite foods (like <span class="kw-imagery">halwa</span>, fried things). He forces medicines on him. While <span class="kw-person">Rakesh</span> thinks he's ensuring his father's health (<span class="kw-theme">devotion</span>), he completely ignores his father's happiness and desires, making <span class="kw-person">Varma</span> feel miserable and trapped.<br><br>So, critically, while <span class="kw-person">Rakesh</span> performs the actions of <span class="kw-theme">devotion</span>, his lack of understanding and empathy makes his "care" feel like <span class="kw-concept">tyranny</span>, questioning if he is truly a <span class="kw-theme">devoted son</span> in spirit.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- The Treasure in the Forest Content -->
+        <div id="treasure-forest" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: The Treasure in the Forest (by H.G. Wells)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>Two Englishmen, <span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span>, paddle a <span class="kw-place">canoe</span> to a <span class="kw-place">tropical island</span> seeking Spanish <span class="kw-concept">treasure</span>. They possess a <span class="kw-concept">map</span> stolen from a <span class="kw-person">Chinese man</span>, <span class="kw-person">Chang-hi</span>, whom they murdered. <span class="kw-person">Chang-hi</span> had found <span class="kw-concept">treasure</span> from a shipwreck and reburied it. Following the <span class="kw-concept">map</span> through the <span class="kw-place">forest</span>, they find the <span class="kw-place">treasure site</span> marked by stones, but also discover the corpse of another <span class="kw-person">Chinese man</span> nearby, presumably one of <span class="kw-person">Chang-hi</span>'s associates. Overcome by <span class="kw-theme">greed</span>, they load gold ingots into <span class="kw-person">Evans</span>'s jacket to carry back. However, <span class="kw-person">Evans</span> soon collapses, feeling a prick from something sharp among the gold. While rearranging the ingots, <span class="kw-person">Hooker</span> also feels a <span class="kw-imagery">thorn</span> prick his thumb. He then realizes <span class="kw-person">Chang-hi</span>'s grinning revenge: the <span class="kw-concept">treasure</span> was booby-trapped with small, <span class="kw-imagery">poisoned thorns</span>, similar to those used by Dyak people. The story ends with both men dying from the <span class="kw-imagery">poison</span>, a cautionary tale about <span class="kw-theme">greed</span> and the fatal consequences of unprepared, ruthless adventure.</p>
+                </div>
+            </section>
+             <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                     <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Describe the expository scene of the story 'The Treasure in the Forest'.</summary>
+                        <div>The story begins with two tired men, <span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span>, in a <span class="kw-place">canoe</span> near a <span class="kw-place">tropical island</span>. It's very hot. They have a stolen <span class="kw-concept">map</span> showing where <span class="kw-concept">treasure</span> (Spanish gold) is hidden in the <span class="kw-place">forest</span>. They are driven by <span class="kw-theme">greed</span> and excitement but are also exhausted from their journey. This opening sets up their dangerous search.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why did Evans and Hooker lose their life?</summary>
+                        <div><span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span> died because the gold <span class="kw-concept">treasure</span> they found was trapped with <span class="kw-imagery">poison</span>. The <span class="kw-person">Chinese man</span> (<span class="kw-person">Chang-hi</span>), whose <span class="kw-concept">map</span> they stole, had coated sharp <span class="kw-imagery">thorns</span> with <span class="kw-imagery">poison</span> and hidden them with the gold. Driven by <span class="kw-theme">greed</span>, both men carelessly pricked themselves on these <span class="kw-imagery">thorns</span> while handling the gold bars, and the <span class="kw-imagery">poison</span> quickly killed them.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What do you think the moral of the story, "The Treasure in the Forest"?</summary>
+                        <div>The main <span class="kw-concept">moral</span> of "The Treasure in the Forest" is that extreme <span class="kw-theme">greed</span> is destructive and dangerous. It shows how wanting wealth too much can make people blind to warnings and dangers. It leads <span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span> to act badly (steal, maybe kill) and carelessly, which causes their <span class="kw-theme">death</span>. The story warns against letting <span class="kw-theme">greed</span> control your actions.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How did Evan and Hooker know about the treasure?</summary>
+                        <div><span class="kw-person">Evan</span> and <span class="kw-person">Hooker</span> learned about the <span class="kw-concept">treasure</span> by stealing a <span class="kw-concept">map</span> from a <span class="kw-person">Chinese man</span> named <span class="kw-person">Chang-hi</span>. They likely killed him to get it. The <span class="kw-concept">map</span> showed the location on the island where Spanish gold, hidden long ago, was buried. All their knowledge came from this stolen, dangerous <span class="kw-concept">map</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">In your opinion, what should the treasure hunters have done to succeed in their venture of treasure hunt?</summary>
+                        <div>To succeed, the <span class="kw-concept">treasure hunters</span> needed to be much more careful. They should have paid attention to the warnings, like <span class="kw-person">Evan</span>'s <span class="kw-concept">dream</span>, the strange marks on the <span class="kw-concept">map</span>, and the dead body near the gold. They shouldn't have been blinded by <span class="kw-theme">greed</span>. Working together cautiously, maybe checking the gold for traps before grabbing it, might have saved them.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">The story shows how power and greed corrupt human beings. Explain.</summary>
+                        <div>The story shows how the intense desire for <span class="kw-concept">treasure</span> (<span class="kw-theme">greed</span>) corrupts <span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span>. It makes them steal the <span class="kw-concept">map</span> and possibly kill <span class="kw-person">Chang-hi</span>. Their <span class="kw-theme">greed</span> then makes them ignore all the danger signs – the <span class="kw-concept">dream</span>, the <span class="kw-concept">map</span>'s warnings, the dead body. They become selfish and reckless, only focused on the gold, which leads directly to their <span class="kw-theme">deaths</span>. Their <span class="kw-theme">greed</span> destroyed their sense of caution and morality.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the theme of the story, "The Treasure in the Forest."</summary>
+                        <div>The main <span class="kw-theme">theme</span> of "The Treasure in the Forest" is the destructive power of <span class="kw-theme">greed</span>. It explores how intense desire for wealth can make people act immorally and ignore obvious dangers. Another <span class="kw-theme">theme</span> is <span class="kw-concept">moral justice</span>, where the characters are punished for their bad actions (stealing the <span class="kw-concept">map</span>, maybe killing). The story serves as a warning about unchecked ambition and selfishness.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">"Greed generally equals great loss." Justify the statement with reference to 'The Treasures in the Forest."</summary>
+                        <div>This statement is true in "The Treasures in the Forest." <span class="kw-person">Evans</span> and <span class="kw-person">Hooker</span>'s intense <span class="kw-theme">greed</span> for gold makes them act recklessly. They steal a <span class="kw-concept">map</span>, ignore warnings like the <span class="kw-concept">dream</span> and the dead body, and rush to grab the <span class="kw-concept">treasure</span>. Their <span class="kw-theme">greed</span> makes them careless, and they get pricked by <span class="kw-imagery">poisoned thorns</span>. This leads to the great loss of their lives, proving their <span class="kw-theme">greed</span> cost them everything.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe Evan's dream.</summary>
+                        <div>In his <span class="kw-concept">dream</span>, <span class="kw-person">Evan</span> saw the <span class="kw-person">Chinese man</span> (<span class="kw-person">Chang-hi</span>) holding a gold bar and grinning at him strangely. When <span class="kw-person">Evan</span> tried to grab the gold, the man vanished, and the gold felt heavy and turned into <span class="kw-imagery">poison</span>. The <span class="kw-concept">dream</span> was scary and seemed like a warning about the <span class="kw-concept">treasure</span> being dangerous, but <span class="kw-person">Evan</span> ignored it when he woke up, still focused on getting rich.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What does the map look like and how do Evan and Hooker interpret it?</summary>
+                        <div>The <span class="kw-concept">map</span> was old, rough, creased, and drawn on yellow paper. It showed the bay, a twisting river, and a star marking the <span class="kw-concept">treasure</span> spot near some palm trees and bushes. It also had strange dashes and a warning written in <span class="kw-place">Chinese</span>. <span class="kw-person">Evan</span> and <span class="kw-person">Hooker</span> mostly ignored the strange parts and the warning. They just used it as a simple guide to find the gold location.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Interpret the story as a mystery story.</summary>
+                        <div><span class="kw-person">H.G. Wells'</span> "The Treasure in the Forest" works well as a <span class="kw-concept">mystery story</span>. It builds <span class="kw-concept">suspense</span> from the beginning, making the reader and the characters wonder about hidden dangers.<br><br>The <span class="kw-concept">mystery</span> starts with the stolen <span class="kw-concept">map</span>. It has strange, unclear markings and a warning in <span class="kw-place">Chinese</span> that the characters ignore, creating <span class="kw-concept">suspense</span> about what they mean. <span class="kw-person">Evan</span>'s <span class="kw-concept">dream</span> about <span class="kw-person">Chang-hi</span> and melting gold also hints at danger. The journey into the dark, unknown <span class="kw-place">forest</span> adds to the mysterious atmosphere. The biggest clue is finding the dead body near the <span class="kw-concept">treasure</span> – how did he die? What killed him? The men are puzzled, and so is the reader. The final discovery of the tiny, deadly <span class="kw-imagery">poisoned thorns</span>, hidden with the gold, solves the <span class="kw-concept">mystery</span> of the Chinaman's <span class="kw-theme">death</span> and seals the hunters' fate.<br><br>All these elements – clues, warnings, <span class="kw-concept">suspense</span>, and a final deadly discovery – make the story a thrilling and tragic <span class="kw-concept">mystery</span> about a deadly secret.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Treasure hunting is a favorable subject of children's story. Remember a treasure hunting story you read in your childhood and compare and contrast it with 'The Treasure in the Forest.'</summary>
+                        <div>"The Treasure in the Forest" by <span class="kw-person">H.G. Wells</span> uses the idea of a <span class="kw-concept">treasure hunt</span>, common in children's stories like <span class="kw-person">Robert Louis Stevenson</span>'s Treasure Island, but it tells a much darker story.<br><br>Like Treasure Island, Wells' story has a <span class="kw-concept">map</span>, an island setting, and the search for hidden gold. Both involve danger and a journey. However, the feeling and outcome are very different. Children's stories usually focus on adventure, clever pirates (who might be bad but are often exciting), and the heroes often succeed and get the <span class="kw-concept">treasure</span>, like Jim Hawkins. The danger feels more like an exciting game. In "The Treasure in the Forest", the focus is on the characters' terrible <span class="kw-theme">greed</span>. They are not heroes; they steal and likely kill to start their hunt. The danger is real and deadly, shown by the <span class="kw-imagery">poisoned treasure</span>. There is no fun adventure, only desperation and <span class="kw-theme">death</span>. The story ends tragically, punishing the characters.<br><br>So, while both use a <span class="kw-concept">map</span> and <span class="kw-concept">treasure</span>, Treasure Island is an adventure, but "The Treasure in the Forest" is a serious warning about how <span class="kw-theme">greed</span> leads to <span class="kw-theme">death</span>.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- My Old Home Content -->
+        <div id="my-old-home" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: My Old Home (by Lu Xun)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>The narrator, <span class="kw-person">Lu Xun</span>, returns to his <span class="kw-time">childhood</span> <span class="kw-place">village</span> in <span class="kw-place">China</span> after a <span class="kw-time">20-year absence</span>, intending to say a <span class="kw-concept">final farewell</span> to his <span class="kw-place">old home</span> and move his family. He finds the town dilapidated and unchanged, not matching his fond <span class="kw-concept">memories</span>. He meets his mother and nephew <span class="kw-person">Hong'er</span>. He recalls his vibrant <span class="kw-time">childhood friendship</span> with <span class="kw-person">Runtu</span>, the son of a temporary worker. They shared innocent adventures and weren't separated by <span class="kw-theme">social class</span> then. He also encounters <span class="kw-person">Mrs. Yang</span> ("Beancurd Beauty"), who now seems sharp-tongued and accuses him of stinginess regarding the furniture he plans to sell. When <span class="kw-person">Runtu</span> arrives, the narrator is shocked by the <span class="kw-theme">change</span>. <span class="kw-person">Runtu</span> is now weathered, impoverished, and addresses <span class="kw-person">Lu Xun</span> deferentially as "Master," erecting a "<span class="kw-imagery">thick wall</span>" between them due to societal hardship (heavy taxes, famine, bandits, officials) and <span class="kw-concept">class differences</span>. Their former closeness is gone. Before leaving, <span class="kw-person">Lu Xun</span> allows <span class="kw-person">Runtu</span> to take some unwanted furniture. As he departs, <span class="kw-person">Lu Xun</span> reflects on the painful gap between <span class="kw-concept">memory</span> and <span class="kw-concept">reality</span>. He hopes his nephew <span class="kw-person">Hong'er</span> and <span class="kw-person">Runtu</span>'s son <span class="kw-person">Shu Sheng</span>, who have quickly become friends, will not face the same <span class="kw-theme">social barriers</span> and drift apart. He muses on hope, comparing it to a path made by walking, leaving the <span class="kw-place">old home</span> and its <span class="kw-concept">memories</span> behind. The story contrasts nostalgia with harsh <span class="kw-concept">reality</span>, exploring themes of <span class="kw-theme">social class</span>, <span class="kw-theme">poverty</span>, <span class="kw-theme">change</span>, and the <span class="kw-theme">loss of childhood innocence</span>.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                     <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why does the author rush back home after more than twenty years?</summary>
+                        <div>The narrator rushes back to his <span class="kw-place">old home</span> mainly to say a <span class="kw-concept">final farewell</span>. The family house has been sold, and he needs to move his mother and nephew away to the city where he now works. It's his last chance to see the home and arrange for selling the leftover furniture before leaving the familiar place forever.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does the narrator describe his feeling at the arrival of his old home?</summary>
+                        <div>When the narrator arrives at his <span class="kw-place">old home</span>, his happy <span class="kw-concept">memories</span> clash with what he sees. He feels very sad and depressed. The countryside, which he remembered as lovely, now looks drab and lifeless. The house seems smaller and run-down. He realizes the beautiful image he held in his mind was different from the <span class="kw-concept">reality</span> of the <span class="kw-time">present</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">In your observation, how was Mrs. Yang's character?</summary>
+                        <div><span class="kw-person">Mrs. Yang</span> seems quite changed by time and hardship. The narrator remembers her as the pretty "Beancurd Beauty." But now, she appears sharp, practical, and a bit greedy. She complains about the narrator being miserly with his furniture and even takes his mother's gloves without asking. Her character shows how life's difficulties can change people over the years.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What were the three kinds of servants in China then? What does it indicate about contemporary Chinese society?</summary>
+                        <div>The story mentions three types of <span class="kw-person">servants</span>: Yearlongs (worked full-time for one family), Short-timers (worked by the day), and Busy-monthers (worked for families during holidays or busy times, like <span class="kw-person">Runtu</span>'s father). This system shows that <span class="kw-place">Chinese</span> society at that time had clear <span class="kw-concept">class differences</span> and a strong <span class="kw-concept">hierarchy</span>, where some people served others based on established roles and economic need.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the narrator help Runtu before leaving the old home?</summary>
+                        <div>Seeing <span class="kw-person">Runtu</span>'s difficult life and <span class="kw-theme">poverty</span>, the narrator helps him by offering him some of the old furniture they are leaving behind. <span class="kw-person">Runtu</span> chooses two long tables, an <span class="kw-imagery">incense burner</span>, <span class="kw-imagery">candlesticks</span>, and a weighing scale. He also asks for the <span class="kw-imagery">ashes</span> from the stove to use as fertilizer, which the narrator allows him to take.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you think the relationships of childhood are innocent, impartial and disinterested? Why, why not? Give reasons based on the story 'My Old Home'.</summary>
+                        <div>In <span class="kw-person">Lu Xun</span>'s story 'My Old Home', we see that <span class="kw-time">childhood</span> relationships can be innocent, impartial (fair), and disinterested (not based on personal gain).<br><br>The narrator's <span class="kw-concept">memory</span> of his <span class="kw-time">childhood friendship</span> with <span class="kw-person">Runtu</span> shows this. When they were boys, they were true friends. They didn't care about their different <span class="kw-theme">social classes</span> (one was a young master, one a servant's son). They were excited to share stories and experiences, like catching birds or hunting the Zha. Their connection was pure and based on shared fun and curiosity, not on what they could get from each other. They were just happy to be together. This friendship was innocent and impartial.<br><br>However, the story also shows that these <span class="kw-time">childhood</span> qualities often don't last. When they meet as adults, the <span class="kw-theme">social barriers</span> and hardships of life have created a thick wall between them, proving such innocence is hard to keep.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Experiences and memories come in conflict with 'present.' Extrapolate this statement in reference to the story,' My Old Home.'</summary>
+                        <div><span class="kw-person">Lu Xun</span>'s 'My Old Home' clearly shows how past experiences and <span class="kw-concept">memories</span> often clash sadly with the <span class="kw-time">present reality</span>.<br><br>The narrator travels back to his <span class="kw-time">childhood</span> home filled with warm <span class="kw-concept">memories</span>. He remembers a beautiful countryside and a happy, lively house. But the <span class="kw-time">present</span> place he finds is run-down, grey, and depressing. His <span class="kw-concept">memory</span> of his friend <span class="kw-person">Runtu</span> is of a bright, energetic boy full of amazing stories. But the <span class="kw-time">present Runtu</span> is a poor, tired man, aged by hardship, who calls him "Master" instead of "Brother". Even <span class="kw-person">Mrs. Yang</span>, remembered as the "Beancurd Beauty," is now a sharp, complaining woman. These happy <span class="kw-concept">memories</span> make the <span class="kw-time">present</span> situation feel even worse.<br><br>This conflict between the golden past in his <span class="kw-concept">memory</span> and the difficult <span class="kw-time">present</span> is the main source of the narrator's sadness throughout the story.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Evaluate the lesson Lu Xun learnt from his latest visit to his old home.</summary>
+                        <div>During his visit in 'My Old Home', the narrator, <span class="kw-person">Lu Xun</span>, learns several hard lessons about life, time, and society.<br><br>He learns that fond <span class="kw-concept">memories</span> cannot stop the harsh changes brought by time and difficult social conditions. His idealized <span class="kw-time">childhood</span> world is gone, replaced by <span class="kw-theme">poverty</span> and decay. He sees firsthand how <span class="kw-concept">class differences</span> and hardship build walls between people, destroying the easy <span class="kw-concept">friendship</span> he once shared with <span class="kw-person">Runtu</span>. He realizes that even things like hope can be like idols people worship for different reasons. Most importantly, he learns that societal problems create deep sadness and distance.<br><br>However, seeing his nephew <span class="kw-person">Hong'er</span> and <span class="kw-person">Runtu</span>'s son become friends offers a tiny spark. He learns to place his hope in the future generations, wishing they might live in a better world without the barriers that separated him from <span class="kw-person">Runtu</span>.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+         <!-- The Half-closed Eyes... Content -->
+        <div id="half-closed-eyes" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: The Half-closed Eyes of the Buddha and the Slowly Sinking Sun (by Shankar Lamichhane)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>The story unfolds as a dialogue (told via <span class="kw-concept">stream of consciousness</span>/<span class="kw-concept">monologue</span>) between a foreign <span class="kw-person">tourist</span> and a <span class="kw-person">Nepali guide</span> in the <span class="kw-place">Kathmandu Valley</span>. It explores perceptions of <span class="kw-place">Nepal</span> through eyes - literal and metaphorical. The <span class="kw-person">tourist</span>, knowledgeable about <span class="kw-place">Nepal</span>, initially offers to guide the <span class="kw-person">guide</span> ("I could take you along your ancient ways"), but the <span class="kw-person">guide</span> subtly asserts his deeper understanding. They discuss <span class="kw-place">Kathmandu's</span> beauty, <span class="kw-concept">history</span> (<span class="kw-person">Manjushri</span>, Chobhar), religious artifacts, <span class="kw-concept">cultural diversity</span> (<span class="kw-person">Aryans</span>, non-Aryans, <span class="kw-person">Hindus</span>, <span class="kw-person">Buddhists</span> living in <span class="kw-theme">tolerance</span>), food, and historical figures (Bhrikuti, Amshuvarma). The <span class="kw-person">tourist</span> is charmed by the welcoming smiles of the Nepalese people. The core theme revolves around different kinds of eyes: eyes in windows, door panels, stupas, the "<span class="kw-concept">samyak gaze</span>" (pure perception) of monks, the eyes of the Himalayas, and the <span class="kw-concept">half-closed eyes of the Buddha</span>, symbolizing peace, wisdom, and watchfulness over the land. The <span class="kw-person">guide</span> contrasts the idealized view with harsh <span class="kw-theme">reality</span> by taking the <span class="kw-person">tourist</span> to a <span class="kw-place">remote village</span> to see a poor <span class="kw-person">farmer's family</span> and their <span class="kw-person">paralyzed child</span>. The child's body is useless except for his eyes, which express deep <span class="kw-theme">faith</span>, connection, <span class="kw-theme">kindness</span>, and thankfulness when the parents believe the <span class="kw-person">tourist</span> is a doctor. The <span class="kw-person">guide</span> connects this to the eyes of the <span class="kw-place">mountains</span> and <span class="kw-place">fields</span>, representing the land's beauty and resilience. The story contrasts Western knowledge with local <span class="kw-theme">reality</span>, highlighting <span class="kw-place">Nepal's</span> <span class="kw-theme">tolerance</span>, coexistence, cultural richness, and the profound meaning seen through different 'eyes'.</p>
+                </div>
+            </section>
+             <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Which narrative technique is used by the author in the story...? How is this story different from other stories you have read?</summary>
+                        <div>The author, <span class="kw-person">Shankar Lamichhane</span>, uses a technique called <span class="kw-concept">stream of consciousness</span>. The story is told through the thoughts of two characters, the <span class="kw-person">tourist</span> and the <span class="kw-person">guide</span>, like listening to their minds (<span class="kw-concept">monologues</span>). This is different because many stories have one storyteller telling events in order. Here, we get feelings and ideas directly from two people, showing different views at the same time.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the guide take the tourist to the remote village?</summary>
+                        <div>The <span class="kw-person">guide</span> takes the <span class="kw-person">tourist</span> to the <span class="kw-place">remote village</span> to show him the <span class="kw-theme">real life</span> of <span class="kw-place">Nepal</span>, beyond the temples and history books. The <span class="kw-person">tourist</span> has seen beautiful things, but the <span class="kw-person">guide</span> wants him to see the truth of how some people live, including their struggles and hardship, represented by the <span class="kw-person">farmer's family</span> and the <span class="kw-person">paralyzed child</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the guide want to show the tourist the instances of poverty?</summary>
+                        <div>The <span class="kw-person">guide</span> wants to show the <span class="kw-person">tourist</span> <span class="kw-theme">poverty</span> to give a complete picture of <span class="kw-place">Nepal</span>. The <span class="kw-person">tourist</span> seems focused only on the beauty, <span class="kw-concept">history</span>, and <span class="kw-concept">spirituality</span>. The <span class="kw-person">guide</span> shows the hardship and suffering, like the <span class="kw-person">paralyzed boy</span> and his family, to make the <span class="kw-person">tourist</span> understand that <span class="kw-place">Nepal</span> has difficult <span class="kw-theme">realities</span> alongside its beauty. It shows the <span class="kw-concept">contrast</span> between different lives.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What are the differences between the paralyzed child and his sister?</summary>
+                        <div>The main difference is that the <span class="kw-person">paralyzed child</span>'s body is almost completely useless; only his eyes show he is alive. He cannot speak, move, or interact. His sister, however, is healthy. She can crawl, explore, touch things, and will eventually learn to speak and live a full life. She represents life and future possibilities, while he represents a life stuck in silent suffering.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the foreign tourist express his happiness upon stepping in the land of Buddha?</summary>
+                        <div>The foreign <span class="kw-person">tourist</span> feels happy because he has studied <span class="kw-place">Nepal</span>'s <span class="kw-concept">history</span> and <span class="kw-concept">culture</span> for years. Stepping into the <span class="kw-place">Kathmandu Valley</span>, the "land of <span class="kw-person">Buddha</span>," feels like entering a peaceful, ancient world he knows from books. The green valley, colorful houses, and the feeling of calm, maybe symbolized by the <span class="kw-concept">Buddha's eyes</span>, make him feel welcome and deeply satisfied.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What could be the author's purpose of introducing different places of Kathmandu Valley to the tourists, at the out set, and a child at the end?</summary>
+                        <div>The author likely shows the beautiful places first to represent the <span class="kw-person">tourist</span>'s idealized view of <span class="kw-place">Nepal</span> – its <span class="kw-concept">history</span>, <span class="kw-concept">art</span>, and <span class="kw-concept">spirituality</span>. Introducing the <span class="kw-person">paralyzed child</span> at the end creates a strong <span class="kw-concept">contrast</span>. It represents the harsh <span class="kw-theme">reality</span> of <span class="kw-theme">poverty</span> and suffering that exists alongside the beauty. This <span class="kw-concept">contrast</span> highlights the story's main idea: the difference between an outsider's romantic view and the complex, sometimes difficult, truth.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">According to the author, what are the different things that Nepal has given to the West?</summary>
+                        <div>According to the <span class="kw-person">tourist</span> in the story, <span class="kw-place">Nepal</span> (representing the East) has given the West many important things. These include <span class="kw-concept">religion</span>, ancient texts like the Puranas, beautiful <span class="kw-concept">art</span> like brass and ivory images, historical records like manuscripts and inscriptions, and overall, <span class="kw-concept">civilization</span> and <span class="kw-concept">wisdom</span>. He feels the East has generously shared its deep cultural and spiritual heritage.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the tourist describe his initial impression of the Kathmandu Valley?</summary>
+                        <div>The <span class="kw-person">tourist</span>'s initial impression is one of great beauty and peace. He sees a green valley with neat <span class="kw-place">fields</span>, colorful houses (red, yellow, white), and feels the pleasant smell of soil and <span class="kw-place">mountains</span>. He finds the atmosphere peaceful and ancient. The surrounding blue hills feel like a welcoming embrace, making the valley seem special and calm.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">According to the tourist, why is the West indebted to the East?</summary>
+                        <div>The <span class="kw-person">tourist</span> believes the West owes a debt to the East (specifically <span class="kw-place">Nepal</span>) because the East has provided things the West lacks. This includes deep <span class="kw-concept">spirituality</span>, rich <span class="kw-concept">culture</span>, ancient <span class="kw-concept">wisdom</span> (like in the Puranas), unique <span class="kw-concept">art</span>, and a sense of peace. He feels the East has generously shared its valuable heritage, enriching the West in return.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the tourist interpret the gaze of the monks and nuns?</summary>
+                        <div>The <span class="kw-person">tourist</span> interprets the gaze of the <span class="kw-person">monks</span> and <span class="kw-person">nuns</span> as the "<span class="kw-concept">samyak gaze</span>." He believes this look represents pure understanding and seeing things exactly as they are, without any pollution or confusion. To him, their gaze symbolizes a deep spiritual clarity and a <span class="kw-concept">perception</span> that sees the true form of everything, something profound he admires.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Discuss the narrative techniques used in "The Half-Closed Eyes of the Buddha..." and "A Very Old Man with Enormous Wings".</summary>
+                        <div><span class="kw-person">Shankar Lamichhane</span>'s "The Half-Closed Eyes..." and <span class="kw-person">Gabriel Garcia Marquez</span>'s "A Very Old Man..." tell their stories in very different ways.<br><br>Lamichhane uses a method called <span class="kw-concept">stream of consciousness</span>. We read the private thoughts of two characters – a foreign <span class="kw-person">tourist</span> and a <span class="kw-person">Nepali guide</span> – one after the other (<span class="kw-concept">monologues</span>). This lets us see <span class="kw-place">Nepal</span> from their different viewpoints. The <span class="kw-person">tourist</span> sees beauty and <span class="kw-concept">history</span>, while the <span class="kw-person">guide</span> shows the harder side of life. It feels like we are inside their minds. Marquez, however, uses a <span class="kw-person">storyteller</span> who is outside the story (third-person). He mixes <span class="kw-theme">magical things</span>, like the <span class="kw-person">old man</span> with <span class="kw-imagery">wings</span>, into a very normal, everyday world. This style is called <span class="kw-theme">magical realism</span>, where strange things are described plainly, as if they are normal.<br><br>So, Lamichhane shows us inner feelings and thoughts directly, while Marquez blends the <span class="kw-concept">supernatural</span> with <span class="kw-theme">real life</span> using an outside narrator.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">The writer mentions the eyes of different places with their significance. What are those eyes and what do they symbolize? Do you also agree with their significance...? Give reasons.</summary>
+                        <div>In "The Half-Closed Eyes...", <span class="kw-person">Shankar Lamichhane</span> uses different kinds of eyes to show different parts of <span class="kw-place">Nepal</span> and its meaning. These are very important symbols in the story.<br><br>He mentions the eyes of <span class="kw-person">monks</span> and <span class="kw-person">nuns</span> with their pure gaze (<span class="kw-concept">samyak gaze</span>), symbolizing clear sight or truth. The eyes carved on windows and doors show Nepali <span class="kw-concept">art</span> and <span class="kw-concept">culture</span>. The eyes of the Himalayas represent the watching presence of nature. The eyes of the <span class="kw-person">paralyzed boy</span> symbolize suffering and a <span class="kw-theme">reality</span> without hope or expression. The welcoming eyes of the <span class="kw-person">villagers</span> show <span class="kw-theme">kindness</span>, <span class="kw-theme">faith</span>, and human connection. Above all, the <span class="kw-concept">half-closed eyes of the Buddha</span> symbolize peace, understanding, and spiritual protection watching over the land.<br><br>Yes, I agree their significance is important. These different eyes help show the <span class="kw-concept">contrast</span> the story is about: the beautiful, spiritual <span class="kw-place">Nepal</span> the <span class="kw-person">tourist</span> sees (like the <span class="kw-concept">Buddha</span>'s eyes) versus the difficult <span class="kw-theme">reality</span> the <span class="kw-person">guide</span> shows (like the boy's eyes). They tie the story together.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- A Very Old Man with Enormous Wings Content -->
+         <div id="old-man-wings" class="story-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-orange-title mt-8">Story: A Very Old Man with Enormous Wings (by Gabriel Garcia Marquez)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-orange-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>During a <span class="kw-imagery">rainstorm</span>, <span class="kw-person">Pelayo</span> finds an <span class="kw-person">old man</span> with <span class="kw-imagery">enormous wings</span> stuck in the <span class="kw-imagery">mud</span> in his <span class="kw-place">courtyard</span>. The man looks decrepit and speaks an unknown language. A <span class="kw-person">neighbour woman</span> declares him an angel who likely fell while coming for <span class="kw-person">Pelayo</span>'s sick child. <span class="kw-person">Pelayo</span> and his wife <span class="kw-person">Elisenda</span> lock the "angel" in the <span class="kw-place">chicken coop</span>. Their child recovers overnight. <span class="kw-person">Father Gonzaga</span>, the priest, is skeptical, noting the angel's undignified appearance and lack of Latin. News spreads, and crowds flock to see the angel. <span class="kw-person">Elisenda</span> starts charging admission (5 cents), and they become wealthy. The crowd treats the angel poorly, poking him and throwing stones. He endures passively until burned with a <span class="kw-imagery">branding iron</span>, then reacts angrily. Interest wanes when a travelling carnival arrives with the <span class="kw-person">Spider-Girl</span>, whose story is more engaging and accessible. The angel is forgotten and lives for years in the dilapidated <span class="kw-place">chicken coop</span>, later moving to a shed and wandering the house, much to <span class="kw-person">Elisenda</span>'s annoyance. He grows weak and seems near <span class="kw-theme">death</span> but recovers, his feathers regrow. One day, <span class="kw-person">Elisenda</span> sees him awkwardly attempting to fly, and watches, relieved, as he finally manages to gain height and disappears over the horizon. The story employs <span class="kw-theme">magical realism</span>, blending the mundane and the fantastic, to explore themes of <span class="kw-theme">human cruelty</span>, <span class="kw-theme">greed</span>, <span class="kw-theme">faith</span>, patience, and the way people react to the inexplicable or miraculous.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-yellow-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                     <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the narrator describe the weather and its effects in the exposition of the story?</summary>
+                        <div>The narrator describes the weather as very bad. It rained for <span class="kw-time">three days</span>, making the world feel sad and grey. The <span class="kw-place">courtyard</span> turned to <span class="kw-imagery">mud</span>, and the house filled with <span class="kw-imagery">crabs</span>. <span class="kw-person">Pelayo</span> thought the bad smell from the rotten <span class="kw-imagery">shellfish</span> and <span class="kw-imagery">crabs</span> made his baby sick. This gloomy, wet weather sets a miserable feeling right at the start of the story before the <span class="kw-person">old man</span> appears.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What is the theme of the story 'The old man with Enormous wings'?</summary>
+                        <div>The main <span class="kw-theme">theme</span> of 'A Very Old Man with Enormous Wings' is how people react to things they don't understand, especially if those things are weak or different. It shows <span class="kw-theme">human cruelty</span>, <span class="kw-theme">greed</span>, and how easily people lose interest. It also looks at <span class="kw-theme">faith</span> and how strange miracles might appear in everyday life, often unnoticed or treated badly.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Describe the setting of the story, A Very Old Man with Enormous Wings.'</summary>
+                        <div>The story is set in a poor, small seaside <span class="kw-place">village</span>, mostly in <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span>'s <span class="kw-place">courtyard</span>. At the beginning, it's been raining heavily, making everything <span class="kw-imagery">muddy</span> and damp. A key part of the setting is the wire <span class="kw-place">chicken coop</span> where the <span class="kw-person">old man</span> is kept prisoner. Later, they build a bigger house, but the feeling remains quite ordinary, contrasting with the strange visitor.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How did the visitors irritate the old man?</summary>
+                        <div>The visitors were very irritating and <span class="kw-theme">cruel</span> to the <span class="kw-person">old man</span>. They treated him like an animal in a show, not a person. They threw food and stones at him through the wire fence. Some pulled his feathers out to use as good luck charms. The worst thing they did was <span class="kw-theme">burn</span> him with a hot <span class="kw-imagery">branding iron</span> just to see if he was alive.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why was Father Gonzaga not sure about the old man being a celestial messenger?</summary>
+                        <div><span class="kw-person">Father Gonzaga</span> doubted the <span class="kw-person">old man</span> was a real angel (celestial messenger) for several reasons. The <span class="kw-person">old man</span> looked too human: he was old, dirty, smelled bad, and had parasites in his <span class="kw-imagery">wings</span>. Most importantly, he didn't understand Latin, which the priest thought was God's language. He seemed more like a very old, worn-out person than a divine being from heaven.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why did Pelayo and Elisenda imprison the old man in the chicken coop?</summary>
+                        <div><span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> locked the <span class="kw-person">old man</span> in the <span class="kw-place">chicken coop</span> mostly out of fear and confusion. Their <span class="kw-person">neighbor woman</span>, who they thought was wise, told them he was an angel who had likely come to take their sick child away. Frightened by this idea and unsure what else to do with the strange, winged man, they put him in the coop for safety.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the old man as Pelayo and his wife first encounter within their courtyard.</summary>
+                        <div>When <span class="kw-person">Pelayo</span> and his wife first saw the <span class="kw-person">old man</span>, he was lying face down in the <span class="kw-imagery">mud</span>, unable to stand up. He looked very old and weak, like a ragpicker, with almost no hair or teeth. He seemed pitiful, like a "drenched great-grandfather." The most shocking part was his <span class="kw-imagery">enormous wings</span>, which were large but looked dirty, broken, and tangled in the <span class="kw-imagery">mud</span>.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the story 'An Old Man With Enormous Wings' as a story of realism and supernatural elements.</summary>
+                        <div>The story 'A Very Old Man with Enormous Wings' by <span class="kw-person">Gabriel Garcia Marquez</span> clearly mixes <span class="kw-concept">supernatural</span> events with very <span class="kw-concept">realistic</span> human actions and places.<br><br>The <span class="kw-concept">realism</span> shows in everyday things: the <span class="kw-imagery">rain</span> that won't stop, the house full of <span class="kw-imagery">crabs</span>, <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> being poor, and how they act like real people – first scared, then <span class="kw-theme">greedy</span> when crowds come. Even the <span class="kw-person">priest</span> (<span class="kw-person">Father Gonzaga</span>) doubting the 'angel' and people later not caring feels real. But the main part is <span class="kw-concept">supernatural</span>: the <span class="kw-person">old man</span> himself, who strangely has huge, dirty <span class="kw-imagery">wings</span>. He speaks a language no one knows, the neighbor instantly believes he's an angel, strange small miracles happen, and he finally flies away. The <span class="kw-person">Spider-Girl</span> at the carnival is also strange and <span class="kw-concept">supernatural</span>.<br><br>So, Marquez puts this amazing winged man in a normal, believable town. He uses the <span class="kw-concept">supernatural</span> part to show real human problems like being unkind, curious, or just not caring about things they don't understand.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Gabriel Gracia Marquez illustrates the themes of abuse and cruelty in the story 'An Old Man with Enormous Wings'. Do you agree or disagree...? Give your opinion...</summary>
+                        <div>Yes, I agree. <span class="kw-person">Gabriel Garcia Marquez</span> clearly shows themes of bad treatment (<span class="kw-theme">abuse</span>) and meanness (<span class="kw-theme">cruelty</span>) in 'A Very Old Man with Enormous Wings'. The story shows how mean people can be to those who are weak or different.<br><br>When the <span class="kw-person">old man</span> is found, he is treated badly. He is locked up in a <span class="kw-place">chicken coop</span> instead of being cared for. <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> use him to make money by charging people to see him. The townspeople treat him like a show animal, not a person. They throw things, pull his feathers out, and even <span class="kw-theme">burn</span> him with a hot <span class="kw-imagery">branding iron</span>. They don't seem to care about his pain. This shows the <span class="kw-theme">cruelty</span> people have towards someone strange and helpless.<br><br>So, the story is a strong example of how people can <span class="kw-theme">abuse</span> others who are different or weak.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why does the writer describe the weather condition at the begining of the story? What relation does the weather condition have in the story?</summary>
+                        <div><span class="kw-person">Gabriel Garcia Marquez</span>, in his story 'A Very Old Man with Enormous Wings', describes the bad weather at the start to set a sad feeling and show the difficult situation.<br><br>The story begins with <span class="kw-time">three days</span> of <span class="kw-imagery">rain</span>. The world feels sad, the beach is full of <span class="kw-imagery">mud</span> and rotten <span class="kw-imagery">shellfish</span>, and <span class="kw-imagery">crabs</span> crawl everywhere in <span class="kw-person">Pelayo</span>'s house. This bad weather makes the baby sick and the house unpleasant. It creates a feeling of sadness, things falling apart (decay), and general misery. This gloomy setting perfectly matches the arrival of the <span class="kw-person">old man</span>, who looks worn out and strange with his <span class="kw-imagery">wings</span>, almost like the storm itself brought him. The weather shows the hard life the family has at the beginning.<br><br>So, the weather is important because it creates the sad mood and the background for the <span class="kw-person">old man</span>'s strange arrival.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">It is human nature to exploit those who are weak, dependent and different. Explain this statement with reference to the story 'A Very Old Man with Enormous Wings'.</summary>
+                        <div><span class="kw-person">Gabriel Garcia Marquez</span>'s story 'A Very Old Man with Enormous Wings' shows how people can <span class="kw-theme">exploit</span> (use unfairly) those who are weak, dependent (need help), and different. The story shows this through how the townspeople treat the <span class="kw-person">old man</span>.<br><br>The <span class="kw-person">old man</span> arrives helpless and is very different because he has <span class="kw-imagery">wings</span>. Instead of helping him, <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> lock him up in a <span class="kw-place">chicken coop</span>. Because he is strange, people want to see him. <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> charge money for people to look, using him to get rich. The crowd is <span class="kw-theme">cruel</span>; they treat him like a circus animal, poke him, pull his feathers, and even <span class="kw-theme">burn</span> him (branding). They do this because he is different and too weak to stop them. His need for help makes him a target for their <span class="kw-theme">greed</span> and <span class="kw-theme">cruelty</span>.<br><br>Therefore, the story clearly shows how the <span class="kw-person">old man</span>'s weakness and strangeness lead people to <span class="kw-theme">exploit</span> and be <span class="kw-theme">cruel</span> to him.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the irritating things that the people do with the strange old man.</summary>
+                        <div>In 'A Very Old Man with Enormous Wings' by <span class="kw-person">Gabriel Garcia Marquez</span>, people did many mean (irritating) and unkind things to the strange <span class="kw-person">old man</span> because they were curious and didn't respect him.<br><br>They treated him like an animal in a show, locking him in a <span class="kw-place">chicken coop</span> and throwing food at him. People hoping for miracles would pull out his feathers. Others poked him to make him move. The worst and meanest thing they did was <span class="kw-theme">burn</span> his side with a hot <span class="kw-imagery">branding iron</span>, like he was farm animal, just to see if he was still alive because he hadn't moved.<br><br>These actions show people were just curious, didn't care about his feelings, and treated him badly because they didn't understand him, causing the <span class="kw-person">old man</span> much pain.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">The story deals with the common people's gullibility. How do Pelayo and his wife take advantage of common people's whim?</summary>
+                        <div>'A Very Old Man With Enormous Wings' by <span class="kw-person">Gabriel Garcia Marquez</span> shows how easily people believe things (<span class="kw-theme">gullibility</span>). <span class="kw-person">Pelayo</span> and his wife <span class="kw-person">Elisenda</span> smartly use this to their advantage.<br><br>The townspeople quickly believe the neighbor woman when she says the <span class="kw-person">old man</span> is an angel, even though she has no proof and he looks dirty and old. They rush to see him. This shows they are <span class="kw-theme">gullible</span>. They want to see miracles or just something strange. Seeing the large crowds, <span class="kw-person">Elisenda</span> gets the idea to charge five cents for people to look at the 'angel'. <span class="kw-person">Pelayo</span> agrees, and they make a lot of money. They profit from the crowd's easy belief and curiosity.<br><br>So, <span class="kw-person">Pelayo</span> and <span class="kw-person">Elisenda</span> make money by using the <span class="kw-theme">gullibility</span> and passing interest (<span class="kw-concept">whim</span>) of the common people.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Short Story Analysis | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+    <script>
+        // Get references to the sections
+        const storySelectionSection = document.getElementById('story-selection');
+        const storyContentDivs = document.querySelectorAll('.story-content');
+
+        // Function to show a specific story's content
+        function showStory(storyId) {
+            // Hide the selection section
+            storySelectionSection.style.display = 'none';
+
+            // Hide all story content sections first
+            storyContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selected story's content section
+            const selectedStory = document.getElementById(storyId);
+            if (selectedStory) {
+                selectedStory.style.display = 'block';
+                window.scrollTo(0, 0); // Scroll to top
+            }
+        }
+
+        // Function to show the selection section and hide story content
+        function showSelection() {
+            // Hide all story content sections
+            storyContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selection section
+            storySelectionSection.style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        // Initially, ensure only the selection is visible (CSS handles this by default)
+        // showSelection(); // Call this if you want JS to explicitly set the initial state
+
+    </script>
+
+</body>
+</html>

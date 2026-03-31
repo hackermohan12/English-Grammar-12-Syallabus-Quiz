@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Grammar Quiz</title>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="min-h-screen flex flex-col items-center pt-8 px-4">
+    <div class="quiz-container">
+        <h1 class="text-3xl font-bold text-center mb-6">Grammar Quiz</h1>
+
+        <div id="topic-selection">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Select a Topic</h2>
+            <div id="topic-buttons" class="flex flex-wrap justify-center">
+                </div>
+        </div>
+
+        <div id="quiz-area" class="hidden">
+            <h2 id="topic-title" class="text-2xl font-semibold mb-4">Topic</h2>
+            <div id="question-container" class="mb-4">
+                <p id="question-text" class="text-lg mb-4"></p>
+                <div id="options-container">
+                    </div>
+            </div>
+            <div id="feedback-container" class="mt-4">
+                <p id="explanation-text" class="explanation hidden"></p>
+            </div>
+            <div class="flex justify-between items-center mt-6">
+                <p id="score" class="score text-lg">Score: 0 / 0</p>
+                <button id="next-button" class="next-button hidden">Next Question</button>
+                 <button id="back-to-topics-button" class="next-button hidden">Back to Topics</button>
+            </div>
+        </div>
+
+         <div id="results-area" class="hidden text-center">
+            <h2 class="text-2xl font-semibold mb-4">Quiz Complete!</h2>
+            <p id="final-score" class="text-xl mb-4"></p>
+            <button id="restart-topic-button" class="next-button">Try Topic Again</button>
+            <button id="choose-new-topic-button" class="next-button">Choose New Topic</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Sound Synthesis ---
+        const correctSynth = new Tone.Synth({
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.2 }
+        }).toDestination();
+
+        const incorrectSynth = new Tone.Synth({
+            oscillator: { type: 'square' },
+            envelope: { attack: 0.01, decay: 0.2, sustain: 0.05, release: 0.2 }
+        }).toDestination();
+
+        function playCorrectSound() {
+            Tone.start(); // Ensure audio context is running
+            correctSynth.triggerAttackRelease('C5', '8n'); // Play a C5 note
+            setTimeout(() => correctSynth.triggerAttackRelease('E5', '8n'), 150);
+            setTimeout(() => correctSynth.triggerAttackRelease('G5', '8n'), 300);
+        }
+
+        function playIncorrectSound() {
+            Tone.start(); // Ensure audio context is running
+            incorrectSynth.triggerAttackRelease('C3', '4n'); // Play a lower C3 note
+        }
+
+        // --- Quiz Data (Extracted and Adapted from PDF Text) ---
+        const quizData = {
+            "Adjectives and Adverbs": [
+                 {
+                    question: "'The assignment looked easy.' Identify the adjective.",
+                    options: ["easy", "looked", "assignment", "The"],
+                    correctAnswer: "easy",
+                    explanation: "The word 'easy' is the adjective. Adjectives describe nouns. Here, 'easy' describes the noun 'assignment'."
+                },
+                {
+                    question: "'Students did well on the Mid Term examinations.' Identify the adverb.",
+                    options: ["well", "good", "did", "examinations"],
+                    correctAnswer: "well",
+                    explanation: "The word 'well' is the adverb. Adverbs modify verbs. Here, 'well' modifies the verb 'did', describing how the students performed."
+                },
+                {
+                    question: "The little girl danced really ____ in the annual programme. (Complete with an appropriate adverb)",
+                    options: ["well", "good", "real", "quick"],
+                    correctAnswer: "well",
+                    explanation: "We need an adverb to modify 'danced'. 'Well' is the adverbial form of 'good' and describes the manner of dancing."
+                },
+                 {
+                    question: "This year was dry. There was very ____ rain. (Choose appropriate word)",
+                    options: ["little", "few", "many", "more"],
+                    correctAnswer: "little",
+                    explanation: "'Rain' is an uncountable noun. 'Little' is used with uncountable nouns to indicate a small amount."
+                },
+                {
+                    question: "Health care in Nepal is not ____ expensive ____ it is abroad.",
+                    options: ["as / as", "so / as", "more / than", "as / like"],
+                    correctAnswer: "as / as",
+                    explanation: "The structure 'as ... as' is used for comparisons of equality (or lack of equality when negated). We need an adjective ('expensive') within this structure."
+                },
+                 {
+                    question: "I can't work as ____ as I used to. (Choose appropriate word)",
+                    options: ["hard", "harder", "hardly", "more hard"],
+                    correctAnswer: "hard",
+                    explanation: "The 'as ... as' structure needs an adverb here. 'Hard' functions as an adverb modifying 'work'."
+                },
+                {
+                    question: "Drive ____ or else you might have an accident.",
+                    options: ["carefully", "careful", "quick", "caring"],
+                    correctAnswer: "carefully",
+                    explanation: "We need an adverb ('carefully') to modify the verb 'Drive', indicating the manner of driving."
+                },
+                 {
+                    question: "He drives ____ than everyone else.",
+                    options: ["more carefully", "carefully", "careful", "most carefully"],
+                    correctAnswer: "more carefully",
+                    explanation: "This sentence involves a comparison ('than'). We need a comparative adverb ('more carefully') to modify 'drives'."
+                 },
+                 {
+                    question: "The cool breeze blew ____ on her face.",
+                    options: ["gently", "gentle", "pleasant", "coolly"],
+                    correctAnswer: "gently",
+                    explanation: "We need an adverb ('gently', 'pleasantly', 'mildly') to modify the verb 'blew'."
+                 }
+            ],
+            "Subject Verb Agreement": [
+                 {
+                    question: "Neither my mother nor my sisters ____ coming to visit.",
+                    options: ["are", "is", "has been", "am"],
+                    correctAnswer: "are",
+                    explanation: "In 'neither...nor', the verb agrees with the subject closer to it ('sisters', plural). So, 'are' is correct."
+                },
+                {
+                    question: "The class monitor, as well as his friends, usually ____ well.",
+                    options: ["performs", "perform", "performing", "have performed"],
+                    correctAnswer: "performs",
+                    explanation: "Phrases like 'as well as' don't affect the verb. The verb agrees with the main subject ('class monitor', singular). So, 'performs' is correct."
+                },
+                 {
+                    question: "At the moment, neither students nor their teacher ____ participating.",
+                    options: ["is", "are", "have been", "were"],
+                    correctAnswer: "is",
+                    explanation: "In 'neither...nor', the verb agrees with the closer subject ('teacher', singular). So, 'is' is correct."
+                },
+                {
+                    question: "One of the boys ____ still working on the project.",
+                    options: ["is", "are", "were", "have been"],
+                    correctAnswer: "is",
+                    explanation: "The subject is 'One' (singular), not 'boys'. 'Of the boys' is a prepositional phrase. So, 'is' is correct."
+                },
+                 {
+                    question: "The Principal along with other experts ____ present at the meeting.",
+                    options: ["was", "were", "have", "has"],
+                    correctAnswer: "was",
+                    explanation: "Phrases like 'along with' don't affect the verb. The verb agrees with the main subject ('Principal', singular). The context is past. So, 'was' is correct."
+                 },
+                 {
+                    question: "Either Manoj or his parents ____ supported the winners.",
+                    options: ["have", "has", "is", "was"],
+                    correctAnswer: "have",
+                    explanation: "In 'either...or', the verb agrees with the closer subject ('parents', plural). So, 'have' is correct."
+                 },
+                 {
+                    question: "Neither the tracksuit nor the pajamas ____ me.",
+                    options: ["fit", "fits", "fitting", "is fitting"],
+                    correctAnswer: "fit",
+                    explanation: "In 'neither...nor', the verb agrees with the closer subject ('pajamas', plural). So, 'fit' is correct."
+                 },
+                 {
+                    question: "The herd of deer ____ to the river.",
+                    options: ["runs", "run", "are running", "have run"],
+                    correctAnswer: "runs",
+                    explanation: "The subject is 'The herd' (collective noun, treated as singular unit). So, 'runs' is correct."
+                 },
+                 {
+                    question: "The master along with his three servants ____ going to the court.",
+                    options: ["is", "are", "am", "were"],
+                    correctAnswer: "is",
+                    explanation: "Phrases like 'along with' don't affect the verb. The verb agrees with the main subject ('master', singular). So, 'is' is correct."
+                 }
+            ],
+            "Prepositions": [
+                 {
+                    question: "The findings will lead ____ future research.",
+                    options: ["to", "by", "for", "in"],
+                    correctAnswer: "to",
+                    explanation: "The verb 'lead' is commonly followed by 'to' when indicating a result or direction."
+                },
+                {
+                    question: "The thief escaped ____ the tunnel.",
+                    options: ["through", "beside", "below", "onto"],
+                    correctAnswer: "through",
+                    explanation: "'Through' indicates movement within and out of an enclosed space like a tunnel."
+                },
+                {
+                    question: "Bears belong ____ the family of mammals.",
+                    options: ["to", "in", "on", "with"],
+                    correctAnswer: "to",
+                    explanation: "The verb 'belong' is followed by 'to' when indicating membership in a group or category."
+                },
+                 {
+                    question: "I was accompanied to the hospital ____ my friend.",
+                    options: ["by", "with", "from", "to"],
+                    correctAnswer: "by",
+                    explanation: "In the passive voice ('was accompanied'), the agent is introduced by 'by'."
+                },
+                {
+                    question: "I do not know who she is staring ____.",
+                    options: ["at", "on", "in", "with"],
+                    correctAnswer: "at",
+                    explanation: "The verb 'stare' is followed by 'at' to indicate the target of the gaze."
+                },
+                {
+                    question: "These leaders have great respect ____ the academicians.",
+                    options: ["for", "since", "to", "by"],
+                    correctAnswer: "for",
+                    explanation: "The noun 'respect' is typically followed by 'for' to indicate who or what is respected."
+                },
+                {
+                    question: "The culprit came ____ the office and walked across the road.",
+                    options: ["out of", "toward", "along", "into"],
+                    correctAnswer: "out of",
+                    explanation: "'Out of' indicates movement from the inside of a place."
+                },
+                 {
+                    question: "His arguments are not based ____ truth.",
+                    options: ["on", "in", "at", "with"],
+                    correctAnswer: "on",
+                    explanation: "The phrase 'based' is followed by 'on' to indicate the foundation or principle."
+                },
+                {
+                    question: "She is suspected ____ stealing money.",
+                    options: ["of", "at", "in", "to"],
+                    correctAnswer: "of",
+                    explanation: "The verb 'suspected' is followed by 'of' when indicating the crime or wrongdoing."
+                },
+                {
+                    question: "I am not interested ____ buying a new car now.",
+                    options: ["in", "at", "on", "by"],
+                    correctAnswer: "in",
+                    explanation: "The adjective 'interested' is followed by 'in' to indicate the subject of interest."
+                },
+                {
+                    question: "All the celebrations were called ____ because of the accident.",
+                    options: ["off", "on", "for", "in"],
+                    correctAnswer: "off",
+                    explanation: "The phrasal verb 'call off' means to cancel."
+                }
+            ],
+             "Modal Verbs": [
+                  {
+                    question: "You have just had a huge breakfast. You ____ be hungry anymore.",
+                    options: ["can't", "may not", "won't", "needn't"],
+                    correctAnswer: "can't",
+                    explanation: "'Can't' expresses impossibility or strong lack of likelihood based on the evidence (huge breakfast)."
+                },
+                {
+                    question: "'Who is that man?' 'I'm not sure. He ____ be his father.'",
+                    options: ["might", "would", "ought to", "must"],
+                    correctAnswer: "might",
+                    explanation: "'Might' (or 'could') expresses possibility when the speaker is uncertain."
+                },
+                 {
+                    question: "My fingernails ____ cutting. They are so long.",
+                    options: ["need", "will be", "may be", "must be"],
+                    correctAnswer: "need",
+                    explanation: "'Need + gerund (cutting)' expresses necessity. The structure 'Something needs doing' is common."
+                },
+                {
+                    question: "The street had a nasty jam. There ____ have been a demonstration.",
+                    options: ["must", "might", "would", "should"],
+                    correctAnswer: "must",
+                    explanation: "'Must have been' expresses a strong deduction about a past event based on present evidence (the jam)."
+                 },
+                 {
+                    question: "People ____ think it is interesting, but I think it is pathetic.",
+                    options: ["might", "are", "should", "will"],
+                    correctAnswer: "might",
+                    explanation: "'Might think' expresses possibility, contrasting one viewpoint with the speaker's own."
+                 },
+                 {
+                    question: "Look! The man is laughing and jumping. He ____ be mad!",
+                    options: ["must", "can", "will", "would"],
+                    correctAnswer: "must",
+                    explanation: "'Must be' expresses a strong deduction or logical certainty based on observed behavior."
+                 },
+                  {
+                    question: "These tasks are very important. You ____ finish them by tomorrow.",
+                    options: ["must", "will", "can", "can't"],
+                    correctAnswer: "must",
+                    explanation: "'Very important' indicates necessity or strong obligation, so 'must' is appropriate."
+                 },
+                 {
+                    question: "Rita is over two hours late. She ____ have missed the bus again.",
+                    options: ["must", "should", "will", "could"],
+                    correctAnswer: "must",
+                    explanation: "'Must have missed' expresses a strong deduction about the past based on current evidence (lateness)."
+                 },
+                 {
+                    question: "The food is really good there. They ____ have a great chef.",
+                    options: ["must", "will", "can", "should"],
+                    correctAnswer: "must",
+                    explanation: "'Must have' expresses a strong deduction based on the quality of the food."
+                 }
+            ],
+            "Infinitives and Gerunds": [
+                {
+                    question: "If you are lost, it's best ____ a hole and sit in it.",
+                    options: ["to dig", "dig", "digging", "to have dug"],
+                    correctAnswer: "to dig",
+                    explanation: "After 'it's + adjective' (like 'it's best'), the infinitive ('to' + base verb) is typically used."
+                },
+                {
+                    question: "He wouldn't let me ____ it. (Correct the verb form if needed)",
+                    options: ["read", "to read", "reading", "have read"],
+                    correctAnswer: "read",
+                    explanation: "The verb 'let' is followed by an object ('me') and the bare infinitive (infinitive without 'to')."
+                },
+                {
+                    question: "I am thankful for his ____ in time.",
+                    options: ["coming", "come", "to come", "have come"],
+                    correctAnswer: "coming",
+                    explanation: "After a possessive adjective ('his'), the gerund (-ing form) is required."
+                },
+                {
+                    question: "My father is fond ____.",
+                    options: ["of gardening", "to garden", "garden", "of garden"],
+                    correctAnswer: "of gardening",
+                    explanation: "After prepositions (like 'of' in 'fond of'), the gerund (-ing form) is required."
+                },
+                {
+                    question: "Max finished ____ his homework.",
+                    options: ["doing", "to do", "do", "having done"],
+                    correctAnswer: "doing",
+                    explanation: "The verb 'finish' is followed by a gerund (-ing form)."
+                },
+                {
+                    question: "We look forward ____ from you soon.",
+                    options: ["to hearing", "to hear", "hear", "hearing"],
+                    correctAnswer: "to hearing",
+                    explanation: "The phrase 'look forward to' is followed by a gerund (-ing form). The 'to' is a preposition here."
+                 }
+            ],
+            "Tense and Aspects": [
+                {
+                    question: "Please don't call between 8 and 9 a.m. We ____ dinner then.",
+                    options: ["will be having", "have", "will have", "will have had"],
+                    correctAnswer: "will be having",
+                    explanation: "The future continuous ('will be having') is used for actions ongoing at a specific future time ('between 8 and 9')."
+                },
+                {
+                    question: "She was upset that day. She ____ by her past memories.",
+                    options: ["was overcome", "overcame", "is overcome", "had overcome"],
+                    correctAnswer: "was overcome",
+                    explanation: "The sentence describes a past state. The reason is likely past passive ('was overcome' - memories overcame her)."
+                },
+                {
+                    question: "After the lesson had finished, we ____ out of college.",
+                    options: ["ran", "run", "had run", "were running"],
+                    correctAnswer: "ran",
+                    explanation: "The main action ('ran') happened after the past perfect action ('had finished'). It should be in the simple past."
+                },
+                {
+                    question: "He ____ a good breakfast before he set out.",
+                    options: ["had had", "had", "has had", "was having"],
+                    correctAnswer: "had had",
+                    explanation: "Having breakfast happened before setting out. Use past perfect ('had had') for an action completed before another past action."
+                },
+                {
+                    question: "By the end of this month, she ____ here for fifteen years.",
+                    options: ["will have been working", "has been working", "will work", "worked"],
+                    correctAnswer: "will have been working",
+                    explanation: "'By the end of this month' indicates a future point. Use future perfect continuous ('will have been working') for duration up to a future time."
+                },
+                {
+                    question: "His company is greatly ____ after.",
+                    options: ["sought", "seek", "seeking", "seeked"],
+                    correctAnswer: "sought",
+                    explanation: "Passive voice ('is ... after'). The past participle of 'seek' is 'sought'. 'Sought after' means desired."
+                }
+            ],
+            "Conjunctions": [
+                {
+                    question: "She left the clothes out ____ it was raining.",
+                    options: ["although", "because", "so", "if"],
+                    correctAnswer: "although",
+                    explanation: "'Although' connects contrasting ideas (leaving clothes out despite rain)."
+                },
+                {
+                    question: "____ they saw the tiger, they attacked it.",
+                    options: ["As soon as", "Although", "Because", "While"],
+                    correctAnswer: "As soon as",
+                    explanation: "'As soon as' indicates immediate sequence (attack happened right after seeing)."
+                },
+                 {
+                    question: "I had to work until midnight, ____ I was very tired.",
+                    options: ["so", "although", "because", "unless"],
+                    correctAnswer: "so",
+                    explanation: "'So' introduces the result (being tired) of the cause (working late)."
+                },
+                 {
+                    question: "____ I was tired, I went to bed.",
+                    options: ["Because", "Although", "So", "Unless"],
+                    correctAnswer: "Because",
+                    explanation: "'Because' introduces the reason/cause (being tired) for the action (going to bed)."
+                },
+                 {
+                    question: "It is almost impossible to succeed ____ one works hard.",
+                    options: ["unless", "if", "although", "because"],
+                    correctAnswer: "unless",
+                    explanation: "'Unless' means 'if not'. Success is impossible if one does not work hard."
+                },
+                {
+                    question: "We got wet ____ we had an umbrella.",
+                    options: ["although", "because", "so", "if"],
+                    correctAnswer: "although",
+                    explanation: "'Although' shows contrast between having an umbrella and still getting wet."
+                },
+                 {
+                    question: "We always have financial problems; ____, we go on outing every year.",
+                    options: ["however", "although", "despite", "because"],
+                    correctAnswer: "however",
+                    explanation: "'However' connects two contrasting independent clauses (financial problems vs. still going out)."
+                },
+                 {
+                    question: "I wanted to go back from office ____ I was feeling uneasy.",
+                    options: ["because", "so", "although", "if"],
+                    correctAnswer: "because",
+                    explanation: "'Because' introduces the reason (feeling uneasy) for wanting to go back."
+                }
+            ],
+            "Relative Clause": [
+                {
+                    question: "There is someone at the door ____ wants to speak to George.",
+                    options: ["who", "whom", "whose", "which"],
+                    correctAnswer: "who",
+                    explanation: "'Who' is the subjective relative pronoun for people, referring to 'someone'."
+                },
+                {
+                    question: "I was born in a remote village ____ indelible memories recur all the time.",
+                    options: ["from where", "where", "which", "that"],
+                    correctAnswer: "from where",
+                    explanation: "'From where' correctly combines 'from there' (referring to the village) including the preposition."
+                },
+                 {
+                    question: "The hotel ____ we stayed was very comfortable.",
+                    options: ["where", "which", "who", "that"],
+                    correctAnswer: "where",
+                    explanation: "'Where' is the relative adverb used for places, replacing 'there' or 'in the hotel'."
+                },
+                 {
+                    question: "A cemetery is a place ____ dead bodies are buried.",
+                    options: ["where", "which", "who", "whose"],
+                    correctAnswer: "where",
+                    explanation: "'Where' refers to a place and indicates location/activity within it."
+                },
+                 {
+                    question: "This is the house ____ belongs to my uncle.",
+                    options: ["which", "who", "where", "whom"],
+                    correctAnswer: "which",
+                    explanation: "'Which' (or 'that') is used for things ('house') as the subject of the relative clause."
+                },
+                 {
+                    question: "The garden ____ we spend a lot of time is beautiful.",
+                    options: ["where", "which", "who", "whose"],
+                    correctAnswer: "where",
+                    explanation: "'Where' replaces 'in the garden' referring to the place."
+                },
+                 {
+                    question: "He is the consultant ____ advice I rely on.",
+                    options: ["whose", "who", "which", "whom"],
+                    correctAnswer: "whose",
+                    explanation: "'Whose' is the possessive relative pronoun, showing the advice belongs to the consultant."
+                },
+                {
+                    question: "She is one of the few girls ____ passed the examination.",
+                    options: ["who have", "who has", "which has", "that has"],
+                    correctAnswer: "who have",
+                    explanation: "'Who' refers to 'girls' (plural). The verb must be plural ('have passed')."
+                }
+            ],
+             "Voice (Active and Passive)": [
+                {
+                    question: "After examination, the patient ____ home.",
+                    options: ["was sent", "were sent", "are sent", "send"],
+                    correctAnswer: "was sent",
+                    explanation: "Passive voice needed. 'Patient' is singular, past tense context. Simple past passive singular: 'was sent'."
+                },
+                {
+                    question: "Change to passive: 'They intend this letter merely to remind the officials.'",
+                    options: ["This letter is merely intended to remind...", "This letter intends merely to remind...", "The officials are intended to be reminded...", "Reminding the officials is intended..."],
+                    correctAnswer: "This letter is merely intended to remind...",
+                    explanation: "Object 'This letter' becomes subject. Verb 'intend' (present simple) becomes 'is intended' (present passive)."
+                },
+                 {
+                    question: "It is winter. Everything ____ with snow.",
+                    options: ["is covered", "are covered", "were covered", "cover"],
+                    correctAnswer: "is covered",
+                    explanation: "Passive needed. 'Everything' is singular, present context. Present simple passive singular: 'is covered'."
+                },
+                 {
+                    question: "Change to passive: 'They sent an article yesterday.'",
+                    options: ["An article was sent yesterday.", "An article sent yesterday.", "Yesterday an article was sent by them.", "They were sent an article yesterday."],
+                    correctAnswer: "An article was sent yesterday.",
+                    explanation: "Object 'an article' becomes subject. Verb 'sent' (past simple) becomes 'was sent' (past passive)."
+                },
+                 {
+                    question: "Students generally dislike ____ strict instructions.",
+                    options: ["being given", "giving", "to be given", "given"],
+                    correctAnswer: "being given",
+                    explanation: "'Dislike' is followed by a gerund. Since students receive instructions, use passive gerund 'being given'."
+                },
+                 {
+                    question: "Change to passive: 'Parents gave children a bar of chocolate.' (Focus on 'children')",
+                    options: ["Children were given a bar of chocolate.", "A bar of chocolate was given children.", "Parents were given chocolate by children.", "Children gave chocolate."],
+                    correctAnswer: "Children were given a bar of chocolate.",
+                    explanation: "Indirect object 'children' becomes subject. Verb 'gave' (past simple) becomes 'were given' (past passive plural)."
+                },
+                 {
+                    question: "Change to active: 'All the books were published in time.'",
+                    options: ["The publisher published all the books in time.", "All the books published in time.", "In time the books were published.", "Publishing the books was done in time."],
+                    correctAnswer: "The publisher published all the books in time.",
+                    explanation: "Implied agent (e.g., 'The publisher') becomes subject. Passive verb 'were published' (past passive) becomes 'published' (past active)."
+                },
+                 {
+                    question: "Change to passive: 'Did they confess the crime?'",
+                    options: ["Was the crime confessed?", "Did the crime confess?", "Was confessing the crime done?", "The crime was confessed?"],
+                    correctAnswer: "Was the crime confessed?",
+                    explanation: "Passive question form. Object 'the crime' becomes subject. Auxiliary 'Did' changes to 'Was' for past passive question."
+                },
+                 {
+                    question: "I resent ____ when I'm speaking.",
+                    options: ["being interrupted", "interrupting", "to be interrupted", "interrupted"],
+                    correctAnswer: "being interrupted",
+                    explanation: "'Resent' is followed by a gerund. Since the speaker receives the action, use passive gerund 'being interrupted'."
+                },
+                {
+                    question: "Change 'I want my students to respect me.' to passive focus.",
+                    options: ["I want to be respected by my students.", "I want respect from my students.", "My students are wanted to respect me.", "Respect is wanted by me from students."],
+                    correctAnswer: "I want to be respected by my students.",
+                    explanation: "The structure 'want + object + infinitive' changes to 'want + passive infinitive (to be respected)'."
+                }
+            ],
+            "Reported Speech": [
+                {
+                    question: "Report using 'wondered': She asked, 'Have you seen this film?'",
+                    options: ["She wondered if I had seen that film.", "She wondered if I have seen this film.", "She wondered have I seen that film.", "She wondered that I had seen this film."],
+                    correctAnswer: "She wondered if I had seen that film.",
+                    explanation: "Use 'if/whether', backshift tense (Present Perfect -> Past Perfect), change 'this' to 'that'."
+                },
+                {
+                    question: "Report: She said to her clerk, 'Don't make mistake again or you'll be sacked'.",
+                    options: ["She warned her clerk not to make mistake again or he would be sacked.", "She told her clerk don't make mistake or you'll be sacked.", "She warned her clerk to not make mistake or he will be sacked.", "She said her clerk not to make mistake or he would be sacked."],
+                    correctAnswer: "She warned her clerk not to make mistake again or he would be sacked.",
+                    explanation: "Negative imperative -> 'not to + infinitive'. Backshift modal ('will' -> 'would'). 'Warned' or 'told' fits."
+                },
+                 {
+                    question: "Report using 'wondered': He asked, 'Did she agree with me?'",
+                    options: ["He wondered if she had agreed with him.", "He wondered did she agree with him.", "He wondered if she agreed with me.", "He wondered that she had agreed with him."],
+                    correctAnswer: "He wondered if she had agreed with him.",
+                    explanation: "Use 'if/whether', backshift tense (Simple Past -> Past Perfect), change pronoun ('me' -> 'him')."
+                },
+                 {
+                    question: "Report: 'Where have you been these days?' She wanted to know...",
+                    options: ["She wanted to know where I had been those days.", "She wanted to know where have I been these days.", "She wanted to know where I had been these days.", "She wanted to know where you had been those days."],
+                    correctAnswer: "She wanted to know where I had been those days.",
+                    explanation: "Use Wh-word ('where'), backshift tense (Present Perfect -> Past Perfect), change 'these' to 'those', statement word order."
+                },
+                 {
+                    question: "Report: 'You must not ignore your study,' the teacher told the student.",
+                    options: ["The teacher told the student not to ignore his study.", "The teacher told the student that he must not ignore your study.", "The teacher said the student must not ignore his study.", "The teacher told the student don't ignore his study."],
+                    correctAnswer: "The teacher told the student not to ignore his study.",
+                    explanation: "'Must not' (prohibition) can be reported as 'not to + infinitive'. Pronoun changes ('you' -> 'he', 'your' -> 'his')."
+                },
+                 {
+                    question: "Report: Students said, 'Can you manage extra classes?'",
+                    options: ["Students asked the principal if he could manage extra classes.", "Students asked the principal can you manage extra classes.", "Students asked the principal could he manage extra classes.", "Students said the principal if he could manage extra classes."],
+                    correctAnswer: "Students asked the principal if he could manage extra classes.",
+                    explanation: "Use 'asked', 'if/whether', backshift modal ('can' -> 'could'), statement word order."
+                },
+                 {
+                    question: "Report: 'Please, help the poor.' He requested...",
+                    options: ["He requested them to help the poor.", "He requested please help the poor.", "He requested to please help the poor.", "He requested helping the poor."],
+                    correctAnswer: "He requested them to help the poor.",
+                    explanation: "Imperative with 'Please' -> 'requested + object + to-infinitive'. 'Please' is removed."
+                },
+                 {
+                    question: "Report: 'Did you receive my email?' The teacher asked...",
+                    options: ["The teacher asked if I had received her email.", "The teacher asked did I receive her email.", "The teacher asked if I received her email.", "The teacher asked that I had received her email."],
+                    correctAnswer: "The teacher asked if I had received her email.",
+                    explanation: "Use 'asked', 'if/whether', backshift tense (Simple Past -> Past Perfect), pronoun changes ('you' -> 'I', 'my' -> 'her')."
+                }
+            ],
+            "Question Tags": [
+                {
+                    question: "She is honest, ____?",
+                    options: ["isn't she", "is she", "doesn't she", "does she"],
+                    correctAnswer: "isn't she",
+                    explanation: "Positive statement ('is') -> negative tag ('isn't'). Pronoun 'she'."
+                },
+                {
+                    question: "We are certain, ____?",
+                    options: ["aren't we", "are we", "don't we", "do we"],
+                    correctAnswer: "aren't we",
+                    explanation: "Positive statement ('are') -> negative tag ('aren't'). Pronoun 'we'."
+                },
+                {
+                    question: "Sulochana isn't here, ____?",
+                    options: ["is she", "isn't she", "does she", "doesn't she"],
+                    correctAnswer: "is she",
+                    explanation: "Negative statement ('isn't') -> positive tag ('is'). Pronoun 'she'."
+                },
+                {
+                    question: "I am a regular student, ____?",
+                    options: ["aren't I", "am I not", "amn't I", "don't I"],
+                    correctAnswer: "aren't I",
+                    explanation: "Special case: Positive 'I am' -> negative tag 'aren't I?'."
+                },
+                {
+                    question: "She has booked a ticket, ____?",
+                    options: ["hasn't she", "doesn't she", "has she", "does she"],
+                    correctAnswer: "hasn't she",
+                    explanation: "Positive statement with auxiliary 'has' -> negative tag 'hasn't'. Pronoun 'she'."
+                },
+                {
+                    question: "They had a big project to execute, ____?",
+                    options: ["didn't they", "hadn't they", "did they", "had they"],
+                    correctAnswer: "didn't they",
+                    explanation: "Positive statement, 'had' is main verb (past simple) -> negative tag uses 'did' -> 'didn't they?'."
+                }
+            ],
+            "Miscellaneous": [
+                 {
+                    question: "Correct the word: Nepal is a *culture* diverse country.",
+                    options: ["culturally", "cultural", "cultured", "cultures"],
+                    correctAnswer: "culturally",
+                    explanation: "An adverb ('culturally') is needed to modify the adjective 'diverse'."
+                },
+                {
+                    question: "Correct the verb form: ...while she *waiting*.",
+                    options: ["was waiting", "waited", "waits", "waiting"],
+                    correctAnswer: "was waiting",
+                    explanation: "'While' often introduces a past continuous action ('was waiting') happening alongside another past action."
+                },
+                {
+                    question: "Choose the correct sentence structure:",
+                    options: ["All my books are lost.", "My all books are lost.", "Lost are all my books.", "Books my all are lost."],
+                    correctAnswer: "All my books are lost.",
+                    explanation: "Determiners like 'all' usually precede possessive adjectives like 'my'."
+                },
+                {
+                    question: "Choose the correct sentence structure:",
+                    options: ["Both his brothers are ill.", "His both brothers are ill.", "Ill are both his brothers.", "Brothers his both are ill."],
+                    correctAnswer: "Both his brothers are ill.",
+                    explanation: "Determiners like 'both' usually precede possessive adjectives like 'his'."
+                },
+                {
+                    question: "Choose the correct phrasing:",
+                    options: ["Give me a hundred rupees.", "Give me a hundred rupee.", "Give me hundred rupees.", "Give me hundred rupee."],
+                    correctAnswer: "Give me a hundred rupees.",
+                    explanation: "When a number modifies a countable noun like 'rupee', the noun is usually plural if the number is greater than one ('a hundred' = 100)."
+                },
+                {
+                    question: "Choose the correct pronoun: Everybody except ____ was absent.",
+                    options: ["me", "I", "myself", "mine"],
+                    correctAnswer: "me",
+                    explanation: "'Except' functions as a preposition here and requires the objective case pronoun ('me')."
+                },
+                 {
+                    question: "We all got wet because ____ us had a raincoat.",
+                    options: ["none of", "any of", "some of", "all of"],
+                    correctAnswer: "none of",
+                    explanation: "Getting wet implies a lack of raincoats. 'None of' means 'not any of' the group."
+                },
+                 {
+                    question: "Can I borrow ____ books from you?",
+                    options: ["some", "any", "a few", "much"],
+                    correctAnswer: "some",
+                    explanation: "'Some' is often used in requests or offers, even in question form. 'Any' is also possible but 'some' fits the polite request context well."
+                 }
+            ]
+        };
+
+
+        // --- DOM Elements ---
+        const topicSelectionDiv = document.getElementById('topic-selection');
+        const topicButtonsDiv = document.getElementById('topic-buttons');
+        const quizAreaDiv = document.getElementById('quiz-area');
+        const resultsAreaDiv = document.getElementById('results-area');
+        const topicTitleH2 = document.getElementById('topic-title');
+        const questionTextP = document.getElementById('question-text');
+        const optionsContainerDiv = document.getElementById('options-container');
+        const explanationTextP = document.getElementById('explanation-text');
+        const scoreP = document.getElementById('score');
+        const nextButton = document.getElementById('next-button');
+        const backToTopicsButton = document.getElementById('back-to-topics-button');
+        const finalScoreP = document.getElementById('final-score');
+        const restartTopicButton = document.getElementById('restart-topic-button');
+        const chooseNewTopicButton = document.getElementById('choose-new-topic-button');
+
+
+        // --- State Variables ---
+        let currentTopic = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questionsAnswered = 0;
+        let answerSelected = false;
+
+        // --- Functions ---
+
+        // Shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Load topics onto the selection screen
+        function loadTopics() {
+            topicButtonsDiv.innerHTML = ''; // Clear existing buttons
+            // Sort topics alphabetically for better organization
+            const sortedTopics = Object.keys(quizData).sort();
+            sortedTopics.forEach(topic => {
+                const button = document.createElement('button');
+                button.textContent = topic;
+                button.classList.add('topic-button');
+                button.onclick = () => startQuiz(topic);
+                topicButtonsDiv.appendChild(button);
+            });
+             showScreen('topic');
+        }
+
+        // Start the quiz for a selected topic
+        function startQuiz(topic) {
+            currentTopic = topic;
+            // Ensure questions exist for the topic before proceeding
+            if (!quizData[topic] || quizData[topic].length === 0) {
+                 console.error(`No questions found for topic: ${topic}`);
+                 alert(`Sorry, no questions are available for the topic "${topic}" yet.`);
+                 loadTopics(); // Go back to topic selection
+                 return;
+            }
+            currentQuestions = [...quizData[topic]]; // Copy questions for the topic
+            shuffleArray(currentQuestions); // Shuffle questions for variety
+            currentQuestionIndex = 0;
+            score = 0;
+            questionsAnswered = 0;
+            answerSelected = false;
+            showScreen('quiz');
+            loadQuestion();
+            updateScoreDisplay(); // Initial score display
+        }
+
+        // Load the current question and options
+        function loadQuestion() {
+            answerSelected = false; // Reset answer lock
+            if (currentQuestionIndex < currentQuestions.length) {
+                const questionData = currentQuestions[currentQuestionIndex];
+                topicTitleH2.textContent = currentTopic; // Set topic title
+                questionTextP.textContent = `${currentQuestionIndex + 1}. ${questionData.question}`;
+                optionsContainerDiv.innerHTML = ''; // Clear previous options
+                explanationTextP.classList.add('hidden'); // Hide explanation
+                nextButton.classList.add('hidden'); // Hide next button initially
+                backToTopicsButton.classList.add('hidden'); // Hide back button
+
+                // Shuffle options before displaying
+                const shuffledOptions = [...questionData.options];
+                shuffleArray(shuffledOptions);
+
+                shuffledOptions.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('option-button');
+                    button.onclick = () => selectAnswer(button, option, questionData.correctAnswer, questionData.explanation);
+                    optionsContainerDiv.appendChild(button);
+                });
+            } else {
+                // Quiz finished
+                showResults();
+            }
+        }
+
+        // Handle answer selection
+        function selectAnswer(button, selectedAnswer, correctAnswer, explanation) {
+            if (answerSelected) return; // Prevent multiple selections
+            answerSelected = true; // Lock selection
+
+            const allOptionButtons = optionsContainerDiv.querySelectorAll('.option-button');
+            allOptionButtons.forEach(btn => {
+                btn.disabled = true; // Disable all buttons after selection
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct'); // Highlight correct answer
+                }
+            });
+
+            if (selectedAnswer === correctAnswer) {
+                button.classList.add('correct');
+                score++;
+                playCorrectSound();
+            } else {
+                button.classList.add('incorrect');
+                playIncorrectSound();
+            }
+
+            questionsAnswered++;
+            explanationTextP.textContent = `Explanation: ${explanation}`;
+            explanationTextP.classList.remove('hidden');
+            nextButton.classList.remove('hidden');
+            backToTopicsButton.classList.remove('hidden'); // Show back button
+            updateScoreDisplay();
+        }
+
+        // Update score display
+        function updateScoreDisplay() {
+            // Ensure denominator reflects total questions in the topic for final score,
+            // but only questions answered so far during the quiz.
+            const denominator = (currentQuestionIndex >= currentQuestions.length) ? currentQuestions.length : questionsAnswered;
+            scoreP.textContent = `Score: ${score} / ${denominator}`;
+        }
+
+
+        // Load the next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        // Show final results screen
+        function showResults() {
+             finalScoreP.textContent = `Your final score for ${currentTopic} is: ${score} / ${currentQuestions.length}`;
+             showScreen('results');
+        }
+
+        // Switch between screens
+        function showScreen(screen) {
+             topicSelectionDiv.classList.add('hidden');
+             quizAreaDiv.classList.add('hidden');
+             resultsAreaDiv.classList.add('hidden');
+
+             if (screen === 'topic') {
+                 topicSelectionDiv.classList.remove('hidden');
+             } else if (screen === 'quiz') {
+                 quizAreaDiv.classList.remove('hidden');
+             } else if (screen === 'results') {
+                 resultsAreaDiv.classList.remove('hidden');
+             }
+        }
+
+
+        // --- Event Listeners ---
+        nextButton.addEventListener('click', nextQuestion);
+        backToTopicsButton.addEventListener('click', loadTopics); // Go back to topic selection
+        restartTopicButton.addEventListener('click', () => startQuiz(currentTopic)); // Restart current topic
+        chooseNewTopicButton.addEventListener('click', loadTopics); // Go back to topic selection
+
+
+        // --- Initial Load ---
+        loadTopics(); // Load topics when the page loads
+
+    </script>
+    <footer>
+        <p>&copy; 2026 Grammar Quiz | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>

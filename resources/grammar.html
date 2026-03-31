@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Interactive Grammar Notes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Poppins', sans-serif; /* Use Poppins font */
+        }
+        /* Style for the clickable headers */
+        .topic-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .topic-header:hover {
+            background-color: #e2e8f0; /* Light gray on hover */
+        }
+        /* Style for the content sections (initially hidden) */
+        .topic-content {
+            display: none; /* Hide content by default */
+            transition: max-height 0.5s ease-out;
+            overflow: hidden;
+            max-height: 0; /* Start with max-height 0 for transition */
+        }
+        /* Style for visible content sections */
+        .topic-content.show {
+            display: block; /* Show content */
+            max-height: 2000px; /* Set a large max-height for transition */
+        }
+        /* Style for list items */
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem; /* Indent lists */
+        }
+        ul ul {
+             list-style-type: circle;
+             margin-left: 1.5rem; /* Further indent sub-lists */
+        }
+        /* Icon rotation */
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .rotate-90 {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="bg-gray-100 p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">Interactive Grammar Notes</h1>
+        <p class="text-gray-600 mb-6 text-center">Click on a topic header to expand or collapse its content.</p>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">1. ADJECTIVES AND ADVERBS</h2>
+                <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                <h3 class="font-semibold mb-2 text-gray-700">Function:</h3>
+                <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li>Adjectives modify nouns or pronouns (describe them). E.g., "The assignment looked <code class="bg-gray-200 px-1 rounded">easy</code>." ('easy' describes 'assignment').</li>
+                    <li>Adverbs modify verbs (describe how, when, where, why an action is done), adjectives (modify their intensity), or other adverbs. E.g., "Students did <code class="bg-gray-200 px-1 rounded">well</code>.", "danced <code class="bg-gray-200 px-1 rounded">really well</code>.", "Drive <code class="bg-gray-200 px-1 rounded">carefully</code>."</li>
+                </ul>
+                <h3 class="font-semibold mb-2 text-gray-700">Form:</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li>Use an adverb (like <code class="bg-gray-200 px-1 rounded">well</code>, <code class="bg-gray-200 px-1 rounded">carefully</code>, <code class="bg-gray-200 px-1 rounded">pleasantly</code>) to describe *how* an action verb is performed, not an adjective (<code class="bg-gray-200 px-1 rounded">good</code>, <code class="bg-gray-200 px-1 rounded">careful</code>, <code class="bg-gray-200 px-1 rounded">pleasant</code>).</li>
+                </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Comparisons:</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li><strong><code class="bg-gray-200 px-1 rounded">as ... as</code> Structure:</strong> Used for equality/inequality. Use the base form of the adjective or adverb between 'as' and 'as'. E.g., "not <code class="bg-gray-200 px-1 rounded">as expensive as</code>", "work <code class="bg-gray-200 px-1 rounded">as hard as</code>".</li>
+                    <li><strong>Comparative Adverbs:</strong> Use 'more + adverb' (e.g., <code class="bg-gray-200 px-1 rounded">more carefully</code>) or '-er' form (e.g., <code class="bg-gray-200 px-1 rounded">harder</code>) when comparing two actions using <code class="bg-gray-200 px-1 rounded">than</code>. E.g., "drives <code class="bg-gray-200 px-1 rounded">more carefully than</code>..."</li>
+                </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Quantifiers (Words for Amount/Number):</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600">
+                    <li>Use <code class="bg-gray-200 px-1 rounded">little</code> with uncountable nouns (like 'rain') for a small amount. E.g., "very <code class="bg-gray-200 px-1 rounded">little</code> rain".</li>
+                    <li>Use <code class="bg-gray-200 px-1 rounded">few</code> with countable nouns for a small number.</li>
+                    <li>Use <code class="bg-gray-200 px-1 rounded">many</code> with countable nouns for a large number.</li>
+                    <li>(Distinctions between <code class="bg-gray-200 px-1 rounded">more</code> were not fully illustrated beyond being comparative).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">2. SUBJECT-VERB AGREEMENT</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong><code class="bg-gray-200 px-1 rounded">Neither...nor</code> / <code class="bg-gray-200 px-1 rounded">Either...or</code>:</strong> The verb agrees with the subject *closer* to it. E.g., "Neither my mother nor my sisters <code class="bg-gray-200 px-1 rounded">are</code>...", "Neither students nor their teacher <code class="bg-gray-200 px-1 rounded">is</code>..."</li>
+                    <li><strong>Interrupting Phrases:</strong> Phrases like <code class="bg-gray-200 px-1 rounded">as well as</code>, <code class="bg-gray-200 px-1 rounded">along with</code>, <code class="bg-gray-200 px-1 rounded">together with</code> coming between subject parts do *not* change the subject number. The verb agrees with the *main subject* before the phrase. E.g., "The class monitor, as well as his friends, <code class="bg-gray-200 px-1 rounded">performs</code>...", "The Principal along with experts <code class="bg-gray-200 px-1 rounded">was</code>..."</li>
+                    <li><strong><code class="bg-gray-200 px-1 rounded">One of the...</code>:</strong> The subject is <code class="bg-gray-200 px-1 rounded">One</code> (singular) and takes a singular verb. E.g., "One of the boys <code class="bg-gray-200 px-1 rounded">is</code> working..." (But note the relative clause exception under that section).</li>
+                    <li><strong>Compound Subjects with <code class="bg-gray-200 px-1 rounded">and</code>:</strong> Subjects joined by <code class="bg-gray-200 px-1 rounded">and</code> are usually plural and take a plural verb. E.g., "He and I <code class="bg-gray-200 px-1 rounded">have</code> (been)..."</li>
+                    <li><strong>Collective Nouns:</strong> Nouns representing a group (<code class="bg-gray-200 px-1 rounded">herd</code>, <code class="bg-gray-200 px-1 rounded">team</code>, etc.) usually take a singular verb when the group acts as a single unit. E.g., "The herd <code class="bg-gray-200 px-1 rounded">runs</code>..."</li>
+                    <li><strong>Specific Plural Nouns:</strong> Some nouns ending in 's' or referring to pairs are treated as plural (<code class="bg-gray-200 px-1 rounded">pajamas</code>). E.g., "...the pajamas <code class="bg-gray-200 px-1 rounded">fit</code> me."</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">3. PREPOSITIONS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                <h3 class="font-semibold mb-2 text-gray-700">Verb/Adjective/Noun Collocations:</h3>
+                 <p class="text-gray-600 mb-2">Many words require specific prepositions. Examples covered:</p>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                     <li><code class="bg-gray-200 px-1 rounded">lead to</code> (result/direction)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">belong to</code> (membership)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">accompanied by</code> (agent in passive)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">stare at</code> (target of gaze)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">respect for</code> (the respected entity)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">based on</code> (foundation)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">suspected of</code> (crime)</li>
+                     <li><code class="bg-gray-200 px-1 rounded">interested in</code> (topic/activity)</li>
+                 </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Movement:</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li><code class="bg-gray-200 px-1 rounded">through</code>: Movement within and out of a passage (e.g., <code class="bg-gray-200 px-1 rounded">through</code> the tunnel).</li>
+                    <li><code class="bg-gray-200 px-1 rounded">out of</code>: Movement from inside an enclosed space (e.g., came <code class="bg-gray-200 px-1 rounded">out of</code> the office).</li>
+                 </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Phrasal Verbs:</h3>
+                 <p class="text-gray-600 mb-2">The preposition/particle changes the verb's meaning.</p>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600">
+                    <li><code class="bg-gray-200 px-1 rounded">call off</code>: Cancel (e.g., parties were <code class="bg-gray-200 px-1 rounded">called off</code>).</li>
+                 </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">4. MODAL VERBS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Possibility/Speculation:</strong> <code class="bg-gray-200 px-1 rounded">might</code>, <code class="bg-gray-200 px-1 rounded">could</code> (e.g., "He <code class="bg-gray-200 px-1 rounded">might</code> be his father.")</li>
+                    <li><strong>Necessity/Obligation:</strong>
+                        <ul class="list-circle list-inside ml-4 space-y-1">
+                             <li><code class="bg-gray-200 px-1 rounded">must</code> (strong obligation): "You <code class="bg-gray-200 px-1 rounded">must</code> finish..."</li>
+                             <li><code class="bg-gray-200 px-1 rounded">need</code> + gerund (necessity): "My fingernails <code class="bg-gray-200 px-1 rounded">need</code> cutting."</li>
+                        </ul>
+                    </li>
+                    <li><strong>Deduction (Certainty based on evidence):</strong>
+                        <ul class="list-circle list-inside ml-4 space-y-1">
+                             <li><code class="bg-gray-200 px-1 rounded">must</code> (strong positive deduction): "He <code class="bg-gray-200 px-1 rounded">must</code> be mad.", "They <code class="bg-gray-200 px-1 rounded">must</code> have a great chef."</li>
+                             <li><code class="bg-gray-200 px-1 rounded">can't</code> (strong negative deduction/impossibility): "You <code class="bg-gray-200 px-1 rounded">can't</code> be hungry."</li>
+                             <li><code class="bg-gray-200 px-1 rounded">must have</code> + past participle (strong past deduction): "She <code class="bg-gray-200 px-1 rounded">must have</code> missed the bus."</li>
+                        </ul>
+                    </li>
+                    <li><strong>Past Possibility:</strong> <code class="bg-gray-200 px-1 rounded">might have</code> + pp, <code class="bg-gray-200 px-1 rounded">could have</code> + pp (e.g., "There <code class="bg-gray-200 px-1 rounded">might have</code> been a demonstration.")</li>
+                    <li><strong>Lack of Necessity:</strong> <code class="bg-gray-200 px-1 rounded">needn't</code> (e.g., "You <code class="bg-gray-200 px-1 rounded">needn't</code> be hungry.")</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">5. TENSE AND ASPECTS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Future Continuous (<code class="bg-gray-200 px-1 rounded">will be + -ing</code>):</strong> Used for an action that will be in progress at a specific time in the future. E.g., "...we <code class="bg-gray-200 px-1 rounded">will be having</code> dinner then."</li>
+                    <li><strong>Past Perfect (<code class="bg-gray-200 px-1 rounded">had + past participle</code>):</strong> Used for an action completed *before* another past action. E.g., "He <code class="bg-gray-200 px-1 rounded">had had</code> breakfast before he set out."</li>
+                    <li><strong>Future Perfect Continuous (<code class="bg-gray-200 px-1 rounded">will have been + -ing</code>) / Future Perfect (<code class="bg-gray-200 px-1 rounded">will have + pp</code>):</strong> Used for the duration of an action up to a specific point in the future. E.g., "...she <code class="bg-gray-200 px-1 rounded">will have been working</code>... for fifteen years."</li>
+                    <li><strong>Simple Past:</strong> Used for completed actions in the past. Necessary for sequence after past perfect. E.g., "After the lesson had finished, we <code class="bg-gray-200 px-1 rounded">ran</code> out..."</li>
+                    <li><strong>Passive Forms:</strong> Use the correct tense of <code class="bg-gray-200 px-1 rounded">be</code> + past participle. E.g., "She <code class="bg-gray-200 px-1 rounded">was overcome</code>" (Simple Past Passive). "His company <code class="bg-gray-200 px-1 rounded">is</code> greatly <code class="bg-gray-200 px-1 rounded">sought</code> after." (Present Simple Passive).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">6. INFINITIVES AND GERUNDS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <h3 class="font-semibold mb-2 text-gray-700">Use Gerund (<code class="bg-gray-200 px-1 rounded">-ing</code> form):</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li>After prepositions (e.g., <code class="bg-gray-200 px-1 rounded">fond of gardening</code>, <code class="bg-gray-200 px-1 rounded">look forward to hearing</code>).</li>
+                    <li>After possessive adjectives/nouns (e.g., <code class="bg-gray-200 px-1 rounded">thankful for his coming</code>).</li>
+                    <li>After certain verbs (e.g., <code class="bg-gray-200 px-1 rounded">finish doing</code>, <code class="bg-gray-200 px-1 rounded">deny committing</code>, <code class="bg-gray-200 px-1 rounded">dislike [doing something]</code>, <code class="bg-gray-200 px-1 rounded">resent [doing something]</code>).</li>
+                 </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Use <code class="bg-gray-200 px-1 rounded">to</code>-Infinitive:</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li>After <code class="bg-gray-200 px-1 rounded">It's + adjective</code> (e.g., <code class="bg-gray-200 px-1 rounded">It's best to dig</code>).</li>
+                    <li>After certain verbs/phrases (e.g., <code class="bg-gray-200 px-1 rounded">be likely to show</code>, <code class="bg-gray-200 px-1 rounded">advised me to put</code>, <code class="bg-gray-200 px-1 rounded">want someone to do</code>).</li>
+                 </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Use Bare Infinitive (without <code class="bg-gray-200 px-1 rounded">to</code>):</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600 mb-3">
+                    <li>After <code class="bg-gray-200 px-1 rounded">let</code> (e.g., <code class="bg-gray-200 px-1 rounded">let me read</code>).</li>
+                 </ul>
+                 <h3 class="font-semibold mb-2 text-gray-700">Passive Forms:</h3>
+                 <ul class="list-disc list-inside space-y-1 text-gray-600">
+                    <li>Passive Gerund: <code class="bg-gray-200 px-1 rounded">being + past participle</code> (e.g., <code class="bg-gray-200 px-1 rounded">dislike being given</code>, <code class="bg-gray-200 px-1 rounded">resent being interrupted</code>).</li>
+                    <li>Passive Infinitive: <code class="bg-gray-200 px-1 rounded">to be + past participle</code> (e.g., <code class="bg-gray-200 px-1 rounded">want to be respected</code>).</li>
+                 </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">7. CONJUNCTIONS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Contrast:</strong> <code class="bg-gray-200 px-1 rounded">although</code>, <code class="bg-gray-200 px-1 rounded">even though</code>, <code class="bg-gray-200 px-1 rounded">though</code> (connect clauses despite contradiction). <code class="bg-gray-200 px-1 rounded">however</code> (connects sentences/clauses showing contrast). E.g., "<code class="bg-gray-200 px-1 rounded">Although</code> she worked hard, she didn't pass." "We got wet <code class="bg-gray-200 px-1 rounded">although</code> we had an umbrella."</li>
+                    <li><strong>Cause/Reason:</strong> <code class="bg-gray-200 px-1 rounded">because</code>, <code class="bg-gray-200 px-1 rounded">as</code>, <code class="bg-gray-200 px-1 rounded">since</code> (introduce the reason why). E.g., "I wanted to go back <code class="bg-gray-200 px-1 rounded">because</code> I was uneasy."</li>
+                    <li><strong>Result:</strong> <code class="bg-gray-200 px-1 rounded">so</code> (introduces the consequence). E.g., "I had to work late, <code class="bg-gray-200 px-1 rounded">so</code> I was tired."</li>
+                    <li><strong>Time Sequence:</strong> <code class="bg-gray-200 px-1 rounded">as soon as</code> (indicates immediate succession). E.g., "<code class="bg-gray-200 px-1 rounded">As soon as</code> they saw the tiger, they attacked."</li>
+                    <li><strong>Condition:</strong> <code class="bg-gray-200 px-1 rounded">unless</code> (means 'if not'). E.g., "Impossible to succeed <code class="bg-gray-200 px-1 rounded">unless</code> one works hard."</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">8. RELATIVE CLAUSE</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Function:</strong> Adds information about a noun (the antecedent).</li>
+                    <li><strong>Relative Pronouns/Adverbs:</strong>
+                        <ul class="list-circle list-inside ml-4 space-y-1">
+                            <li>People: <code class="bg-gray-200 px-1 rounded">who</code> (subject), <code class="bg-gray-200 px-1 rounded">whom</code> (object - not explicitly tested here), <code class="bg-gray-200 px-1 rounded">whose</code> (possessive), <code class="bg-gray-200 px-1 rounded">that</code> (can replace <code class="bg-gray-200 px-1 rounded">who</code> in defining clauses).</li>
+                            <li>Things/Animals: <code class="bg-gray-200 px-1 rounded">which</code> (subject/object), <code class="bg-gray-200 px-1 rounded">that</code> (can replace <code class="bg-gray-200 px-1 rounded">which</code> in defining clauses).</li>
+                            <li>Places: <code class="bg-gray-200 px-1 rounded">where</code> (replaces 'in/at/on the place'), <code class="bg-gray-200 px-1 rounded">in which</code>, <code class="bg-gray-200 px-1 rounded">from where</code>.</li>
+                            <li>Possession: <code class="bg-gray-200 px-1 rounded">whose</code> (for people, animals, sometimes things). E.g., "...consultant <code class="bg-gray-200 px-1 rounded">whose</code> advice I rely on.", "...man <code class="bg-gray-200 px-1 rounded">whose</code> son plays..."</li>
+                        </ul>
+                    </li>
+                    <li><strong>Choosing Pronoun:</strong> Must match the antecedent (person/thing/place) and its function (subject/object/possessive) in the relative clause.</li>
+                    <li><strong>Verb Agreement:</strong> The verb inside the relative clause agrees with the antecedent. E.g., "...one of the few girls <code class="bg-gray-200 px-1 rounded">who have</code> passed..." ('who' refers to plural 'girls').</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">9. VOICE (ACTIVE AND PASSIVE)</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Use:</strong> Passive is used when the receiver of the action is the focus, or the doer is unknown/unimportant.</li>
+                    <li><strong>Formation:</strong> <code class="bg-gray-200 px-1 rounded">Form of BE + Past Participle</code>.</li>
+                    <li><strong>Changing Active to Passive:</strong>
+                        <ol class="list-decimal list-inside ml-4 space-y-1">
+                            <li>Object of active sentence becomes subject of passive.</li>
+                            <li>Change verb to passive form (correct tense of <code class="bg-gray-200 px-1 rounded">be</code> + pp).</li>
+                            <li>Subject of active sentence becomes agent (with <code class="bg-gray-200 px-1 rounded">by</code>) or is omitted.</li>
+                            <li>With two objects, either can become the subject.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Changing Passive to Active:</strong> Reverse the process; supply a logical subject if agent is missing.</li>
+                    <li><strong>Passive Gerunds/Infinitives:</strong> Use <code class="bg-gray-200 px-1 rounded">being + pp</code> (gerund) or <code class="bg-gray-200 px-1 rounded">to be + pp</code> (infinitive) when the action expressed by the gerund/infinitive is received by the subject. E.g., <code class="bg-gray-200 px-1 rounded">resent being interrupted</code>, <code class="bg-gray-200 px-1 rounded">want to be respected</code>.</li>
+                    <li><strong>Passive Questions:</strong> Invert the <code class="bg-gray-200 px-1 rounded">be</code> verb and the subject. E.g., <code class="bg-gray-200 px-1 rounded">Was</code> the crime confessed?</li>
+                 </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">10. REPORTED SPEECH (INDIRECT SPEECH)</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Tense Backshift:</strong> Verbs usually shift one tense back (Present -> Past, Past -> Past Perfect, etc.) when reporting past speech.</li>
+                    <li><strong>Pronoun/Possessive Changes:</strong> Adjust according to speaker perspective.</li>
+                    <li><strong>Time/Place Expressions:</strong> Change relative to the time of reporting (e.g., <code class="bg-gray-200 px-1 rounded">this</code> -> <code class="bg-gray-200 px-1 rounded">that</code>, <code class="bg-gray-200 px-1 rounded">these</code> -> <code class="bg-gray-200 px-1 rounded">those</code>, <code class="bg-gray-200 px-1 rounded">now</code> -> <code class="bg-gray-200 px-1 rounded">then</code>).</li>
+                    <li><strong>Reporting Statements:</strong> Use <code class="bg-gray-200 px-1 rounded">(reporting verb) + that + clause</code>.</li>
+                    <li><strong>Reporting Yes/No Questions:</strong> Use <code class="bg-gray-200 px-1 rounded">(reporting verb) + if/whether + clause</code> (statement word order).</li>
+                    <li><strong>Reporting Wh-Questions:</strong> Use <code class="bg-gray-200 px-1 rounded">(reporting verb) + Wh-word + clause</code> (statement word order).</li>
+                    <li><strong>Reporting Commands/Requests:</strong> Use <code class="bg-gray-200 px-1 rounded">(reporting verb) + object + (not) + to-infinitive</code>.</li>
+                    <li><strong>Modals:</strong> Some change (<code class="bg-gray-200 px-1 rounded">can</code> -> <code class="bg-gray-200 px-1 rounded">could</code>, <code class="bg-gray-200 px-1 rounded">will</code> -> <code class="bg-gray-200 px-1 rounded">would</code>), others may not (<code class="bg-gray-200 px-1 rounded">must not</code> for prohibition).</li>
+                    <li><strong>Reporting Verbs:</strong> Choose appropriately (<code class="bg-gray-200 px-1 rounded">ask</code> for questions, <code class="bg-gray-200 px-1 rounded">tell/warn/advise/order</code> for commands, <code class="bg-gray-200 px-1 rounded">request</code> for polite requests, <code class="bg-gray-200 px-1 rounded">wonder</code> for questions asked to oneself).</li>
+                 </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">11. QUESTION TAG</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Structure:</strong> Auxiliary verb + pronoun, added to a statement.</li>
+                    <li><strong>Rule:</strong> Positive statement => Negative tag. Negative statement => Positive tag.</li>
+                    <li><strong>Verb:</strong> Use the *same auxiliary* as the statement. If no auxiliary, use <code class="bg-gray-200 px-1 rounded">do/does/did</code>.</li>
+                    <li><strong>Subject:</strong> Use the *same subject* as a pronoun.</li>
+                    <li><strong>Special Cases:</strong> <code class="bg-gray-200 px-1 rounded">I am...</code> => <code class="bg-gray-200 px-1 rounded">..., aren't I?</code></li>
+                 </ul>
+            </div>
+        </div>
+
+        <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+            <div class="topic-header bg-gray-50 p-4 flex justify-between items-center rounded-t-lg">
+                <h2 class="text-lg font-semibold text-gray-700">12. MISCELLANEOUS</h2>
+                 <i class="fas fa-chevron-right icon-rotate text-gray-500"></i>
+            </div>
+            <div class="topic-content p-4 border-t border-gray-200">
+                 <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li><strong>Word Forms:</strong> Use the correct part of speech (e.g., adverb <code class="bg-gray-200 px-1 rounded">culturally</code> to modify adjective <code class="bg-gray-200 px-1 rounded">diverse</code>; noun <code class="bg-gray-200 px-1 rounded">practice</code> vs. verb <code class="bg-gray-200 px-1 rounded">practise</code> [BrE spelling]).</li>
+                    <li><strong>Tense in Clauses:</strong> Use appropriate tense (e.g., past continuous <code class="bg-gray-200 px-1 rounded">was waiting</code> with <code class="bg-gray-200 px-1 rounded">while</code> for simultaneous past actions).</li>
+                    <li><strong>Determiner Order:</strong> <code class="bg-gray-200 px-1 rounded">All</code>/<code class="bg-gray-200 px-1 rounded">Both</code> usually precede possessives (<code class="bg-gray-200 px-1 rounded">All my books</code>, <code class="bg-gray-200 px-1 rounded">Both his brothers</code>).</li>
+                    <li><strong>Plural Nouns:</strong> Use plurals after numbers > 1 (<code class="bg-gray-200 px-1 rounded">a hundred rupees</code>).</li>
+                    <li><strong>Pronoun Case:</strong> Use objective case (<code class="bg-gray-200 px-1 rounded">me</code>, <code class="bg-gray-200 px-1 rounded">him</code>, <code class="bg-gray-200 px-1 rounded">us</code>, etc.) after prepositions, including <code class="bg-gray-200 px-1 rounded">except</code> (e.g., <code class="bg-gray-200 px-1 rounded">except me</code>).</li>
+                    <li><strong>Adverb Placement:</strong> Adverbs of frequency (like <code class="bg-gray-200 px-1 rounded">often</code>) usually go before the main verb (except <code class="bg-gray-200 px-1 rounded">be</code>).</li>
+                 </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Get all topic headers
+        const headers = document.querySelectorAll('.topic-header');
+
+        // Add click event listener to each header
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                // Find the content section related to this header
+                const content = header.nextElementSibling;
+                // Find the icon within this header
+                const icon = header.querySelector('i');
+
+                // Toggle the 'show' class on the content to expand/collapse
+                content.classList.toggle('show');
+
+                // Toggle icon rotation
+                icon.classList.toggle('rotate-90');
+
+                // Optional: Close other sections when one is opened
+                // headers.forEach(otherHeader => {
+                //     if (otherHeader !== header) {
+                //         otherHeader.nextElementSibling.classList.remove('show');
+                //         otherHeader.querySelector('i').classList.remove('rotate-90');
+                //     }
+                // });
+            });
+        });
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Interactive Grammar | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>

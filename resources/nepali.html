@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Sahitya Flashcards (Nepali & English) - Enhanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        /* Basic styling for the body */
+        body {
+            font-family: 'Poppins', sans-serif; /* Use Poppins */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Subtle gradient background */
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333; /* Default text color */
+        }
+
+        /* Heading style */
+        h1 {
+            color: #2c3e50; /* Darker blue-grey */
+            margin-bottom: 20px; /* More space */
+            text-align: center;
+            font-size: 1.8em; /* Slightly larger */
+            font-weight: 600; /* Bolder */
+        }
+
+        /* Control groups container */
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Increased gap */
+            margin-bottom: 20px; /* More space below controls */
+        }
+
+        /* Language/Mode selection container */
+        .selection-group {
+             display: flex;
+             gap: 10px;
+             justify-content: center;
+             flex-wrap: wrap; /* Allow wrapping */
+        }
+
+        /* Refined Button Styling (Language and Mode) */
+        .control-button {
+            padding: 8px 16px; /* Slightly larger padding */
+            font-size: 0.9em;
+            cursor: pointer;
+            border: 1px solid #bdc3c7; /* Softer border */
+            border-radius: 20px; /* Rounded pill shape */
+            background-color: #fff;
+            color: #34495e; /* Darker text */
+            transition: all 0.3s ease; /* Smooth transition for all properties */
+            margin: 3px;
+        }
+        .control-button.active {
+            background-color: #3498db; /* Brighter blue for active */
+            color: white;
+            border-color: #3498db;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3); /* Subtle shadow */
+        }
+        .control-button:hover:not(.active) {
+            background-color: #ecf0f1; /* Light hover */
+            border-color: #95a5a6;
+            transform: translateY(-1px); /* Slight lift on hover */
+        }
+
+        /* Styling for Radio Button Toggles (Show Mode) */
+        .show-mode-selector {
+            display: inline-block; /* Keep inline-block */
+            border: 1px solid #bdc3c7; /* Match control button border */
+            border-radius: 20px; /* Match pill shape */
+            overflow: hidden; /* Keep rounded corners */
+            background-color: #fff; /* Background for the container */
+        }
+        .show-mode-selector label {
+            display: inline-block; /* Make labels sit side-by-side */
+            padding: 8px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+            color: #34495e;
+            transition: all 0.3s ease;
+            border-right: 1px solid #ecf0f1; /* Lighter separator */
+        }
+         .show-mode-selector label:last-child {
+             border-right: none; /* Remove border from last label */
+         }
+        .show-mode-selector input[type="radio"] {
+            display: none; /* Hide actual radio buttons */
+        }
+        .show-mode-selector input[type="radio"]:checked + label {
+            background-color: #2ecc71; /* Green for active mode */
+            color: white;
+            font-weight: 600;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow for active */
+        }
+
+
+        /* The main card container */
+        .flashcard-container {
+            width: 90%;
+            max-width: 700px; /* Slightly wider */
+            background-color: #ffffff;
+            border-radius: 15px; /* More rounded */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 450px; /* Slightly taller */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition */
+            position: relative; /* Needed for absolute positioning of counter */
+        }
+        .flashcard-container:hover {
+             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); /* Enhance shadow on hover */
+             transform: translateY(-3px); /* Slight lift effect */
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 25px; /* More padding */
+            border-bottom: 1px solid #ecf0f1; /* Lighter border */
+            font-size: 0.95em;
+            color: #7f8c8d; /* Softer grey */
+        }
+        .card-header .hint, .card-header .star {
+            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.3s ease;
+        }
+        .card-header .hint:hover, .card-header .star:hover {
+            color: #3498db; /* Blue hover */
+        }
+        .card-header .star { font-size: 1.4em; color: #bdc3c7; } /* Lighter grey default star */
+        .card-header .star.favorited { color: #f1c40f; } /* Gold favorite */
+
+        /* Card Body (Main content area) */
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 25px; /* More vertical padding */
+            text-align: center;
+            font-size: 1.6em; /* Slightly larger question */
+            cursor: pointer;
+            min-height: 220px; /* Ensure minimum height */
+            line-height: 1.5; /* More spacing */
+            overflow-y: auto; /* Allow scrolling for long content */
+            color: #2c3e50; /* Darker text */
+        }
+        /* Styling when answer/summary is shown */
+        .card-body.answer-visible {
+            font-size: 1em; /* Consistent answer font size */
+            text-align: left;
+            align-items: flex-start; /* Align content top-left */
+            justify-content: flex-start;
+        }
+         /* Specific styling for summary view */
+         .card-body.summary-view {
+            line-height: 1.6; /* More line height for summaries */
+            white-space: pre-wrap; /* Respect line breaks in summary data */
+         }
+
+        .card-body strong { /* Author/Chars label */
+            display: block; margin-bottom: 10px; color: #3498db; font-weight: 600; font-size: 1.1em;
+        }
+        .card-body ul { /* Author/Chars list */
+            margin-top: 8px; padding-left: 25px; margin-bottom: 0; list-style-type: disc;
+        }
+        .card-body li { margin-bottom: 6px; }
+
+        /* Card Footer */
+        .card-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #ecf0f1;
+            background-color: #f8f9f9; /* Very light grey */
+            display: flex;
+            justify-content: center; /* Center the confidence buttons */
+            align-items: center;
+            min-height: 60px; /* Ensure footer has height */
+            position: relative; /* Context for absolute positioning */
+        }
+
+        /* Card Counter - Repositioned */
+         .card-counter {
+             position: absolute;
+             bottom: 5px; /* Position at the very bottom */
+             left: 25px;
+             font-size: 0.85em; /* Smaller */
+             color: #95a5a6; /* Lighter grey */
+         }
+
+        /* Confidence Buttons Container */
+        .confidence-buttons {
+            display: flex; /* Managed by JS (flex or none) */
+            gap: 15px;
+            width: 100%;
+            max-width: 450px; /* Limit width of button group */
+            justify-content: space-around;
+        }
+
+        /* Styling for individual Confidence Buttons */
+        .confidence-button {
+            padding: 12px 20px; /* Adjusted padding */
+            font-size: 0.95em; /* Adjusted font size */
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px; /* Pill shape */
+            transition: all 0.3s ease;
+            flex-grow: 1; /* Allow buttons to grow */
+            max-width: 200px; /* Max width per button */
+            text-align: center;
+            color: white; /* White text for both */
+        }
+
+        .confidence-button.try-again {
+            background-color: #e74c3c; /* Red */
+            box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+        }
+        .confidence-button.try-again:hover {
+            background-color: #c0392b; /* Darker red */
+            box-shadow: 0 5px 12px rgba(192, 57, 43, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .confidence-button.confident {
+            background-color: #2ecc71; /* Green */
+            box-shadow: 0 3px 8px rgba(46, 204, 113, 0.3);
+        }
+        .confidence-button.confident:hover {
+            background-color: #27ae60; /* Darker green */
+            box-shadow: 0 5px 12px rgba(39, 174, 96, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Optional: Other Footer Controls (e.g., Fullscreen) */
+        .footer-controls-right {
+            position: absolute;
+            right: 25px;
+            bottom: 18px; /* Align vertically */
+            display: flex;
+            gap: 10px; /* Space between icons */
+        }
+        .action-button {
+            background: none;
+            border: none;
+            font-size: 1.5em; /* Icon size */
+            cursor: pointer;
+            color: #95a5a6; /* Lighter icon color */
+            padding: 8px;
+            line-height: 1;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .action-button:hover {
+            color: #34495e; /* Darker on hover */
+            background-color: #ecf0f1; /* Light background circle on hover */
+        }
+
+        /* Hide elements we don't need anymore */
+         #prev-button, #next-button { display: none; } /* Hide original nav */
+
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+<body>
+
+    <h1>Summaries and Chapters Name</h1>
+
+    <div class="controls-container">
+        <div class="selection-group language-selector">
+            <button id="lang-ne" class="control-button">नेपाली</button>
+            <button id="lang-en" class="control-button">English</button>
+        </div>
+        <div class="selection-group show-mode-selector">
+            <input type="radio" id="show-author-chars" name="showMode" value="authorChars" checked>
+            <label for="show-author-chars" class="control-button">Author & Characters</label>
+
+            <input type="radio" id="show-summary" name="showMode" value="summary">
+            <label for="show-summary" class="control-button">Summary</label>
+        </div>
+    </div>
+
+
+    <div class="flashcard-container">
+        <div class="card-header">
+            <div class="hint" id="hint-button" title="Get a hint">💡 Hint</div>
+            <div class="star" id="star-button" title="Mark as favorite">★</div>
+        </div>
+
+        <div class="card-body" id="card-body">
+            </div>
+
+        <div class="card-footer">
+            <div class="card-counter" id="card-counter">1 / N</div>
+
+            <div class="confidence-buttons" id="confidence-controls" style="display: none;">
+                <button id="try-again-button" class="confidence-button try-again">Try Again</button>
+                <button id="confident-button" class="confidence-button confident">I'm Confident</button>
+            </div>
+
+            <div class="footer-controls-right">
+                  <button id="fullscreen-button" class="action-button" title="Toggle Fullscreen">⛶</button>
+                  </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        // (Keep the flashcardsDataNe and flashcardsDataEn arrays exactly as they were in the original file)
+        const flashcardsDataNe = [
+             { id: "ne0", chapterName: "पाठ १: आमाको सपना", author: "गोपालप्रसाद रिमाल", characters: ["आमा (Symbolic for Nepal)", "छोरा (Symbolic for Nepali people)"], summary: `यो कविता गोपालप्रसाद रिमालले लेख्नुभएको हो। यो राणाशासनको अन्याय र अत्याचारको विरोधमा वि.सं. १९९७ तिर लेखिएको थियो। दशरथ चन्द, शुक्रराज शास्त्री, धर्मभक्त माथेमा, गंगालाल श्रेष्ठ जस्ता शहीदहरूको बलिदानबाट कवि प्रभावित भएर यो कविता लेखेका हुन्। कवितामा नेपाललाई 'आमा' र नेपाली जनतालाई 'छोरा' को रूपमा प्रस्तुत गरिएको छ। यो आमा र छोरा बीचको संवादको रूपमा छ। आमा (नेपाल) ले आफ्नो छोरा (नेपाली जनता) लाई देशमा भइरहेको अन्याय र अत्याचार हटाउन, परिवर्तन ल्याउन क्रान्ति गर्नुपर्छ, अघि बढ्‌नुपर्छ भनेर आग्रह गर्छिन्। अन्याय हटाउन लड्नै पर्छ। क्रान्ति वा परिवर्तन बिहानको सूर्य जस्तै चम्किलो र हुरी जस्तै बलियो भएर आउँछ, जसलाई कसैले रोक्न सक्दैन। कविताले साहस र निडरताको प्रेरणा दिन्छ। आमाले छोरालाई नडराउन, साहसी बन्न र अन्यायविरुद्ध लड्न प्रेरित गर्छिन्। डराएर बसे कहिल्यै राम्रो समय आउँदैन, त्यसैले अन्यायको अगाडि कहिल्यै नझुक्न भनिएको छ।` },
+             { id: "ne1", chapterName: "पाठ २: विरहिणी दमयन्ती", author: "मदनमणि दीक्षित", characters: ["दमयन्ती", "नल (दमयन्तीका श्रीमान्)", "पुष्कर (नलका भाइ)", "नागराज कर्कटोक (किरात सिकारी)"], summary: `यो कथा मदनमणि दीक्षितले लेख्नुभएको हो। कथाले दमयन्तीको अवस्था वर्णन गर्छ जब उनका श्रीमान् नल एक्कासी हराउँछन्। सोच्नुहोस्, तपाईंले धेरै माया गर्ने मान्छे एक्कासी हरायो भने कस्तो हुन्छ? दमयन्ती पनि पागल जस्तै श्रीमान् खोज्दै घना जंगलमा भौतारिन्छिन्। उनले रुख, पात, लहरा सबैसँग श्रीमान् खोजिदिन गुहार माग्छिन्। थकित भएर पिपलको रुखमुनि सुत्दा उनले नलका भाइ पुष्कर (पहेंलो आँखा, सेतो दाँत भएको) लाई सपनामा देख्छिन्। ब्यूँझिंदा उनलाई डरलाग्दो नागराज कर्कटोक (वा किरात सिकारी) ले समातेर आफ्नो छाप्रोमा लान्छ। तर दमयन्ती डराउँदिनन्, बुद्धि प्रयोग गरेर, हाँसेर, मीठो बोलेर सिकारीलाई झुक्याउँछिन्। उसलाई खाना पकाउन र मदिरा खुवाएर लठ्ठ पार्छिन्, अनि आगो लगाएर त्यहाँबाट भाग्छिन्। उनको संघर्ष सकिँदैन, ३ दिन भोकै-तिर्खे हिँडेपछि व्यापारीहरूको समूहसँग भेट हुन्छ र आश्रय माग्छिन्। तर राति जंगली हात्तीको आक्रमणमा व्यापारीहरू मारिन्छन्, दमयन्ती भने बाँच्छिन्। यस कथाले नारीहरू प्रेममा मात्र नभई आत्मबल, बुद्धि, साहस र संघर्षमा पनि बलिया हुन्छन्, संकटको सामना गर्न सक्छन्, आफ्नो अस्तित्व र सम्मान जोगाउन सक्षम छन् भन्ने देखाउँछ। नारीहरू कमजोर छैनन् ।` },
+             { id: "ne2", chapterName: "पाठ ३: घनघस्याको उकालो काट्ता", author: "तारानाथ शर्मा", characters: ["तारानाथ शर्मा (The narrator/traveler)"], summary: `यो तारानाथ शर्माको नियात्रा हो। लेखकले बैतडी र डडेलधुराको बीचमा पर्ने घनघस्याको अत्यन्तै कठिन र दुर्गम उकालो यात्राको वर्णन गरेका छन्। यात्रामा हरियाली भए पनि बाटो अप्ठ्यारो, भोक, तिर्खा, थकान र चिसो हावा जस्ता असुविधा थिए। भारी बोकेर हिँड्नुपर्दाको कठिनाइको कल्पना गर्न सकिन्छ। लेखकले सुदूरपश्चिमका गाउँहरूको पिछडिएको अवस्था, विकास, स्वास्थ्य र शिक्षाको कमी देखेर दुःख व्यक्त गर्छन्। उनले पानीको अभाव, घाम लाग्दा धुलो र पानी पर्दा हिलो हुने बाटोको वर्णन गर्छन्। यात्रामा गोठाला, भारी बोक्ने मानिसहरू, पसल, गोठ आदिको चित्रण छ, जसले त्यहाँको कठिन जीवनशैली देखाउँछ। लेखकले तुम्लिङको हिउँ (जुन बेलायतको भन्दा प्यारो लाग्छ), राजापुरको कासेघरी, केल्केनीको उकालो, अघोरी गाँठको सानो फलामे पुल, पुवा खोला, टुकुचा, सइबासको लेक, चन्द्रागिरी जस्ता ठाउँहरूको अनुभव वर्णन गर्छन्। लेखकले घनघस्या भौगोलिक रूपमा मात्र नभई सामाजिक, सांस्कृतिक र आर्थिक रूपमा पनि पिछडिएकोमा चिन्ता व्यक्त गर्छन् र विकास किन केही ठाउँमा मात्र केन्द्रित भयो, दुर्गम क्षेत्रमा किन पुगेन भनी प्रश्न गर्छन्। नियात्राको सन्देश हो - संघर्ष गर्दै अघि बढ्नुपर्छ, पर्यटन प्रवर्द्धन र ग्रामीण विकास आवश्यक छ, र कठिनाइबीच पनि जीवनको सौन्दर्य खोज्नुपर्छ।` },
+             { id: "ne3", chapterName: "पाठ ५: एक चिहान", author: "हृदयचन्द्र सिंह प्रधान", characters: ["अष्टनारायण", "लतामाया", "शिवनारायण", "नानीथकु", "पुननारायण", "हर्षनारायण", "गोदत प्रसाद (डाक्टर)", "सुरमान (साहु)", "रामबहादुर (कारिन्दा)"], summary: `यो हृदयचन्द्र सिंह प्रधानद्वारा लिखित सामाजिक यथार्थवादी उपन्यास हो। कथा अष्टनारायण नामका गरिब किसान र उनको परिवारको संघर्ष, प्रेम, धोका र नियतिको खेलमा आधारित छ। अष्टनारायण सिकिस्त बिरामी पर्छन् र बाँच्ने आशा मार्छन्। गरिबीका कारण उपचार र काजक्रियामा खर्च नगर्न परिवारलाई भन्छन् क्रिया खर्चका लागि २५ रुपैयाँ लुकाएर राख्छन्। तर परिवारले ऋण लिएर झारफुक र पछि डाक्टर गोदत्त प्रसादकहाँ उपचार गराउन खोज्छन्। डाक्टर लोभी र कामुक थिए, उनले पैसाको लोभमा नानीथकुप्रति कुदृष्टि राख्छन्। गाउँका धनी सुब्बा सुरमानले पनि नानीथकुलाई लोभ्याउन खोज्छन्। आमा लतामाया सुब्बाको प्रस्ताव मान्न तयार भएपनि दाजु शिवनारायणले बहिनीलाई बचाउँछन् र उनको विवाह इमान्दार युवक रामखेलवान राउतसँग गरिदिन्छन्। कान्छो छोरा हर्षनारायणको विवाह तामाङ समुदायकी पुतलीसँग हुन्छ, जसले जातीय एकता देखाउँछ। परिवार खेतीपातीमा लाग्छ। तर वि.सं. २०११ सालको भीषण बाढीले शिवनारायणको परिवारसहित गाउँ नै तहसनहस पार्छ, सबैको मृत्यु हुन्छ। घर, खेत, सपना सबै बगेर जान्छ र पूरै परिवार एउटै चिहानमा परिणत हुन्छ। उपन्यासले गरिबी, सामाजिक अन्याय, विभेद, शोषण, संघर्ष र सामन्ती सोचको प्रभावलाई चित्रण गर्छ। यसले जातीय एकता र अन्याय विरुद्धको संघर्ष पनि देखाउँछ।` },
+             { id: "ne4", chapterName: "पाठ ६: स्टिफन विलियम हकिङ", author: "Not mentioned (Biographical text)", characters: ["स्टिफन हकिङ (Main Figure)"], summary: `स्टिफन हकिङको जीवनी। २१ वर्षको उमेरमा गम्भीर रोग (ALS) लागेर डाक्टरले २ वर्ष मात्र बाँच्छ भने पनि उनले हार मानेनन्। बरु झन् मेहेनत गरेर विज्ञानका रहस्य खोल्न लागे। १९४२ जनवरी ८ मा बेलायतको अक्सफोर्डमा जन्मेका हकिङ सानैदेखि जिज्ञासु थिए, पुराना सामान खोलेर अध्ययन गर्थे, साथीहरूसँग कम्प्युटर बनाए, उनी 'आइन्स्टाइन' उपनामले चिनिन्थे। १७ वर्षमा अक्सफोर्डमा भौतिकशास्त्र पढे। २१ वर्षमा रोग लागेपनि सकारात्मक सोच राखे र काम गरिरहे। उनको भनाइ थियो - "जीवनको कठिनाइबारे गुनासो नगर, केही गर।" १९६५ मा जेन वाइल्डसँग विवाह गरे (पछि डिभोर्स भयो), जसबाट ३ सन्तान भए। पछि नर्स एलेन मेसनसँग पनि विवाह गरे (त्यो पनि टिकेन)। उनले ब्ल्याक होल, ब्रह्माण्डको उत्पत्ति, वार्महोल र समय यात्राबारे महत्त्वपूर्ण सिद्धान्त दिए। उनको पुस्तक 'अ ब्रिफ हिस्ट्री अफ टाइम' (१९८८) ४० भन्दा बढी भाषामा अनुवाद भई विश्वभर चर्चित भयो। २०१८ मार्च १४ मा ७६ वर्षको उमेरमा निधन भयो। उनको जीवनले शारीरिक अशक्तता बाधा होइन, मानसिक दृढता नै सफलताको मूल हो भन्ने प्रेरणा दिन्छ। जिज्ञासा राख्नु, प्रश्न गर्नु र असफलताबाट सिक्नुपर्छ भन्ने सन्देश उनको जीवनबाट पाइन्छ।` },
+             { id: "ne5", chapterName: "पाठ ७: हामीलाई बोलाउछन् हिमचुली", author: "राष्टकवि माधव घिमिरे", characters: ["हिमचुली (Symbolic/Personified)"], summary: `यो राष्ट्रकवि माधव घिमिरेको कविता हो। पढ्दा हिमाली यात्रा गरेजस्तै अनुभूति हुन्छ, जहाँ हिमाल, जंगल, डाँफे, चौरी, इन्द्रेणी जस्ता सुन्दर दृश्य छन्। हिमालले नै हामीलाई बोलाइरहेको ("आऊ मलाई चुम") र अघि बढ्न, नथाक्न प्रेरित गरिरहेको जस्तो लाग्छ। कविताले हिमाली सौन्दर्य, नेपालीको संघर्ष, जीवनशैली, साहस र स्वाभिमान दर्शाउँछ। हिमाल चढ्नु सजिलो छैन, यो संघर्षको यात्रा हो, जसमा अनेक कठिनाइ (कम हावा, उकालो, चिसो, हिमपहिरो, चिप्लो बाटो) हुन्छन्। हाम्रा पुर्खाहरूले यिनै कठिनाइ पार गर्दै, संघर्ष गरेर हिमाल चुमे र सफल भए। अब हाम्रो पालो हो, जीवनका कठिनाइसँग नडराई, हिमाल जस्तै अटल भएर उचाइको लक्ष्य राखी अघि बढ्नुपर्छ। हिमाल हाम्रो गौरव र स्वाभिमान हो, यसको रक्षा र सम्मान गर्नुपर्छ। पर्यटन विकासले देशलाई आर्थिक टेवा पुग्छ। समग्रमा, हिमालले हामीलाई अघि बढ्न निरन्तर प्रेरित गरिरहेको छ।` },
+             { id: "ne6", chapterName: "पाठ ८: मातृत्व", author: "भागीरथी श्रेष्ठ", characters: ["ममता", "सुबोध", "ममताको छोरा (unnamed)"], summary: `यो भागीरथी श्रेष्ठको कथा हो, जसले आमाको प्रेम, बलिदान र सचेतना देखाउँछ। मुख्य पात्र ममता हुन्, जसको श्रीमान् हवाई दुर्घटनामा बित्छन्। उनी एक्लोपन र संघर्षमा हुन्छिन्। श्रीमानको साथी सुबोधले उनलाई सहारा दिन्छन् र ममता उसलाई मन पराउन थाल्छिन्। तर ममताको १० वर्षे छोरा सुबोधलाई मन पराउँदैन, किनकि सुबोध बच्चाहरूलाई हेप्ने, हकार्ने र उनीहरूप्रति असंवेदनशील व्यवहार गर्छ। छोराले आमालाई सुबोधलाई घरमा नबोलाउन भन्छ। ममताले सुबोध असल भएको सम्झाउन खोज्छिन्। एकदिन ममताले सुबोधलाई हलुवा बनाएर खुवाउँदा, सुबोधले बच्चाहरूको भाग समेत खाइदिन्छ, जसले उसको स्वार्थीपन देखाउँछ। पछि सुबोधले ममतालाई छोराछोरीभन्दा आफूलाई बढी माया गर्नुपर्ने दबाब दिन्छ। तब ममताले बुझ्छिन् कि सुबोध स्वार्थी छ, उसले ममतालाई मात्र चाहन्छ, बच्चाहरूलाई होइन। जसले आफ्ना छोराछोरीलाई माया गर्दैन, ऊसँगको सम्बन्ध टिक्दैन भन्ने महसुस गरेर अन्तमा ममताले सुबोधलाई छाडेर आफ्ना छोराछोरीलाई नै अँगाल्ने निर्णय गर्छिन्। यसले सत्यको जीत र असत्य (स्वार्थ) को हार देखाउँछ। कथाको मुख्य सन्देश मातृत्व संसारको सबैभन्दा ठूलो, पवित्र र निःस्वार्थ प्रेम हो, जसको अगाडि अरू सबै सम्बन्ध फिक्का हुन्छन्।` },
+             { id: "ne7", chapterName: "पाठ ९: गोर्खे", author: "बखतबहादुर थापा", characters: ["पेशल", "सतपाल", "गोर्खे (Personified Antivirus)"], summary: `यो बखतबहादुर थापाको कथा हो, जुन आधुनिक प्रविधि, विज्ञान र कम्प्युटरको संसारसँग सम्बन्धित छ। विज्ञान र प्रविधिले जीवन सहज बनाएको छ, तर यसले भाइरस जस्ता नयाँ चुनौती पनि ल्याएको छ। कथामा पेशल नामका प्रविधि विज्ञ पात्र छन्, जसले 'गोर्खे' नामक एन्टिभाइरस सफ्टवेयर बनाएर सतपालको कम्प्युटरबाट भाइरस हटाउँछन्। कथाले कम्प्युटरलाई मानव शरीर, भाइरसलाई रोग र एन्टिभाइरसलाई औषधी वा डाक्टरसँग तुलना गर्छ। 'गोर्खे' ले पाँच प्रकारका भाइरस नष्ट गरेर कम्प्युटरलाई ठीक पार्छ। कथाको मुख्य विषयवस्तु कम्प्युटर भाइरस र एन्टिभाइरस प्रविधि हो। यसले प्रविधिको सही प्रयोगले समस्या समाधान गर्न सकिने, तर यसका सकारात्मक र नकारात्मक दुवै पक्ष हुने (जोखिम र चुनौती पनि हुने) कुरा देखाउँछ। साथै, समस्या समाधानमा मानवीय बुद्धि र सीपको महत्त्व, भाइरस-एन्टिभाइरसको द्वन्द्वमार्फत आधुनिक प्रविधि युगको चित्रण, र प्रविधिले साहित्यलाई नयाँ आयाम दिनसक्ने सन्देश दिएको छ। कथामा स्क्यान, भाइरस, एन्टिभाइरस जस्ता प्राविधिक शब्दहरूको प्रयोग गरिएको छ।` },
+             { id: "ne8", chapterName: "पाठ १०: नेपाली पहिचान", author: "Not mentioned (Dialogue/Informational text)", characters: ["संगीता (Speaker)", "सलिम (Speaker)", "घनश्याम (Speaker)", "बेखमान (Speaker)", "सिम्मा (Speaker)"], summary: `यो संवादमा आधारित पाठ हो, जसमा संगीता, सलिम, घनश्याम, बेखमान र सिम्मा जस्ता साथीहरू नेपालको जातीय, भाषिक र सांस्कृतिक विविधता बारे छलफल गर्छन्। उनीहरू यो विविधतालाई नेपालको पहिचान र सम्पत्ति मान्छन् र यसलाई समस्याको रूपमा नभई मौलिकता र गर्वको विषयको रूपमा लिनुपर्ने कुरा गर्छन् । विविधता बीचको सहिष्णुता, आपसी सद्भाव र एकता नै नेपाली समाजको बलियो पहिचान हो। जाति, भाषा, धर्म वा संस्कृतिको आधारमा द्वन्द्व हुनु हुँदैन। समाजमा रहेका विकृति र अन्धविश्वासलाई शिक्षा र चेतनाले हटाउनुपर्छ, तर आफ्नो मौलिक संस्कृतिलाई जोगाउनुपर्छ। आपसी सम्मान र सद्भावले नै नेपाल बलियो बन्छ भन्ने विचार व्यक्त गरिएको छ। पाठको सम्पूर्ण सन्देश "विविधतामा एकता नै नेपाली पहिचान हो" भन्ने हो।` },
+             { id: "ne9", chapterName: "पाठ ११: सहकारी", author: "Not mentioned (Informational text)", characters: ["Not applicable (Topic-based)"], summary: `सहकारी भनेको सबैजना मिलेर काम गर्ने प्रणाली हो। एक्लै गर्न नसकिने काम (जस्तै खेती, पसल, बैंक, बचत, उत्पादन) धेरैजना मिलेर गर्दा सजिलो हुन्छ र सबैलाई फाइदा पुग्छ। सहकारी मानिसको आर्थिक, सामाजिक र व्यक्तिगत उन्नतिका लागि, गरिबलाई सहयोग गर्न र बेरोजगारलाई रोजगार दिन आवश्यक छ। यसका विशेषताहरू हुन् यो सबैका लागि खुल्ला हुन्छ, सदस्यहरू मिलेर पैसा जम्मा गर्छन्, नाफा बाँड्छन् र यो स्वतन्त्र संस्था हो। सहकारीले साना व्यवसायलाई ठूलो बनाउन, रोजगारी सिर्जना गर्न, गरिबलाई आर्थिक सहयोग गर्न र गाउँको उत्पादन बढाएर आत्मनिर्भर बनाउन मद्दत गर्छ। तर, पछिल्लो समय सहकारीमा पैसा दुरुपयोग हुने र ठगी हुने समस्या देखिएको छ, त्यसैले सहकारीलाई पारदर्शी र इमानदार बनाउनु आवश्यक छ। नेपालमा सहकारीको सुरुवात वि.सं. २०१३ मा चितवनमा भएको थियो।` },
+             { id: "ne10", chapterName: "पाठ १२: जीवनमार्ग", author: "Not mentioned (Reportage)", characters: ["छिरिङ (उद्यमी)", "पत्रकार (Narrator)"], summary: `यो रिपोर्ताज (साहित्यिक प्रतिवेदन) हो, जुन साहित्यको नयाँ विधा हो। यसमा छिरिङ नामका सफल उद्यमीको संघर्ष र सफलताको कथा पत्रकारको दृष्टिकोणबाट प्रस्तुत गरिएको छ। पत्रकार सोलुखुम्बु पुगेर 'चोमोलुङमा औद्योगिक प्रतिष्ठान'का संस्थापक छिरिङलाई भेट्छन्। छिरिङ सामान्य परिवारका थिए, बुबा भारी बोक्थे। थोरै जमिनको उब्जनीले ३-४ महिना मात्र खान पुग्थ्यो। बुबा भारी बोक्दा हिउँमा चिप्लिएर भीरबाट खसेर बितेपछि सानैमा छिरिङले परिवारको जिम्मेवारी लिनुपर्यो। पढ्ने रहर भए पनि भारी बोक्न बाध्य भए। तर भाग्यवश एक विदेशी पर्यटकले छात्रवृत्ति दिएपछि एसएलसी पास गरे। त्यसपछि शिक्षक, सरकारी जागिर, ट्रेकिङ व्यवसाय गर्दै जापान पुगे। जापानको यात्राले उनको सोच बदल्यो। विदेशमा श्रम बेच्नुभन्दा आफ्नै देशमा केही गर्ने सोच बनाए र 'चोमोलुङमा औद्योगिक प्रतिष्ठान' खोले। प्रतिष्ठानले नेपालका मौलिक मौसमी वस्तुहरू जस्तै गुन्द्रुक, सिन्की, सातु, सिस्नुको धुलो, च्याउको अचार, बाँसका सामग्रीहरू आदि उत्पादन गरेर विदेश निर्यात गर्छ। छिरिङका अनुसार विदेशका नेपालीले अझै पनि यस्ता मौलिक वस्तु खोज्छन्। यसले देशलाई आर्थिक रूपमा आत्मनिर्भर बनाउन मद्दत गर्छ। छिरिङको सफलताको रहस्य देशको मौलिकता, स्रोतसाधन र सीपको सही प्रयोग गरेर आत्मनिर्भर बन्न सकिन्छ भन्ने सोच हो। उनको संघर्ष र सफलता हामी सबैका लागि प्रेरणादायी छ र हामीले पनि आफ्नै देशमा केही नयाँ उद्यम गर्ने सोच्नुपर्छ भन्ने सन्देश दिन्छ।` }
+        ];
+        const flashcardsDataEn = [
+            { id: "en0", chapterName: "The Half-closed Eyes of the Buddha and the Slowly Sinking Sun", author: "Sankhar Lamichhane", characters: ["Foreign Tourist", "Nepali Guide", "Farmer's Family", "Paralyzed boy"], summary: `The story contrasts the perspectives of a Western tourist and a Nepali guide in Kathmandu Valley. The tourist, initially enchanted by Nepal's rich culture, religion, and welcoming people, sees only the idealized, peaceful image. The guide, however, takes the tourist to the hills to reveal the poverty and sorrow that coexist within this culturally rich country. The story employs a stream of consciousness technique, focusing on the characters' inner thoughts and feelings rather than actions. The central motif is "eyes," used to symbolize different perspectives and realities - from the welcoming eyes of Buddha to the sorrowful eyes of a paralyzed boy.` },
+            { id: "en1", chapterName: "A Very Old Man with Enormous Wings", author: "Gabriel Garcia Marquez", characters: ["Pelayo", "Elisenda", "Neighbor woman", "Father Gonzaga", "Old winged man (Angel)", "Spider-Girl"], summary: `Pelayo and Elisenda find an old winged man in their courtyard after a storm. The neighbor woman declares him an angel. They keep him in a chicken coop, and he becomes a spectacle for the town, exploited for money. Father Gonzaga questions his authenticity. When a Spider-Girl arrives, the crowd's attention shifts. The angel is neglected, becomes part of their lives, then eventually flies away. The story examines human responses to the weak, different, and dependent, highlighting curiosity, greed, and cruelty. It is a magical realist story where fantastical elements are placed in a mundane, realistic setting.` },
+            { id: "en2", chapterName: "Human Rights and the age of Inequality", author: "Samuel Moyn", characters: ["(No narrative characters, uses King Croesus, mentions Roosevelt)"], summary: `The presentation defines human rights and inequality, exploring the egalitarian principle and its types (economic, political, legal, racial, gender, moral). It uses the story of King Croesus to illustrate inequality and discusses the historical context of human rights, particularly in the 1940s and post-WWII era, focusing on Roosevelt's "Second Bill of Rights." It links human rights to political economy and questions whether a new human rights movement is needed to address contemporary inequality, suggesting redistribution of resources and fair laws.` },
+            { id: "en3", chapterName: "Soft Storm", author: "Abhi Subedi", characters: ["Speaker (Poetic Persona/Narrator)"], summary: `The poem "Soft Storm" uses the speaker's journey through Kathmandu at night as a metaphor for the social and political turmoil in Nepalese society. The speaker, a rebel against societal misleading, describes the "tumult atmosphere, and anarchy." The poem blends natural imagery with social commentary, depicting scenes of poverty, indifference, and social malpractices alongside fleeting moments of beauty and hope. The "soft storm" symbolizes a gentle yet persistent rebellion against injustice.` },
+            { id: "en4", chapterName: "Humility", author: "Yuval Noah Harari", characters: ["(No narrative characters)"], summary: `The presentation explores the concept of humility as discussed by Yuval Noah Harari. It argues that everyone believes themselves to be the center of the universe and claims superiority based on religion, nationality, race, etc. Harari criticizes these claims as false and rooted in ignorance and racism. He emphasizes that true humility, recognizing the equal value of all humanity, is essential for progress and peace. Humility is presented as the antidote to humanity's illusions of superiority and mastery, promoting respect for other cultures and traditions.` },
+            { id: "en5", chapterName: "The Awakening Age", author: "Ben Okri", characters: ["(Addresses Africans/people generally)"], summary: `"The Awakening Age" calls for unity, peace, and solidarity among people worldwide, especially Africans. The poem uses imagery of travel and connection ("meridian line," "mountain rope") to emphasize the shared human experience and hope for a better future. It acknowledges the hardships faced by Africans ("poverty's rage") but expresses optimism for an "awakening age" characterized by prosperity, equality, and brotherhood. The poem urges readers to change perceptions and embrace unity over division.` },
+            { id: "en6", chapterName: "I Was My Own Route", author: "Julia de Burgos", characters: ["Speaker (Poetic Persona/Narrator)"], summary: `"I Was My Own Route" is a feminist poem challenging patriarchal ideologies and societal expectations placed on women. The speaker rejects the labels and standards imposed by men, choosing to forge her own path to freedom and self-identity. The poem depicts a journey of liberation, overcoming obstacles ("old guard") and achieving "intimate liberation." It emphasizes courage, decisiveness, and the rejection of male domination in pursuit of female autonomy.` },
+            { id: "en7", chapterName: "Every Morning I wake", author: "Dylan Thomas", characters: ["Speaker (representing inhabitants of Milk Wood)", "God"], summary: `"Every Morning I Wake" is a prayer to God from Dylan Thomas's play Under Milk Wood. The speaker, representing the ordinary inhabitants of Milk Wood, pleads for God's mercy, compassion, and protection. It acknowledges human vulnerability ("poor creatures born to die") and the uncertainty of life ("touch-and-go"). The poem expresses deep faith and gratitude towards God, portraying Him as the ultimate source of blessing and the only one who truly sees our best selves.` },
+            { id: "en8", chapterName: "A Day", author: "Emily Dickinson", characters: ["Dominie (Symbolic figure of death/guide)"], summary: `"A Day" uses the cycle of sunrise and sunset to symbolize the transition from life to death. The poem progresses from the joyful, innocent perception of sunrise as "ribbons" and "squirrels" (childlike view of life's beauty) to a more somber and uncertain depiction of sunset as a "purple stile" and a "Dominie in gray" leading a "flock away" (metaphor for death and the afterlife). It explores the beauty of life, the mystery of death, and the transition between them through vivid imagery, symbolism (sunrays, stile, Dominie), metaphor, personification, and simile.` },
+            { id: "en9", chapterName: "On Libraries", author: "Oliver Sacks", characters: ["Oliver Sacks (as narrator/protagonist)", "Father (of Oliver Sacks)"], summary: `Oliver Sacks's essay "On Libraries" is a nostalgic reflection on his lifelong love of libraries and physical books. He recounts his childhood spent in his father's library and the Willesden Public Library, emphasizing the intellectual freedom and joy of discovery he found there. He contrasts this with the shift in the 1990s when libraries began disposing of physical books in favor of digital resources, a change he deeply laments. He argues for the irreplaceable value of physical books, emphasizing their sensory qualities and the unique atmosphere of libraries.` },
+            { id: "en10", chapterName: "My Old Home", author: "Lu Xun", characters: ["Narrator", "Runtu (Childhood friend)"], summary: `"My Old Home" explores the narrator's return to his childhood home after 30 years and his encounter with his childhood friend Runtu. The story contrasts idealized memories of childhood with the harsh realities of the present. The narrator finds his old home desolate and Runtu transformed by hardship and social class divisions, symbolized by Runtu addressing him as "Master." The story examines themes of friendship, memory vs. reality, childhood innocence lost to social and economic realities, and the rigid class structure of early 20th century China.` },
+            { id: "en11", chapterName: "A Matter of Husbands", author: "Ferenc Molnar", characters: ["Ernest Woman", "Famous Actress", "Husband (lawyer, husband of Ernest Woman)"], summary: `"A Matter of Husbands" is a comedic one-act play revolving around an Ernest Woman who suspects her lawyer husband of having an affair with a Famous Actress. When she confronts the actress, the Famous Actress cleverly manipulates her, claiming the affair is a ruse by the husband to rekindle his wife's love through jealousy. The Ernest Woman is convinced and leaves, only for the play to reveal the actress and the husband are indeed having an affair, highlighting irony and deception. The play features only two female characters and explores themes of marital relationships, appearances vs. reality, and the manipulative nature of some individuals.` },
+            { id: "en12", chapterName: "The Bull", author: "Bhimnidhi Tiwari", characters: ["Laxminarayan (Bull doctor)", "Jitman (Cowherd)", "Gore (Cowherd)", "King Rana Bahadur Shah (Mentioned)"], summary: `"The Bull" is a one-act drama denouncing the feudal structure of 18th-century Nepali society. The play centers on the death of King Rana Bahadur Shah's bull, Male, and the fear and horror it instills in three characters: the bull doctor Laxminarayan and cowherds Jitman and Gore. The characters fear the king's wrath due to the bull's death, highlighting the absolute power of the monarchy and the dehumanization of common people. The play explores themes of monarchical power, feudalism, dehumanization, class difference, and the struggle for survival in a rigid social hierarchy.` },
+            { id: "en13", chapterName: "A Respectable Woman", author: "Kate Chopin", characters: ["Mrs. Baroda", "Gouvernail (Husband's friend)", "Husband (of Mrs. Baroda)"], summary: `"A Respectable Woman" explores the inner conflict of Mrs. Baroda, a woman adhering to 19th-century societal expectations of a "respectable woman." When her husband invites his friend Gouvernail to stay, Mrs. Baroda finds herself unexpectedly attracted to him, disrupting her mental peace. The story traces her internal struggle between her social duty as a respectable wife and her burgeoning physical desires. She ultimately flees to her aunt's house to avoid temptation, highlighting the limitations and repressions placed upon women in that era.` },
+            { id: "en14", chapterName: "The Treasure in the Forest", author: "Herbert George Wells (H.G. Wells)", characters: ["Evans", "Hooker"], summary: `"The Treasure in the Forest" is a cautionary tale about greed and its destructive consequences. Two men, Evans and Hooker, seek buried treasure on a tropical island, guided by a stolen map. Driven by greed, they disregard warnings and danger, eventually finding poisoned gold. They are fatally poisoned by thorns embedded in the treasure, highlighting the moral justice of the story. The story uses elements of adventure and suspense to explore themes of greed, moral justice, consequences of unchecked ambition, and the corrupting influence of wealth.` },
+            { id: "en15", chapterName: "Neighbors", author: "Tim Winton", characters: ["Newlywed couple", "Neighbors (European migrants)"], summary: `"Neighbors" tells the story of a newlywed couple who move to a multicultural suburb inhabited by European migrants. Initially, they are annoyed and prejudiced by their noisy and intrusive neighbors, valuing their privacy and selfhood above all else. Over the course of a year, through the changing seasons, they gradually experience the unexpected kindness and generosity of their neighbors, who help them with gardening, building a henhouse, and during the wife's pregnancy and childbirth. The story explores the breakdown of cultural and linguistic barriers through acts of compassion and community, highlighting the importance of human connection over individualism.` }
+        ];
+
+
+        // --- State Variables ---
+        let currentCardIndex = 0;
+        let currentLanguage = 'ne'; // Default language
+        let activeFlashcardsData = flashcardsDataNe; // Active dataset based on language
+        let cards = []; // Array to hold the currently active and shuffled cards
+        let isAudioReady = false; // Flag to check if Tone.js audio context is started
+        let isAnswerVisible = false; // Track if answer/summary is currently shown
+        let currentShowMode = 'authorChars'; // 'authorChars' or 'summary'
+        let favoritedCards = new Set(); // Set to store IDs of favorited cards
+
+        // --- DOM Element References ---
+        const cardBody = document.getElementById('card-body');
+        const cardCounter = document.getElementById('card-counter');
+        const langNeButton = document.getElementById('lang-ne');
+        const langEnButton = document.getElementById('lang-en');
+        const showModeRadios = document.querySelectorAll('input[name="showMode"]');
+        const hintButton = document.getElementById('hint-button');
+        const starButton = document.getElementById('star-button');
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        // New confidence buttons
+        const confidenceControls = document.getElementById('confidence-controls');
+        const tryAgainButton = document.getElementById('try-again-button');
+        const confidentButton = document.getElementById('confident-button');
+
+        // --- Tone.js Synths Setup ---
+        const flipSynth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.05, release: 0.2 } }).toDestination();
+        const nextSynth = new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.005, decay: 0.05, sustain: 0.01, release: 0.1 } }).toDestination();
+        const uiSynth = new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.005, decay: 0.05, sustain: 0.01, release: 0.1 } }).toDestination(); // For general UI clicks
+
+        // --- Core Functions ---
+
+        /**
+         * Starts the Tone.js audio context if not already started.
+         * Required to be called once after user interaction.
+         */
+        async function startAudio() {
+             if (!isAudioReady) {
+                 try {
+                    await Tone.start();
+                    console.log('Audio context started');
+                    isAudioReady = true;
+                 } catch (error) {
+                    console.error("Error starting audio context:", error);
+                    // Optionally disable audio features if context fails
+                 }
+             }
+        }
+
+        /**
+         * Plays a sound effect using a specified Tone.js synth.
+         * @param {Tone.Synth} synth - The synth instance to use.
+         * @param {string} [note='C4'] - The note to play (e.g., 'C4', 'E#5').
+         * @param {string} [duration='8n'] - The duration of the note (e.g., '8n', '16n').
+         */
+        function playSound(synth, note = 'C4', duration = '8n') {
+             if (!isAudioReady) return; // Don't play if audio not ready
+             try {
+                 synth.triggerAttackRelease(note, duration);
+             } catch (error) {
+                 console.error("Error playing sound:", error);
+             }
+        }
+
+        /**
+         * Updates the card display to show the current question (chapter name).
+         * Handles index wrapping and updates the counter and star button.
+         */
+        function displayCard() {
+            if (cards.length === 0) {
+                // Handle case where there are no cards (e.g., after filtering or error)
+                cardBody.textContent = "No cards available for this selection.";
+                cardCounter.textContent = "0 / 0";
+                starButton.classList.remove('favorited');
+                confidenceControls.style.display = 'none'; // Ensure confidence buttons are hidden
+                return;
+            }
+
+            // Ensure index is within bounds (useful after removing cards)
+            currentCardIndex = (currentCardIndex + cards.length) % cards.length;
+
+            const currentCard = cards[currentCardIndex];
+            isAnswerVisible = false; // Reset state: show question first
+
+            // Display Question (Chapter Name)
+            cardBody.textContent = currentCard.chapterName;
+            cardBody.classList.remove('answer-visible', 'summary-view'); // Reset view classes
+
+            // Hide confidence buttons when showing question
+            confidenceControls.style.display = 'none';
+
+            // Update Counter
+            const counterPrefix = currentLanguage === 'ne' ? 'कार्ड' : 'Card';
+            cardCounter.textContent = `${currentCardIndex + 1} / ${cards.length}`;
+
+            // Update Star Button state based on whether the current card is favorited
+            starButton.classList.toggle('favorited', favoritedCards.has(currentCard.id));
+        }
+
+        /**
+         * Shows the Answer (Author/Characters) or Summary based on the currentShowMode.
+         * Reveals the confidence buttons.
+         */
+        function showAnswerOrSummary() {
+            if (cards.length === 0 || isAnswerVisible) return; // Don't do anything if no cards or answer already visible
+
+            const currentCard = cards[currentCardIndex];
+            isAnswerVisible = true;
+            cardBody.classList.add('answer-visible'); // Apply common style for revealed content
+
+            // Display content based on the selected mode
+            if (currentShowMode === 'summary') {
+                // Display Summary
+                cardBody.textContent = currentCard.summary || "Summary not available."; // Use textContent for pre-wrap
+                cardBody.classList.add('summary-view'); // Add specific summary styling
+            } else {
+                // Display Author & Characters
+                cardBody.classList.remove('summary-view'); // Ensure summary style is removed
+                let backHtml = `<strong>Author:</strong> ${currentCard.author}<br><br>`;
+                backHtml += `<strong>Main Characters/Topic:</strong>`;
+                // Check if characters data exists and is meaningful
+                if (Array.isArray(currentCard.characters) && currentCard.characters.length > 0 && currentCard.characters[0] !== "Not applicable (Topic-based)" && currentCard.characters[0] !== "(No narrative characters)") {
+                    backHtml += `<ul>`;
+                    currentCard.characters.forEach(char => { backHtml += `<li>${char}</li>`; });
+                    backHtml += `</ul>`;
+                } else if (currentCard.characters && typeof currentCard.characters === 'string' && currentCard.characters.trim() !== "") {
+                     // Handle cases where characters might be a single string
+                     backHtml += ` ${currentCard.characters}`;
+                } else if (Array.isArray(currentCard.characters) && currentCard.characters.length > 0) {
+                     // Handle cases like "(No narrative characters)" as a single item array
+                     backHtml += ` ${currentCard.characters[0]}`;
+                }
+                 else {
+                     backHtml += ` N/A`; // Fallback if no character info
+                 }
+                cardBody.innerHTML = backHtml; // Use innerHTML for Author/Chars formatting
+            }
+
+            // Show confidence buttons
+            confidenceControls.style.display = 'flex';
+
+            playSound(flipSynth, 'E4', '16n'); // Play sound on reveal
+        }
+
+        /**
+         * Toggles the view between Question and Answer/Summary.
+         */
+        function toggleQuestionAnswer() {
+            startAudio(); // Ensure audio is ready on interaction
+            if (isAnswerVisible) {
+                displayCard(); // Go back to showing the question
+            } else {
+                showAnswerOrSummary(); // Show the answer/summary
+            }
+        }
+
+        // --- Navigation and Confidence Logic ---
+
+        /**
+         * Moves to the next card in the sequence.
+         * Called by confidence buttons or potentially manual navigation if added back.
+         */
+        function goToNextCard() {
+            if (cards.length === 0) return; // Nothing to navigate to
+            currentCardIndex++; // Increment index
+            // displayCard will handle wrapping and showing the new card
+            displayCard();
+        }
+
+        /**
+         * Handles the "Try Again" button click.
+         * Simply moves to the next card, keeping the current card in rotation.
+         */
+        function handleTryAgain() {
+            startAudio();
+            console.log("Try Again selected for card:", cards.length > 0 ? cards[currentCardIndex].id : 'N/A');
+            goToNextCard(); // Move to the next card
+            playSound(nextSynth, 'C4', '16n'); // Lower sound for 'Try Again'
+        }
+
+        /**
+         * Handles the "I'm Confident" button click.
+         * Moves to the next card. (Future enhancement: Could remove the card or use spaced repetition).
+         */
+        function handleConfident() {
+            startAudio();
+            console.log("Confident selected for card:", cards.length > 0 ? cards[currentCardIndex].id : 'N/A');
+            // --- Simple Logic: Just move to the next card ---
+            goToNextCard();
+
+            // --- Example: More complex logic (remove card from session) ---
+            /*
+            if (cards.length > 0) {
+                const completedCard = cards.splice(currentCardIndex, 1)[0];
+                console.log("Card marked confident and removed:", completedCard.id);
+                if (cards.length === 0) {
+                    cardBody.textContent = "Congratulations! All cards reviewed.";
+                    cardCounter.textContent = "Done!";
+                    confidenceControls.style.display = 'none';
+                    starButton.classList.remove('favorited');
+                    return; // Exit function early
+                }
+                // If not the last card, the index effectively points to the next one.
+                // If it WAS the last card, wrap the index.
+                if (currentCardIndex >= cards.length) {
+                    currentCardIndex = 0;
+                }
+                displayCard(); // Display the new current card
+            }
+            */
+            // --- End Example ---
+
+            playSound(nextSynth, 'G4', '16n'); // Higher sound for 'Confident'
+        }
+
+
+        // --- Utility Functions ---
+
+        /**
+         * Shuffles the currently active flashcard data array in place.
+         */
+        function shuffleCards() {
+             startAudio(); // Ensure audio context
+             cards = [...activeFlashcardsData]; // Create a copy to shuffle
+             let i = cards.length, j, temp;
+             if (i === 0) return; // No cards to shuffle
+             while (--i > 0) {
+                 j = Math.floor(Math.random() * (i + 1));
+                 temp = cards[i];
+                 cards[i] = cards[j];
+                 cards[j] = temp;
+             }
+             currentCardIndex = 0; // Reset index to the beginning
+             displayCard(); // Display the first card of the shuffled deck
+             console.log(`Cards shuffled for lang: ${currentLanguage}`);
+             playSound(uiSynth, 'A4', '8n'); // Sound for shuffle action
+        }
+
+        /**
+         * Sets the active language, updates UI buttons, loads data, and shuffles.
+         * @param {string} lang - The language code ('ne' or 'en').
+         */
+        function setLanguage(lang) {
+            startAudio(); // Ensure audio context
+            currentLanguage = lang;
+            activeFlashcardsData = (lang === 'ne') ? flashcardsDataNe : flashcardsDataEn;
+
+            // Update active state of language buttons
+            langNeButton.classList.toggle('active', lang === 'ne');
+            langEnButton.classList.toggle('active', lang === 'en');
+
+            shuffleCards(); // Shuffle the new dataset and display the first card
+            playSound(uiSynth, 'E5', '16n'); // Sound for language change
+        }
+
+        /**
+         * Sets the display mode for the back of the card (Author/Chars or Summary).
+         * @param {string} mode - The mode ('authorChars' or 'summary').
+         */
+        function setShowMode(mode) {
+            startAudio(); // Ensure audio context
+            currentShowMode = mode;
+            console.log("Show mode set to:", mode);
+            // If the answer is currently visible, immediately update the display
+            if (isAnswerVisible) {
+                showAnswerOrSummary();
+            }
+            playSound(uiSynth, 'F#4', '16n'); // Sound for mode change
+        }
+
+
+        // --- Placeholder/Simple Functions ---
+
+        /** Placeholder for hint functionality */
+        function getHint() {
+            startAudio();
+            console.log("Hint requested for card:", cards.length > 0 ? cards[currentCardIndex].id : 'N/A');
+            alert("Hint functionality is not yet implemented."); // Simple alert for now
+            playSound(uiSynth, 'B4', '8n');
+        }
+
+        /** Toggles the favorite status of the current card */
+        function toggleFavorite() {
+            startAudio();
+            if (cards.length === 0) return; // No card to favorite
+            const currentCardId = cards[currentCardIndex].id;
+            if (favoritedCards.has(currentCardId)) {
+                favoritedCards.delete(currentCardId);
+                starButton.classList.remove('favorited');
+                console.log("Removed from favorites:", currentCardId);
+            } else {
+                favoritedCards.add(currentCardId);
+                starButton.classList.add('favorited');
+                console.log("Added to favorites:", currentCardId);
+            }
+            // Optional: Save favorites to localStorage for persistence
+            playSound(flipSynth, 'C5', '16n'); // Sound for favoriting
+        }
+
+        /** Toggles fullscreen mode */
+        function toggleFullscreen() {
+             startAudio();
+             console.log("Fullscreen toggled");
+             if (!document.fullscreenElement) {
+                 document.documentElement.requestFullscreen()
+                    .then(() => playSound(uiSynth, 'A4', '8n'))
+                    .catch(err => {
+                         console.error(`Fullscreen error: ${err.message}`, err);
+                         alert(`Could not enter fullscreen mode: ${err.message}`);
+                     });
+             } else {
+                 if (document.exitFullscreen) {
+                     document.exitFullscreen()
+                        .then(() => playSound(uiSynth, 'G4', '8n'))
+                        .catch(err => console.error("Error exiting fullscreen:", err));
+                 }
+             }
+        }
+
+
+        // --- Event Listeners ---
+        // Click on card body to flip between question and answer
+        cardBody.addEventListener('click', toggleQuestionAnswer);
+
+        // Language selection buttons
+        langNeButton.addEventListener('click', () => setLanguage('ne'));
+        langEnButton.addEventListener('click', () => setLanguage('en'));
+
+        // Show Mode (Author/Chars vs Summary) radio buttons
+        showModeRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                if (event.target.checked) { // Ensure it's the selected radio
+                     setShowMode(event.target.value);
+                }
+            });
+        });
+
+        // Header buttons
+        hintButton.addEventListener('click', getHint);
+        starButton.addEventListener('click', toggleFavorite);
+
+        // Footer buttons
+        fullscreenButton.addEventListener('click', toggleFullscreen);
+        tryAgainButton.addEventListener('click', handleTryAgain);
+        confidentButton.addEventListener('click', handleConfident);
+
+        // Keyboard navigation (Optional Enhancement)
+        document.addEventListener('keydown', (event) => {
+            startAudio(); // Ensure audio context on key press
+            if (cards.length === 0) return; // Ignore if no cards
+
+            if (event.key === ' ' || event.key === 'Enter') { // Space or Enter to flip
+                event.preventDefault(); // Prevent default space scroll
+                toggleQuestionAnswer();
+            } else if (isAnswerVisible) {
+                 if (event.key === 'ArrowLeft' || event.key === '1') { // Left arrow or '1' for Try Again
+                    handleTryAgain();
+                 } else if (event.key === 'ArrowRight' || event.key === '2') { // Right arrow or '2' for Confident
+                    handleConfident();
+                 }
+            }
+            // Add ArrowLeft/Right for prev/next card when question is shown?
+            // else if (!isAnswerVisible) {
+            //     if (event.key === 'ArrowRight') { goToNextCard(); playSound(nextSynth, 'G4', '16n'); }
+            //     if (event.key === 'ArrowLeft') { /* Implement prevCard if needed */ }
+            // }
+        });
+
+
+        // --- Initial Load ---
+        // Set default language ('ne'), which also shuffles and displays the first card.
+        setLanguage('ne');
+
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Educational Resources | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+</html>

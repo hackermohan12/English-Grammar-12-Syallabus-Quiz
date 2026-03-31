@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Essay Analysis Collection</title>
+    <style>
+        /* Custom Styles for Enhanced Dark Mode - Replicated from previous examples */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #d1d5db; /* Tailwind gray-300 */
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, summary, .essay-select-button { /* Added button to font rule */
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .gradient-text {
+             background: linear-gradient(90deg, #6ee7b7 0%, #34d399 50%, #10b981 100%); /* Emerald gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Header Styling - Using a gradient instead of specific image */
+        header {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(5, 150, 105, 0.8) 100%); /* Dark Gray/Emerald gradient */
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+         /* Ensure header content is visible */
+        header > div {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Section Background Gradients - Adjusted slightly for variety */
+        .sunrise-gradient {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.7) 0%, rgba(5, 150, 105, 0.2) 100%);
+        }
+        .sunset-gradient {
+             background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(17, 24, 39, 0.7) 100%);
+        }
+
+        /* Content Card Styling */
+        .content-card {
+            background-color: rgba(31, 41, 55, 0.6); /* Tailwind gray-800 with opacity */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 with opacity */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+        }
+
+        /* Details/Summary (Q&A) Styling */
+        details {
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1rem 1.25rem; /* Tailwind p-4 pr-5 */
+            background-color: rgba(55, 65, 81, 0.5); /* Tailwind gray-700 base with opacity */
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif; /* Use Poppins for question text */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            position: relative;
+        }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::before {
+            content: '+';
+            position: absolute;
+            right: 1.25rem; /* Tailwind right-5 */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #9ca3af; /* Tailwind gray-400 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary { background-color: rgba(75, 85, 99, 0.7); } /* Tailwind gray-600 open */
+        details[open] > summary::before { content: '−'; }
+        details > div { /* Q&A Answer Content Styling */
+             padding: 1.25rem; /* Tailwind p-5 */
+             margin-top: 0;
+             border-top: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 separator */
+             background-color: rgba(17, 24, 39, 0.5); /* Tailwind gray-900 darker background */
+             color: #d1d5db; /* Tailwind gray-300 */
+             font-size: 0.95rem;
+        }
+
+        /* Keyword Highlighting Styles - Reused from poem.html */
+        .kw-imagery { color: #f472b6; font-weight: 600; } /* Pink-500 */
+        .kw-theme { color: #34d399; font-weight: 600; } /* Emerald-400 */
+        .kw-concept { color: #60a5fa; font-weight: 600; } /* Blue-400 */
+        .kw-time { color: #fb923c; font-weight: 600; } /* Orange-400 */
+        .kw-person { color: #facc15; font-weight: 600; } /* Yellow-500 */
+        .kw-place { color: #22d3ee; font-weight: 600; } /* Cyan-400 */
+
+
+        /* Section Title Colors - Adjusted slightly */
+        .text-emerald-title { color: #6ee7b7; } /* Emerald-300 */
+        .text-teal-title { color: #5eead4; } /* Teal-300 */
+
+        /* Footer Styling */
+        footer {
+            background-color: #1f2937; /* Tailwind gray-800 */
+            border-top: 1px solid #374151; /* Tailwind gray-700 */
+            color: #9ca3af; /* Tailwind gray-400 */
+        }
+
+        /* Styles for Essay Selection */
+        #essay-selection {
+            text-align: center;
+        }
+        .essay-select-button {
+            background-color: rgba(55, 65, 81, 0.7); /* Tailwind gray-700 semi-transparent */
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 border */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin: 0.5rem; /* Tailwind m-2 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block; /* Fit content */
+            backdrop-filter: blur(5px);
+        }
+        .essay-select-button:hover {
+            background-color: rgba(75, 85, 99, 0.9); /* Tailwind gray-600 darker on hover */
+            border-color: rgba(110, 121, 134, 0.7); /* Lighter border on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Style for Back Button */
+        .back-button {
+             background-color: rgba(75, 85, 99, 0.7); /* Tailwind gray-600 semi-transparent */
+             border: 1px solid rgba(92, 103, 117, 0.5);
+             color: #e5e7eb;
+             padding: 0.5rem 1rem;
+             border-radius: 0.5rem;
+             margin-top: 1.5rem; /* Tailwind mt-6 */
+             cursor: pointer;
+             transition: all 0.3s ease;
+             font-family: 'Inter', sans-serif; /* Use Inter for button text */
+             font-weight: 600;
+        }
+        .back-button:hover {
+            background-color: rgba(92, 103, 117, 0.9);
+            transform: translateY(-1px);
+        }
+
+        /* Hide content sections by default */
+        .essay-content {
+            display: none;
+        }
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="antialiased">
+
+    <header class="min-h-[40vh] md:min-h-[50vh] flex items-center justify-center text-center p-8">
+        <div class="max-w-3xl">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4 gradient-text">Essay Analysis</h1>
+            <p class="text-xl md:text-2xl text-gray-100 italic mt-2">A Collection</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-200 leading-relaxed">
+                Select an essay below to view its summary and analysis.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6 md:p-10 space-y-16">
+
+        <section id="essay-selection" class="p-6 md:p-8 content-card sunrise-gradient">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-8 text-emerald-title">Choose an Essay</h2>
+            <div id="selection-buttons">
+                <button class="essay-select-button" onclick="showEssay('on-libraries')">On Libraries</button>
+                <button class="essay-select-button" onclick="showEssay('marriage-institution')">Marriage as a Social Institution</button>
+                <button class="essay-select-button" onclick="showEssay('knowledge-wisdom')">Knowledge and Wisdom</button>
+                <button class="essay-select-button" onclick="showEssay('humility')">Humility</button>
+                <button class="essay-select-button" onclick="showEssay('human-rights-inequality')">Human Rights and the Age of Inequality</button>
+            </div>
+        </section>
+
+        <!-- On Libraries Content -->
+        <div id="on-libraries" class="essay-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-emerald-title mt-8">Essay: On Libraries (by Oliver Sacks)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-emerald-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Oliver Sacks</span> recounts his lifelong <span class="kw-theme">love affair with books and libraries</span>, starting from his <span class="kw-time">childhood</span> home's <span class="kw-imagery">oak-panelled library</span>. Both his parents were <span class="kw-concept">literature</span> enthusiasts, influencing his early immersion in books. He fondly remembers the <span class="kw-place">Willesden Public Library</span> as a place of <span class="kw-concept">self-discovery</span>, preferring active reading there to passive learning in formal school. His interests evolved towards <span class="kw-concept">science</span> (<span class="kw-concept">astronomy</span>, <span class="kw-concept">chemistry</span>), leading him to specialist libraries like the <span class="kw-place">Science Museum's library</span> and later, university libraries like the <span class="kw-place">Radcliffe Science Library</span> and the <span class="kw-place">Bodleian Library</span> at <span class="kw-place">Oxford</span>. His most beloved library was at <span class="kw-place">Queen's College, Oxford</span>, where he explored ancient texts and <span class="kw-time">17th/18th-century</span> writings. Moving to <span class="kw-place">New York</span>, he found solace and productivity in the library at <span class="kw-place">Albert Einstein College of Medicine</span>. <span class="kw-person">Sacks</span> emphasizes the library as a space for quiet <span class="kw-concept">companionship</span>, exploration, and deep connection through shared <span class="kw-concept">knowledge</span>. He laments the shift in the <span class="kw-time">1990s</span> where students began ignoring bookshelves for <span class="kw-concept">computerized access</span>, leading to the <span class="kw-theme">discarding of physical books</span>, which he views as a tragic "destruction of centuries of <span class="kw-concept">wisdom</span>." He believes <span class="kw-theme">digital literature</span> cannot fully replace the priceless nature and inspirational quality of physical books.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-teal-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">What impression did the author have about the library at The Albert Einstein College of Medicine? [2]</summary>
+                        <div>The author, <span class="kw-person">Oliver Sacks</span>, liked the <span class="kw-place">AECOM library</span> very much because it was large and spacious. This was important because his <span class="kw-place">New York</span> apartment was very small with no space to read or write. The library had large <span class="kw-imagery">tables</span> where he could work comfortably and wander around the <span class="kw-imagery">shelves and stacks</span>. It offered him the space he needed.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the author appreciate Queen's College library?</summary>
+                        <div>The author appreciated the <span class="kw-place">Queen's College library</span> because it held many <span class="kw-concept">ancient books</span> (<span class="kw-concept">incunabula</span>) and important <span class="kw-time">17th/18th-century</span> <span class="kw-concept">literature</span> (like <span class="kw-person">Swift</span>, <span class="kw-person">Pope</span>, <span class="kw-person">Dryden</span>). He loved being able to hold these old books. Exploring the <span class="kw-imagery">underground stacks</span> gave him a real sense of <span class="kw-concept">history</span> and his own language. It was where he truly connected with older <span class="kw-concept">literature</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was the author biased towards science?</summary>
+                        <div>As <span class="kw-person">Oliver Sacks</span> got older, his reading became more focused on <span class="kw-concept">science</span>, especially <span class="kw-concept">astronomy</span> and <span class="kw-concept">chemistry</span>. He "hungered" for <span class="kw-concept">science</span> books that his school library didn't have. This strong interest led him to seek out specialized libraries like the <span class="kw-place">Science Museum library</span> to learn more. <span class="kw-concept">Science</span> simply became his main area of fascination and study.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What did the librarian assure the author?</summary>
+                        <div>When the author was horrified to see many library books thrown out, the <span class="kw-person">librarian</span> assured him that everything considered important ("of worth") had been <span class="kw-concept">digitized</span>. The <span class="kw-person">librarian</span> likely meant to comfort him by saying the <span class="kw-concept">knowledge</span> wasn't truly lost, just changed into a computer format. However, the author didn't find this comforting.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the author's first memories and his attraction to libraries during his childhood.</summary>
+                        <div>The author's first memories involved <span class="kw-concept">books</span> and his family's library at home, especially the beautiful <span class="kw-imagery">oak-paneled room</span>. He learned to read very early (age 3 or 4). He spent his happiest <span class="kw-time">childhood</span> hours at the local <span class="kw-place">Willesden Public Library</span>. This library was his "real education," offering him <span class="kw-concept">freedom</span> and <span class="kw-concept">discovery</span> away from school.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did the author dislike school? Describe.</summary>
+                        <div>The author disliked school because he found it passive. He didn't like just sitting in class and receiving instruction from teachers. He felt information went "in one ear and out by the other." He needed to be active, to learn for himself, explore topics that interested him, and choose his own books, which he could do in <span class="kw-place">libraries</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did the students ignore the bookshelves in the 1990s? Describe.</summary>
+                        <div>In the <span class="kw-time">1990s</span>, students ignored bookshelves because they started using <span class="kw-concept">computers</span> to find the information they needed. They found it easier and quicker to access materials <span class="kw-concept">digitally</span>. As a result, they saw the physical <span class="kw-concept">books</span> on the shelves as unnecessary for their studies, preferring the convenience of computer access over browsing the bookshelves.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why was the author horrified when he visited a library shortly before writing the essay?</summary>
+                        <div>The author was horrified because he found the library <span class="kw-imagery">shelves</span>, which used to be full of <span class="kw-concept">books</span>, were now mostly empty ("sparsely occupied"). He learned that most of the <span class="kw-concept">books</span> had been thrown out because students were using <span class="kw-concept">computers</span> instead. He felt this was like a "murder" or a "crime" - the <span class="kw-theme">destruction of centuries of knowledge</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Explain the difficulties Oliver Sacks faced when he first went to New York (possibly in relation to finding libraries or intellectual community).</summary>
+                        <div>When <span class="kw-person">Oliver Sacks</span> first came to <span class="kw-place">New York</span> in <span class="kw-time">1965</span>, his main difficulty was the small size of his apartment. There were almost no surfaces to read or write on. He missed having space. While the essay doesn't mention difficulty finding libraries (he found the <span class="kw-place">AECOM library</span>), the lack of personal space made <span class="kw-place">libraries</span> essential places for him to work and read comfortably.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What were Oliver Sacks' general feelings about libraries?</summary>
+                        <div><span class="kw-person">Oliver Sacks</span> loved <span class="kw-place">libraries</span>. He saw them as places of <span class="kw-concept">intellectual freedom</span>, where he could be an active learner and explore whatever interested him. He enjoyed the quiet atmosphere, the feeling of <span class="kw-concept">community</span> with other readers, and the joy of <span class="kw-concept">discovering</span> unexpected <span class="kw-concept">books</span> ("<span class="kw-concept">serendipity</span>"). <span class="kw-place">Libraries</span> were essential for his education and happiness.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">"On Libraries" is written in praise of intellectual freedom, community work, and the ecstasy of serendipitous discovery." Discuss.</summary>
+                        <div><span class="kw-person">Oliver Sacks'</span> essay "On Libraries" is truly a celebration of the unique benefits libraries offer, especially <span class="kw-concept">intellectual freedom</span>, a sense of <span class="kw-concept">community</span>, and the joy of <span class="kw-concept">serendipitous discovery</span>.<br><br>He contrasts the rigid structure of school, which he disliked, with the <span class="kw-concept">freedom</span> libraries provided. There, he could choose any book, follow any path of interest, and learn actively at his own pace – this was his <span class="kw-concept">intellectual freedom</span>. <span class="kw-person">Sacks</span> also valued the library's social aspect, describing the "quiet companionship" of readers on their own quests and the potential for conversations and friendships to start among the <span class="kw-imagery">shelves</span> – a subtle form of <span class="kw-concept">community work</span>. Finally, he highlights the pure joy of <span class="kw-concept">serendipity</span>, the "ecstasy of wonderful discovery." He loved wandering the <span class="kw-imagery">stacks</span>, never knowing what "unexpected treasures" he might find, like the works of <span class="kw-person">Theodore Hook</span> or the old book Megrim that inspired his own writing.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">The author says "I was not a good pupil, but I was a good learner." Justify it relating to the text.</summary>
+                        <div>In "On Libraries," <span class="kw-person">Oliver Sacks</span> makes a clear distinction when he says, "I was not a good pupil, but I was a good learner." This statement is justified by his descriptions of his education.<br><br>He explains he disliked school because it required being a passive pupil: sitting still, receiving instructions, letting information flow "in one ear and out by the other." He wasn't good at this structured, passive way of absorbing facts dictated by teachers. However, he was an excellent learner because he was deeply curious and needed to be active in his education. He found his "real education" in <span class="kw-place">libraries</span> like <span class="kw-place">Willesden</span>. There, he could actively roam, choose subjects that fascinated him (like <span class="kw-concept">science</span>), follow his own paths, and absorb <span class="kw-concept">knowledge</span> deeply because he was personally engaged. He learned best by exploring independently, not by being told what to learn.<br><br>Thus, his success came from self-directed, active learning in <span class="kw-place">libraries</span>, proving he was a 'good learner' even if he didn't fit the mold of a 'good pupil'.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">A proverb says, "Nothing is pleasanter than exploring a library." Does this proverb apply in the essay? Explain.</summary>
+                        <div>Yes, the proverb "Nothing is pleasanter than exploring a library" perfectly applies to <span class="kw-person">Oliver Sacks'</span> experiences as described in his essay "On Libraries." His writing is filled with examples of the deep pleasure he found in <span class="kw-place">libraries</span> throughout his life.<br><br>From his <span class="kw-time">childhood</span> memories of his family's <span class="kw-imagery">oak-paneled library</span> and the "happiest hours" spent at <span class="kw-place">Willesden Public Library</span>, his passion is clear. He emphasizes the joy of <span class="kw-concept">freedom</span> - being "free to roam" and look at thousands of <span class="kw-concept">books</span>. He uses words like "ecstasy" to describe the feeling of "<span class="kw-concept">serendipitous discovery</span>" - finding unexpected treasures by chance while exploring the <span class="kw-imagery">shelves</span>. He fondly recalls specific moments, like discovering <span class="kw-person">Theodore Hook</span> in the <span class="kw-place">Bodleian</span> or ancient texts in <span class="kw-place">Queen's College</span>. Even the quiet atmosphere and sense of <span class="kw-concept">community</span> contributed to the pleasantness.<br><br><span class="kw-person">Sacks</span> portrays exploring <span class="kw-place">libraries</span> not just as useful, but as a source of profound happiness, excitement, and lifelong satisfaction, fully supporting the proverb's truth.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+         <!-- Marriage as a Social Institution Content -->
+        <div id="marriage-institution" class="essay-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-emerald-title mt-8">Essay: Marriage as a Social Institution (by Stephen L. Nock)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-emerald-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Stephen L. Nock's</span> essay examines <span class="kw-concept">marriage</span> as a <span class="kw-concept">social institution</span>, particularly its impact on <span class="kw-person">men</span> and its changing role due to social and demographic trends. He argues <span class="kw-concept">marriage</span> is not just a private matter but a major <span class="kw-concept">social structure</span> with well-understood <span class="kw-concept">rules</span> and connections to other institutions (family, law, economy). <span class="kw-person">Nock</span> asserts <span class="kw-concept">marriage</span> holds special significance for <span class="kw-person">men</span>, helping them develop and express <span class="kw-theme">masculine identity</span> and providing <span class="kw-concept">structure</span> to their lives. He notes that <span class="kw-concept">normative marriage</span> (in the <span class="kw-place">US</span> context) traditionally involves voluntary entry by mature heterosexual adults, husbands as primary earners, fidelity, and parenthood. <span class="kw-concept">Marriage</span>, especially for <span class="kw-person">men</span>, correlates with better physical and mental health and transforms <span class="kw-person">men</span> regarding achievement, social involvement, and well-being. The essay touches upon debates around strengthening <span class="kw-concept">marriage</span> and addressing modern societal problems like limitless desires for well-being, suggesting <span class="kw-concept">marriage</span> provides important boundaries and <span class="kw-concept">social capital</span> (networks built on trust).</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-teal-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Describe marriage as a social institution.</summary>
+                        <div><span class="kw-concept">Marriage</span>, according to the essay, is more than just two people; it's a <span class="kw-concept">social institution</span>. This means it's a widely recognized relationship defined by <span class="kw-concept">laws</span>, <span class="kw-concept">customs</span>, and shared <span class="kw-concept">rules</span>. These <span class="kw-concept">rules</span> guide how spouses should behave (like being faithful) and connect the couple to other parts of society, like family and the economy. It provides a known <span class="kw-concept">structure</span> for their lives.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Marriage is a form of 'capital'. Explain.</summary>
+                        <div>The essay calls <span class="kw-concept">marriage</span> a form of "<span class="kw-concept">social capital</span>." Like money (physical capital) or skills (human capital), <span class="kw-concept">marriage</span> provides resources. It creates a network of relationships (like new family members) built on <span class="kw-concept">trust</span> and expected support. These connections can help people get information, assistance in times of need, and a sense of belonging, making it a valuable social resource or "<span class="kw-concept">capital</span>."</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">In what way is marriage an institution? Explain.</summary>
+                        <div><span class="kw-concept">Marriage</span> is an <span class="kw-concept">institution</span> because it's a socially recognized pattern with established <span class="kw-concept">rules</span> and expectations that go beyond just the two people involved. <span class="kw-concept">Laws</span>, religion, and <span class="kw-concept">customs</span> define what <span class="kw-concept">marriage</span> means (like faithfulness, supporting children). These shared understandings provide a known <span class="kw-concept">structure</span> and guide behaviour, making it a formal <span class="kw-concept">social institution</span>, not just a private agreement.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Is marriage different from other networks of relation? Give a reason.</summary>
+                        <div>Yes, <span class="kw-concept">marriage</span> is different from other relationships like <span class="kw-concept">cohabitation</span> (living together without marriage). The main reason is that <span class="kw-concept">marriage</span> is a formal <span class="kw-concept">social institution</span> with widely understood <span class="kw-concept">rules</span>, expectations (like faithfulness, long-term commitment), and legal status. Other relationships, like <span class="kw-concept">cohabitation</span>, often lack these clear, socially recognized <span class="kw-concept">rules</span> and <span class="kw-concept">structures</span>, giving partners more <span class="kw-concept">freedom</span> but less built-in support or guidance.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why is marriage better to men?</summary>
+                        <div>The essay, citing <span class="kw-person">Durkheim</span>, suggests <span class="kw-concept">marriage</span> benefits <span class="kw-person">men</span> because it provides <span class="kw-concept">structure</span> and limits their desires. <span class="kw-person">Durkheim</span> believed <span class="kw-person">men</span> have strong, potentially endless desires (for well-being, prestige) that need social control. <span class="kw-concept">Marriage</span>, by focusing love and responsibility on one partner and family, helps <span class="kw-person">men</span> find balance and happiness within accepted limits, which is seen as beneficial for them.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you think marriage is a social institution? Why, why not? Explain briefly. [2]</summary>
+                        <div>Yes, I think <span class="kw-concept">marriage</span> is a <span class="kw-concept">social institution</span>. It's not just a private relationship between two people. Society, through <span class="kw-concept">laws</span>, <span class="kw-concept">customs</span>, and <span class="kw-concept">traditions</span>, recognizes and defines it. It involves shared expectations about commitment, family, and roles. This public recognition and set of <span class="kw-concept">rules</span> make it a formal <span class="kw-concept">structure</span> within society, which is what an <span class="kw-concept">institution</span> is.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Discuss the six dimensions that define normative marriage in the United States of America.</summary>
+                        <div><span class="kw-person">Stephen L. Nock</span>, in his essay "Marriage as a Social Institution," describes <span class="kw-concept">normative marriage</span> in the <span class="kw-place">USA</span> using six key features or dimensions. These represent the traditional ideal or standard.<br><br>First, <span class="kw-concept">marriage</span> is entered <span class="kw-concept">voluntarily</span> by the individuals. Second, it involves <span class="kw-concept">mature adults</span>. Third, traditionally, it is between <span class="kw-concept">heterosexual</span> adults (a man and a woman). Fourth, there's an expectation that the <span class="kw-person">husband</span> will be the <span class="kw-concept">main earner</span> for the family. Fifth, sexual <span class="kw-concept">faithfulness</span> between the partners is a core rule and expectation. Finally, the sixth dimension is that married partners are expected to become <span class="kw-concept">parents</span> and raise children together. Although not all marriages fit this perfectly today, <span class="kw-person">Nock</span> argues these six points still form the basic, socially understood blueprint or <span class="kw-concept">norm</span> for <span class="kw-concept">marriage</span> in American society.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is cohabitation? Explain the advantages of cohabitation over normative marriage.</summary>
+                        <div><span class="kw-concept">Cohabitation</span> means two people living together and having a sexual relationship without being legally married. In "Marriage as a Social Institution," <span class="kw-person">Nock</span> contrasts this with <span class="kw-concept">normative marriage</span>.<br><br>The main advantage of <span class="kw-concept">cohabitation</span>, as suggested in the essay, is <span class="kw-concept">freedom</span> from the strict <span class="kw-concept">rules</span> and expectations that come with <span class="kw-concept">marriage</span> as a <span class="kw-concept">social institution</span>. Cohabiting partners have more flexibility to decide how they want to arrange their relationship – how to handle money (pooled or separate), how to deal with parents, or whether to take vacations together. They are not bound by the traditional assumptions and legal ties of <span class="kw-concept">marriage</span>. This lack of a fixed "template" allows them to create their relationship more personally and perhaps avoid some pressures associated with <span class="kw-concept">normative marriage</span>. However, the essay also notes this lack of <span class="kw-concept">structure</span> means less built-in guidance or social support.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- Knowledge and Wisdom Content -->
+        <div id="knowledge-wisdom" class="essay-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-emerald-title mt-8">Essay: Knowledge and Wisdom (by Bertrand Russell)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-emerald-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Bertrand Russell</span> distinguishes between <span class="kw-concept">knowledge</span> (the acquisition of data and information, like theory) and <span class="kw-concept">wisdom</span> (the practical application of <span class="kw-concept">knowledge</span> to create value, gained through learning and experience). He argues that <span class="kw-concept">knowledge</span> alone, without <span class="kw-concept">wisdom</span>, can be <span class="kw-theme">harmful</span>. Examples include medical advances reducing infant mortality leading to overpopulation, or <span class="kw-concept">knowledge</span> of atomic physics leading to nuclear weapons. <span class="kw-concept">Wisdom</span> involves factors like a <span class="kw-concept">sense of proportion</span>, <span class="kw-concept">comprehensiveness</span> (awareness and feeling), <span class="kw-concept">emancipation</span> from personal prejudice, <span class="kw-concept">impartiality</span>, and understanding human needs. Both <span class="kw-concept">knowledge</span> and <span class="kw-concept">wisdom</span> are essential and must be combined. <span class="kw-concept">Wisdom</span> is needed in public and private life, for setting life goals, and overcoming prejudice. It fosters understanding and reduces enmity. <span class="kw-person">Russell</span> believes <span class="kw-concept">wisdom</span> can be <span class="kw-concept">taught</span>, primarily by incorporating ethical considerations and consequences into the teaching of <span class="kw-concept">knowledge</span> (e.g., discussing atomic weapons when teaching atomic structure). He stresses the increasing need for <span class="kw-concept">wisdom</span> as <span class="kw-concept">knowledge</span> grows, to ensure a brighter future.</p>
+                </div>
+            </section>
+             <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-teal-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Differentiate between knowledge and wisdom.</summary>
+                        <div>According to <span class="kw-person">Russell</span>, <span class="kw-concept">knowledge</span> is knowing facts, data, and information, like how things work (e.g., how atoms are made). <span class="kw-concept">Wisdom</span>, however, is about using that <span class="kw-concept">knowledge</span> well in real life. It involves understanding the bigger picture, having a <span class="kw-concept">sense of what's truly important</span> (<span class="kw-concept">proportion</span>), considering consequences, and having <span class="kw-concept">empathy</span> and understanding for others.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What does Russel mean by sense of proportion? Why is it difficult to have the sense of proportion in present world?</summary>
+                        <div>A "<span class="kw-concept">sense of proportion</span>" means seeing the whole picture and understanding which parts of a problem are most important. It's difficult today, <span class="kw-person">Russell</span> says, because <span class="kw-concept">knowledge</span> is very <span class="kw-concept">specialized</span>. <span class="kw-person">Experts</span> (like scientists) focus deeply on their one area and may not have time or training to see how their work affects everything else (e.g., medicine lowering death rates leading to food shortages).</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the world need more wisdom than knowledge in the future?</summary>
+                        <div>The world needs more <span class="kw-concept">wisdom</span> because <span class="kw-concept">knowledge</span> keeps increasing, giving us more power. This power can be used for good or bad (like atomic energy). Without <span class="kw-concept">wisdom</span> – knowing how to use <span class="kw-concept">knowledge</span> carefully and for good goals – our increased <span class="kw-concept">knowledge</span> could become very dangerous and lead to destruction. <span class="kw-concept">Wisdom</span> helps us use power well.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is the difference between knowledge and wisdom, according to Russell?</summary>
+                        <div>According to <span class="kw-person">Russell</span>, <span class="kw-concept">knowledge</span> is about acquiring facts and information (like knowing how to build something). <span class="kw-concept">Wisdom</span> is the practical and thoughtful use of that <span class="kw-concept">knowledge</span>. It includes understanding the goals of life, seeing the whole picture (<span class="kw-concept">sense of proportion</span>), being fair (<span class="kw-concept">impartiality</span>), and understanding human needs, not just knowing technical details.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the contributing factors to wisdom?</summary>
+                        <div><span class="kw-person">Russell</span> lists several factors that contribute to <span class="kw-concept">wisdom</span>:
+                        1. A <span class="kw-concept">sense of proportion</span> (seeing what's important).
+                        2. <span class="kw-concept">Comprehensiveness</span> (understanding many sides).
+                        3. Awareness of the <span class="kw-concept">ends of human life</span> (knowing life's goals).
+                        4. <span class="kw-concept">Emancipation</span> from personal prejudices (being free from bias).
+                        5. <span class="kw-concept">Impartiality</span> (fairness).
+                        6. Understanding human <span class="kw-concept">needs</span> and feelings.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you agree with the author that wisdom is more important than knowledge, Why, why not? Give reasons. [2]</summary>
+                        <div>Yes, I agree with <span class="kw-person">Russell</span> that <span class="kw-concept">wisdom</span> is more important than just <span class="kw-concept">knowledge</span>. <span class="kw-concept">Knowledge</span> gives us power (like technology), but <span class="kw-concept">wisdom</span> teaches us how to use that power correctly and safely. Without <span class="kw-concept">wisdom</span>, <span class="kw-concept">knowledge</span> can be very <span class="kw-theme">harmful</span> - like inventing powerful weapons without thinking about peace. <span class="kw-concept">Wisdom</span> helps us make good choices for humanity.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the factors that contribute to wisdom?</summary>
+                        <div>According to <span class="kw-person">Russell</span>, the main factors creating <span class="kw-concept">wisdom</span> are: understanding the whole situation (<span class="kw-concept">comprehensiveness</span>), knowing what truly matters (<span class="kw-concept">sense of proportion</span>), understanding life's goals, being fair and not personally biased (<span class="kw-concept">impartiality</span>), and having <span class="kw-concept">empathy</span> or feeling for others' needs and emotions. It's a mix of intellect and feeling.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Can wisdom be taught? If so, how?</summary>
+                        <div>Yes, <span class="kw-person">Russell</span> believes <span class="kw-concept">wisdom</span> can be <span class="kw-concept">taught</span>, partly through education. He suggests teaching should include not just facts (<span class="kw-concept">knowledge</span>) but also the consequences of actions, like the harm caused by hatred or misuse of technology (e.g., atomic bombs). Education should encourage thinking about the bigger picture and understanding different viewpoints, helping students develop fairness (<span class="kw-concept">impartiality</span>) and <span class="kw-concept">empathy</span>.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">How can wisdom be taught? Give examples.</summary>
+                        <div><span class="kw-person">Bertrand Russell</span> believes <span class="kw-concept">wisdom</span> can indeed be <span class="kw-concept">taught</span>, mainly by integrating it into the way we teach <span class="kw-concept">knowledge</span>. It's not just about separate moral lessons, but about connecting facts to real-life values and consequences.<br><br>He suggests that while teaching any subject, educators should incidentally point out the broader context and potential impacts. For example, when teaching the <span class="kw-concept">science</span> of atoms (<span class="kw-concept">knowledge</span>), a teacher should also discuss the devastating effects of atomic bombs (<span class="kw-concept">wisdom</span> about consequences and human life). When teaching history, instead of just facts, teachers can discuss the harm caused by prejudice and hatred, encouraging <span class="kw-concept">impartiality</span>. He also mentions the importance of teaching understanding over hate, using the example of learning to see enemies (like the <span class="kw-person">Samaritans</span>, or modern equivalents) as fellow humans with flaws, rather than just objects of hate.<br><br>Essentially, teaching <span class="kw-concept">wisdom</span> involves encouraging a <span class="kw-concept">sense of proportion</span>, showing connections between different fields, fostering <span class="kw-concept">empathy</span>, and promoting <span class="kw-concept">freedom</span> from personal bias within the regular curriculum.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What, according to Russell, is the essence of wisdom? And how can one acquire the very essence? Give reasons for your answer.</summary>
+                        <div>According to <span class="kw-person">Bertrand Russell</span>, the very <span class="kw-concept">essence of wisdom</span> is freeing oneself, as much as possible, from being trapped by personal feelings, immediate surroundings, and selfish desires ("the tyranny of the here and now"). It involves seeing things <span class="kw-concept">impartially</span>, understanding wider perspectives beyond one's own immediate experience, and giving due importance to things remote in time or space.<br><br>One acquires this essence, <span class="kw-person">Russell</span> suggests, through both intellect and feeling. Intellectually, it requires <span class="kw-concept">knowledge</span> and <span class="kw-concept">comprehensiveness</span> – understanding many factors and their connections. Emotionally, it requires developing <span class="kw-concept">empathy</span> and reducing <span class="kw-concept">egoism</span>. We learn to care about broader human goals and the well-being of others, not just ourselves. Education plays a role by teaching <span class="kw-concept">impartiality</span> and the consequences of narrow-mindedness. Experience and reflecting on life also help us gain a better <span class="kw-concept">sense of proportion</span> and detach from purely personal biases.<br><br>Therefore, acquiring <span class="kw-concept">wisdom</span>'s essence is a gradual process of widening one's thoughts and feelings beyond the self, achieved through learning, understanding, <span class="kw-concept">empathy</span>, and seeking fairness.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- Humility Content -->
+        <div id="humility" class="essay-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-emerald-title mt-8">Essay: Humility (by Yuval Noah Harari)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-emerald-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Yuval Noah Harari's</span> essay "Humility" argues that most cultures lack <span class="kw-concept">humility</span>, instead displaying <span class="kw-concept">egoism</span> and illusions of superiority. He contends that basic human traits like <span class="kw-concept">morality</span>, <span class="kw-concept">art</span>, <span class="kw-concept">spirituality</span>, and <span class="kw-concept">creativity</span> are universal, encoded in our DNA, not exclusive to any single group. However, many cultures believe they are the <span class="kw-concept">center of the universe</span> and the originators of history and key innovations (e.g., <span class="kw-person">Greeks</span> tracing history to <span class="kw-person">Homer</span>, <span class="kw-person">Indians</span> claiming ancient nukes, <span class="kw-person">Jews</span> crediting themselves with monotheism, <span class="kw-person">Chinese</span> nationalists asserting primacy). <span class="kw-person">Harari</span> debunks these claims, pointing out that most significant ideologies (like monotheism, originating in <span class="kw-place">Egypt</span>) existed elsewhere before being adopted and aggressively spread by surviving faiths. He highlights the irony that many faiths preach against <span class="kw-concept">egoism</span> yet exhibit extreme <span class="kw-concept">self-centeredness</span> by claiming unique importance or chosen status (like <span class="kw-person">Jews</span> viewing gentiles as less important). Religious intolerance and persecution stem from this lack of <span class="kw-concept">humility</span>. <span class="kw-person">Harari</span> advocates for recognizing the <span class="kw-theme">limits of our knowledge and ability</span> and acknowledging the shared, universal nature of human capabilities as a path towards genuine <span class="kw-concept">humility</span>.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-teal-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                     <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">The essayist calls the readers around the world to puncture the hot-air balloons inflated by their own tribes. What do you think is the reason behind? [2]</summary>
+                        <div>The author asks readers to "puncture the <span class="kw-imagery">hot-air balloons</span>" because each group ("tribe") inflates its own importance, claiming they are the <span class="kw-concept">center of the world</span> and the source of all good things. He wants us to see this pride is wrong (false claims, racism). We need <span class="kw-concept">humility</span> to recognize that no single group is superior and to stop these conflicts.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How do the Hindu nativists oppose the claim of Chinese nationalists about human history and civilization? [2]</summary>
+                        <div><span class="kw-person">Hindu nativists</span> oppose the <span class="kw-person">Chinese</span> claims by saying that great inventions like airplanes and nuclear bombs were actually created by <span class="kw-person">ancient sages</span> in <span class="kw-place">India</span> long before anyone in <span class="kw-place">China</span> or the West. They argue that <span class="kw-place">India</span>, not <span class="kw-place">China</span>, is the true origin of advanced <span class="kw-concept">knowledge</span> and civilization, dismissing <span class="kw-person">Chinese</span> achievements as less important or original.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Discuss the statement "You are not the center of the world" with reference to the essay, Humility.</summary>
+                        <div>The essay "Humility" argues strongly against the idea that any one group is the "<span class="kw-concept">center of the world</span>." <span class="kw-person">Harari</span> shows how many cultures (<span class="kw-person">Greeks</span>, <span class="kw-person">Chinese</span>, <span class="kw-person">Hindus</span>, <span class="kw-person">Jews</span>, <span class="kw-person">Muslims</span>, etc.) all wrongly believe their history is the most important and their culture is the origin of everything good. He says this is just <span class="kw-concept">pride</span> and <span class="kw-concept">egoism</span>. True <span class="kw-concept">humility</span> means realizing we are all just part of a larger human story.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What makes the author conclude that morality, art, spirituality and creativity are universal human abilities embedded in our DNA? Give your opinion. [2]</summary>
+                        <div>The author concludes these abilities are <span class="kw-concept">universal</span> because they appear in cultures all over the world, even very old ones from the <span class="kw-time">Stone Age</span>, long before today's nations or religions existed. Since these traits are found everywhere and are so old, he believes they must be basic parts of being human ("<span class="kw-concept">embedded in our DNA</span>"), not invented by any one specific group later on. (Opinion: This seems reasonable, as these traits are fundamental to human societies everywhere).</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the universal human abilities according to Harari? [2]</summary>
+                        <div>According to <span class="kw-person">Harari</span>, the <span class="kw-concept">universal human abilities</span> that are part of our basic nature (<span class="kw-concept">embedded in our DNA</span>) are <span class="kw-concept">morality</span> (knowing right from wrong), <span class="kw-concept">art</span> (creating beauty), <span class="kw-concept">spirituality</span> (seeking meaning beyond the physical), and <span class="kw-concept">creativity</span> (making new things and ideas).</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What do pious Muslims believe about human history?</summary>
+                        <div><span class="kw-person">Pious Muslims</span> generally believe that history before the <span class="kw-person">Prophet Muhammad</span> and the revelation of the <span class="kw-concept">Quran</span> is mostly irrelevant or unimportant. For them, true history revolves around the <span class="kw-person">Muslim community</span> (<span class="kw-concept">ummah</span>) that started with <span class="kw-person">Muhammad</span>. Some exceptions exist, like Turkish or Egyptian nationalists who value their pre-Islamic past.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What did the Aztecs firmly believe about the universe?</summary>
+                        <div>The <span class="kw-person">Aztecs</span> firmly believed that the universe depended on them. They thought that if they did not perform <span class="kw-theme">human sacrifices</span> every year, the sun would not rise, and the whole universe would fall apart (disintegrate). This shows their belief that their rituals were essential for keeping the cosmos working.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What does the essay tell us about the conflicting histories of human civilization?</summary>
+                        <div>The essay tells us that the history of human civilization is full of conflicts because almost every group believes their history is the most important and that they are the source of all major achievements. Each group tells a story making themselves the <span class="kw-concept">center of the world</span>, often ignoring or downplaying others. This <span class="kw-concept">pride</span> and <span class="kw-concept">egoism</span> leads to constant arguments and conflicts over whose history is "true" or "superior."</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">How do Hindu nationalists refute the Chinese claim that human history really began with the yellow emperor and the Xia and Shang Dynasties? [5]</summary>
+                        <div>In <span class="kw-person">Yuval Noah Harari's</span> "Humility," he explains how <span class="kw-person">Hindu nationalists</span> strongly reject the <span class="kw-person">Chinese</span> claim to being the originators of history and major inventions.<br><br>While <span class="kw-person">Chinese nationalists</span> say history began with their ancient emperors and dynasties, and that others copied their breakthroughs, <span class="kw-person">Hindu nationalists</span> argue the opposite. They claim that key modern technologies, such as <span class="kw-imagery">airplanes</span> and even <span class="kw-imagery">nuclear bombs</span>, were actually invented thousands of years ago by <span class="kw-person">ancient sages</span> living in the <span class="kw-place">Indian subcontinent</span>. They name specific figures like <span class="kw-person">Maharishi Bhardwaj</span> for rockets and <span class="kw-person">Acharya Kanad</span> for atomic theory. They believe these <span class="kw-place">Indian</span> achievements happened long before famous <span class="kw-person">Chinese</span> or <span class="kw-person">Greek</span> thinkers. By stating that <span class="kw-place">India</span> had such advanced <span class="kw-concept">knowledge</span> in ancient times, they are refuting the <span class="kw-person">Chinese</span> idea of being the primary source of civilization and claiming that honor for <span class="kw-place">India</span> instead.<br><br>This highlights the common pattern discussed in the essay: each group trying to prove its own history is the oldest and most important.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you agree with the author's view that history has been a major debatable issue in the present world? Give your opinion.</summary>
+                        <div>Yes, I strongly agree with <span class="kw-person">Yuval Noah Harari's</span> view that <span class="kw-concept">history</span> is a major debatable issue today. The essay gives many examples showing this is true.<br><br>We see constant arguments between nations and cultural groups about who invented what first, whose civilization is older or superior, and whose version of past events is correct. Examples like the <span class="kw-person">Chinese</span> versus <span class="kw-person">Hindu</span> claims about ancient inventions, or different groups (<span class="kw-person">Greeks</span>, <span class="kw-person">Jews</span>, <span class="kw-person">Muslims</span>) believing they are the <span class="kw-concept">center of the world</span>, show how deep these debates run. This isn't just academic; these historical arguments often fuel present-day nationalism, <span class="kw-concept">pride</span>, political conflicts, and sometimes even racism. People use <span class="kw-concept">history</span> to justify their group's importance or claims against others.<br><br>Because <span class="kw-concept">history</span> shapes identity and is used to support modern beliefs and politics, it continues to be a source of intense debate and conflict around the world, just as <span class="kw-person">Harari</span> describes.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- Human Rights and the Age of Inequality Content -->
+         <div id="human-rights-inequality" class="essay-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-emerald-title mt-8">Essay: Human Rights and the Age of Inequality (by Samuel Moyn)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-emerald-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p><span class="kw-person">Samuel Moyn</span> argues that there's a drastic mismatch between the global crisis of <span class="kw-theme">inequality</span> and the current <span class="kw-concept">human rights</span> movement, which is not equipped to address it effectively. He begins with the parable of <span class="kw-person">King Croesus</span>, wealthy but unwilling to spend his money to end his people's suffering, as a metaphor for the modern world's unequal distribution of resources despite stated ideals. While <span class="kw-concept">Human Rights Day</span> (<span class="kw-time">Dec 10th</span>) is celebrated, little progress is made on <span class="kw-concept">distributive equality</span>. <span class="kw-person">Moyn</span> traces the history, noting the <span class="kw-time">post-WWII</span> "heroic age" of national welfare states and <span class="kw-person">Roosevelt</span>'s "Second Bill of Rights" (focused on socio-economic security) which ultimately failed to establish global <span class="kw-concept">equality</span>, partly due to <span class="kw-time">Cold War</span> partisanship. He argues that while <span class="kw-concept">human rights</span> documents claim equal rights, these are meaningless without addressing the underlying socio-political and economic structures that perpetuate <span class="kw-theme">inequality</span>. Achieving fair distribution of wealth and resources requires radical movements, which seem impractical today. <span class="kw-person">Moyn</span> concludes that the current <span class="kw-concept">human rights</span> regime focuses on <span class="kw-theme">sufficiency</span> (a basic floor) rather than <span class="kw-concept">equality</span>, leaving the world like <span class="kw-person">Croesus</span>'s: the rich enjoy maximum benefits while the poor have only illusions. The <span class="kw-concept">human rights</span> remedy needs a supplement focused specifically on tackling <span class="kw-theme">material inequality</span>.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-teal-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                     <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                      <details>
+                        <summary class="text-lg md:text-xl">What is the significance of universal Declaration Human Rights ?</summary>
+                        <div>The <span class="kw-concept">Universal Declaration of Human Rights</span> (<span class="kw-concept">UDHR</span>) is significant because it's the first global statement of basic <span class="kw-concept">rights</span> and <span class="kw-concept">freedoms</span> that all people should have, just because they are human. It sets a common standard for <span class="kw-concept">fairness</span>, <span class="kw-concept">dignity</span>, and <span class="kw-concept">equality</span>. It acts as a foundation for international <span class="kw-concept">human rights</span> law and inspires people to fight for <span class="kw-concept">freedom</span> and justice worldwide.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What kind of society is Utopian society? Can we imagine such society in modern world?</summary>
+                        <div>A <span class="kw-concept">Utopian society</span> is an imagined, perfect place where everyone is happy, and there are no problems like <span class="kw-theme">poverty</span> or suffering. In the essay, <span class="kw-person">Croesus's world</span>, where everyone has basic needs met, is presented as a kind of <span class="kw-concept">utopia</span>. However, the essay argues we cannot truly imagine such a society today because massive <span class="kw-theme">inequality</span> still exists, making the idea of a perfectly fair world seem impossible in reality.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Is another human rights movement necessary? Why?</summary>
+                        <div>The author, <span class="kw-person">Samuel Moyn</span>, suggests another kind of <span class="kw-concept">human rights</span> movement might be necessary. He thinks the current movement is good at fighting bad government actions (like torture) but not good at fighting <span class="kw-theme">economic inequality</span>. Because huge <span class="kw-theme">inequality</span> remains a big problem, a new movement focused specifically on fair distribution of wealth might be needed, though it would be very difficult to create.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why is the Universal Declaration of Human Rights important to you?</summary>
+                        <div>The <span class="kw-concept">Universal Declaration of Human Rights</span> is important to me because it says everyone deserves basic <span class="kw-concept">rights</span> and respect, no matter who they are or where they live. It promotes <span class="kw-concept">fairness</span>, <span class="kw-concept">equality</span>, and <span class="kw-concept">dignity</span> for all people. It gives hope and a standard to aim for, helping protect individuals from unfair treatment and ensuring basic <span class="kw-concept">freedoms</span> are recognized globally.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the facts that have been missed in Roosevelt's call for a "second Bill of Rights"?</summary>
+                        <div>According to <span class="kw-person">Moyn</span>, three important facts were missed about <span class="kw-person">Roosevelt's</span> "<span class="kw-concept">second Bill of Rights</span>". First, it was <span class="kw-place">America</span> joining a European idea (welfare state) late. Second, <span class="kw-person">Roosevelt's</span> real goal aimed higher than just basic help; he wanted to limit "special privileges for the few" (a ceiling on <span class="kw-theme">inequality</span>). Third, although he hoped it would be global, it was planned to work only nation by nation.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">In what way is the Universal Declaration of Human Rights important? Give reasons. [2]</summary>
+                        <div>The <span class="kw-concept">Universal Declaration of Human Rights</span> is important mainly because it sets a global standard for how people should be treated. It clearly lists basic <span class="kw-concept">rights</span> (like life, <span class="kw-concept">freedom</span> from slavery, free speech) that every person has. This gives people everywhere a tool to demand <span class="kw-concept">fairness</span>, <span class="kw-concept">justice</span>, and <span class="kw-concept">dignity</span> from their governments and societies.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is the goal of the Universal Declaration of Human Rights ? Why is it important for an individual ?</summary>
+                        <div>The main goal of the <span class="kw-concept">Universal Declaration of Human Rights</span> (<span class="kw-concept">UDHR</span>), created by the United Nations in 1948, is to state clearly the basic <span class="kw-concept">rights</span> and <span class="kw-concept">freedoms</span> that belong to every single human being in the world. It lists key values like <span class="kw-concept">fairness</span>, <span class="kw-concept">dignity</span>, <span class="kw-concept">equality</span>, and respect. Its aim is to be a "common standard of achievement for all peoples and nations" and the foundation for <span class="kw-concept">freedom</span>, <span class="kw-concept">justice</span>, and peace.<br><br>This is very important for individuals because it gives them official recognition of their worth and basic needs. It says that no matter who you are, you have the right to life, liberty, safety, <span class="kw-concept">freedom</span> from torture, <span class="kw-concept">freedom</span> of thought and expression, and social protection. It empowers individuals to know their <span class="kw-concept">rights</span> and to demand them if they are being treated unfairly by governments or others. It provides a shared language and standard for fighting against <span class="kw-theme">injustice</span> anywhere.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Summarize the essay saying what has mainly been emphasized there?</summary>
+                        <div><span class="kw-person">Samuel Moyn's</span> essay "<span class="kw-concept">Human Rights</span> and the Age of <span class="kw-theme">Inequality</span>" mainly emphasizes the serious gap between the goals of the <span class="kw-concept">human rights</span> movement and the growing problem of global <span class="kw-theme">economic inequality</span>.<br><br><span class="kw-person">Moyn</span> starts with a story (parable) about a rich <span class="kw-person">king</span>, <span class="kw-person">Croesus</span>, who provides basic welfare but keeps all the wealth, creating huge <span class="kw-theme">inequality</span>. He compares this to our world, where <span class="kw-concept">human rights</span> focus on preventing bad things like torture and ensuring basic needs (a "floor of protection") but do little to challenge the massive gap between the rich and poor. He argues that the <span class="kw-concept">Universal Declaration of Human Rights</span> itself doesn't demand <span class="kw-theme">economic equality</span>. He traces how national welfare programs after WWII did aim for more <span class="kw-concept">equality</span>, but the international <span class="kw-concept">human rights</span> movement that became popular later isn't designed or equipped to fight for fair distribution of wealth.<br><br>The essay strongly emphasizes that <span class="kw-concept">human rights</span>, as they exist now, are simply not enough to solve the problem of <span class="kw-theme">inequality</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain your views on 'civil liberties' in Nepal based on your understanding of Croseus' ideas.</summary>
+                        <div>Based on <span class="kw-person">Croesus</span>'s ideas as presented by <span class="kw-person">Moyn</span>, we can look at <span class="kw-concept">civil liberties</span> in <span class="kw-place">Nepal</span>. <span class="kw-person">Croesus</span>'s world ensures basic <span class="kw-concept">civil liberties</span> – <span class="kw-concept">freedom</span> from repression, police states, torture – alongside a basic welfare floor, but allows extreme <span class="kw-theme">inequality</span>.<br><br>In <span class="kw-place">Nepal</span>, the constitution guarantees many <span class="kw-concept">civil liberties</span> like <span class="kw-concept">freedom</span> of speech, assembly, religion, and protection from unlawful detention or torture. In theory, <span class="kw-place">Nepal</span> respects these basic <span class="kw-concept">rights</span> more than some countries might. However, like many places, <span class="kw-place">Nepal</span> also struggles with significant <span class="kw-theme">economic inequality</span>, <span class="kw-theme">poverty</span>, and unequal access to resources and justice. So, in some ways, the situation mirrors <span class="kw-person">Croesus</span>'s world: basic <span class="kw-concept">civil liberties</span> are officially recognized and sometimes protected, but this exists alongside deep social and economic gaps. The <span class="kw-concept">human rights</span> framework, while providing important protections, doesn't seem to effectively challenge or reduce the underlying <span class="kw-theme">inequality</span>, which affects how meaningful those <span class="kw-concept">liberties</span> truly are for many poor or marginalized Nepalis.<br><br>My view is that while <span class="kw-place">Nepal</span> has made progress on <span class="kw-concept">civil liberties</span>, like in <span class="kw-person">Croesus</span>'s world, these <span class="kw-concept">liberties</span> alone don't ensure true <span class="kw-concept">equality</span> or well-being for everyone when large economic disparities persist.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Essay Analysis | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+    <script>
+        // Get references to the sections
+        const essaySelectionSection = document.getElementById('essay-selection');
+        const essayContentDivs = document.querySelectorAll('.essay-content');
+
+        // Function to show a specific essay's content
+        function showEssay(essayId) {
+            // Hide the selection section
+            essaySelectionSection.style.display = 'none';
+
+            // Hide all essay content sections first
+            essayContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selected essay's content section
+            const selectedEssay = document.getElementById(essayId);
+            if (selectedEssay) {
+                selectedEssay.style.display = 'block';
+                window.scrollTo(0, 0); // Scroll to top
+            }
+        }
+
+        // Function to show the selection section and hide essay content
+        function showSelection() {
+            // Hide all essay content sections
+            essayContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selection section
+            essaySelectionSection.style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        // Initially, ensure only the selection is visible (CSS handles this by default)
+        // showSelection(); // Call this if you want JS to explicitly set the initial state
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Chemistry Study Tool: Carboxylic Acids</title>
+    <style>
+        /* Layout Fixes for the "Old Method" */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin: 2rem auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-inner {
+            position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; border-radius: 0.5rem; background-color: var(--card-bg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg); 
+            background-color: var(--light-bg);
+            align-items: flex-start; text-align: left;
+        }
+        .perspective { perspective: 1000px; }
+        .flashcard-container { width: 100%; height: 300px; margin-bottom: 2rem; }
+
+        /* MCQ Styles */
+        .mcq-option-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .mcq-option-button:hover:not(:disabled) {
+            background-color: var(--light-bg);
+            transform: translateX(5px);
+        }
+        .selected-option {
+            border-color: var(--primary-color) !important;
+            background-color: var(--light-bg) !important;
+        }
+        .correct-option {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .incorrect-option {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+
+        .feedback-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        code { background-color: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px; font-family: monospace; }
+        .hidden { display: none !important; }
+        
+        /* Flex Alignment */
+        .flex-col-center { display: flex; flex-direction: column; align-items: center; }
+        .gap-3 { gap: 1rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1 class="section-title" style="text-align: center; margin-bottom: 1.5rem;">Chemistry Study Tool: Carboxylic Acids</h1>
+
+        <!-- Mode Selection Area -->
+        <div id="mode-selection" class="mode-selection">
+            <button id="select-flashcard-mode" class="btn" style="background-color: #10b981;">Flashcards</button>
+            <button id="select-mcq-mode" class="btn" style="background-color: #3b82f6;">MCQs</button>
+        </div>
+
+        <!-- Content Display Area -->
+        <div id="content-area" class="hidden">
+
+            <!-- Flashcard View -->
+            <div id="flashcard-view" class="hidden flex-col-center">
+                <div id="card-info" style="margin-bottom: 1rem; font-weight: 500; color: var(--text-secondary);">Card X of Y</div>
+                <div id="card" class="flashcard-container flashcard perspective cursor-pointer" onclick="flipFlashcard()">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p id="card-front-text" style="font-size: 1.2rem; font-weight: 500;"></p>
+                            <span style="font-size: 0.8rem; color: #94a3b8; margin-top: 2rem;">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                             <p id="card-back-answer" style="font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;"></p>
+                             <p id="card-back-explanation" style="font-size: 0.95rem; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="flashcard-controls" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;">
+                    <button id="fc-prev-button" class="btn" style="background-color: #94a3b8;">Previous</button>
+                    <button id="fc-flip-button" class="btn" style="background-color: #f59e0b;">Flip Card</button>
+                    <button id="fc-next-button" class="btn" style="background-color: #94a3b8;">Next</button>
+                    <button id="fc-shuffle-button" class="btn" style="background-color: #8b5cf6;">Shuffle</button>
+                    <button id="fc-restart-button" class="btn" style="background-color: #ef4444;">Restart</button>
+                </div>
+            </div>
+
+            <!-- MCQ View -->
+            <div id="mcq-view" class="hidden flex-col-center">
+                <div id="mcq-progress-indicator" style="margin-bottom: 1rem; color: var(--text-secondary);">Question X of Y</div>
+                <div id="mcq-question-text" style="font-size: 1.1rem; font-weight: 500; padding: 1.5rem; background-color: var(--light-bg); border-radius: var(--border-radius); width: 100%; margin-bottom: 1.5rem;"></div>
+                <div id="mcq-options-container" style="width: 100%;"></div>
+                
+                <div id="mcq-feedback-explanation" class="feedback-box hidden" style="width: 100%;">
+                    <strong id="mcq-feedback-status" style="display: block; margin-bottom: 0.5rem; font-size: 1.1rem;"></strong>
+                    <span id="mcq-explanation-text"></span>
+                </div>
+
+                <div id="mcq-navigation" style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button id="mcq-check-button" class="btn" style="background-color: #10b981;">Check Answer</button>
+                    <button id="mcq-next-button" class="btn hidden">Next Question</button>
+                </div>
+                <div id="mcq-score-container" style="margin-top: 1rem; font-weight: 600;">Score: 0 / 0</div>
+
+                <div id="mcq-results-container" class="hidden" style="text-align: center; margin-top: 2rem;">
+                     <h2>Quiz Complete!</h2>
+                     <p id="mcq-final-score" style="margin: 1rem 0; font-size: 1.2rem;"></p>
+                     <button id="mcq-restart-button" class="btn">Restart Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Educational Resources | Chemistry Tool</p>
+    </footer>
+
+    <script>
+        const studyData = [
+            { id: 1, term: "CH₃COOH --(SOCl₂)--> ?", answer: "Ethanoyl chloride", explanation: "SOCl₂ converts carboxylic acids (-COOH) to acid chlorides (-COCl).", options: ["Ethanal", "Ethanoyl chloride", "Ethanamide", "Chloroethane"] },
+            { id: 2, term: "Ethanoyl chloride --(H₂/Pd/BaSO₄)--> ?", answer: "Ethanal", explanation: "Rosenmund Reduction: Acid chloride reduced to aldehyde using H₂/Pd/BaSO₄.", options: ["Ethanol", "Ethanoic acid", "Ethene", "Ethanal"] },
+            { id: 3, term: "Reaction name for RCOCl → RCHO using H₂/Pd/BaSO₄?", answer: "Rosenmund Reduction", explanation: "Specific name for catalytic hydrogenation of acid chlorides to aldehydes.", options: ["Wolf-Kishner", "Clemmensen", "Rosenmund Reduction", "Hofmann Reduction"] },
+            { id: 4, term: "Ethanal --(HCN)--> ?", answer: "Ethanal cyanohydrin (2-Hydroxypropanenitrile)", explanation: "HCN adds across the C=O of aldehydes/ketones forming cyanohydrins.", options: ["Acetic acid cyanohydrin", "Propanoic acid", "Ethanal cyanohydrin (2-Hydroxypropanenitrile)", "Lactic acid"] },
+            { id: 5, term: "Ethanal cyanohydrin --(H₂O/H⁺)--> ?", answer: "Lactic acid (2-Hydroxypropanoic acid)", explanation: "Acidic hydrolysis converts the nitrile group (-CN) to a carboxylic acid group (-COOH).", options: ["Propanamide", "Lactic acid (2-Hydroxypropanoic acid)", "Propanoic acid", "Alanine"] },
+            { id: 6, term: "Product when Ethanal is treated with N₂H₄/KOH/Ethylene glycol?", answer: "Ethane", explanation: "Wolf-Kishner reduction fully reduces C=O of aldehydes/ketones to CH₂/CH₃.", options: ["Ethanol", "Ethane", "Ethene", "Ethanoic acid"] },
+            { id: 7, term: "Common reagent to convert RCOOH to RCOCl?", answer: "PCl₅ or SOCl₂", explanation: "PCl₅ and SOCl₂ are standard reagents for this conversion.", options: ["Cl₂ / Red P", "PCl₅ or SOCl₂", "HCl (conc.)", "NaCl"] },
+            { id: 8, term: "RCOCl + NH₃ (ammonia) yields?", answer: "An amide (RCONH₂)", explanation: "Ammonia acts as a nucleophile, forming an amide.", options: ["An amine (RNH₂)", "An amide (RCONH₂)", "A nitrile (RCN)", "A carboxylic acid (RCOOH)"] },
+            { id: 9, term: "Ethanoic acid heated with P₂O₅ yields?", answer: "Ethanoic anhydride", explanation: "P₂O₅ is a dehydrating agent, forming anhydride from two acid molecules.", options: ["Ethanal", "Ethanoyl chloride", "Ethanamide", "Ethanoic anhydride"] },
+            { id: 10, term: "Ethanoic anhydride ((CH₃CO)₂O) reduced with LiAlH₄ yields?", answer: "Ethanol", explanation: "LiAlH₄ reduces anhydrides to the corresponding primary alcohol.", options: ["Ethanoic acid", "Ethanal", "Ethanol", "Ethane"] },
+            { id: 11, term: "Reaction: Propanamide --(Br₂/KOH)--> Ethanamine?", answer: "Hofmann Bromamide Degradation", explanation: "Converts primary amide to primary amine with one less carbon.", options: ["Rosenmund Reduction", "Stephen Reaction", "Hofmann Bromamide Degradation", "Curtius Rearrangement"] },
+            { id: 12, term: "Primary amine (RNH₂) + HNO₂ (0-5°C) yields?", answer: "An alcohol (ROH)", explanation: "Primary aliphatic amines react with nitrous acid to form alcohols and N₂ gas.", options: ["A secondary amine", "A nitrile", "An alcohol (ROH)", "An amide"] },
+            { id: 13, term: "Ethanoyl chloride (CH₃COCl) + Ethanol (CH₃CH₂OH) yields?", answer: "Ethyl ethanoate (Ethyl acetate)", explanation: "Esterification: Alcohol attacks acid chloride to form an ester.", options: ["Ethanoic anhydride", "Diethyl ether", "Ethyl ethanoate (Ethyl acetate)", "Ethanal"] },
+            { id: 14, term: "Hell-Volhard-Zelinsky (HVZ) reaction treats carboxylic acid (with α-H) with?", answer: "Br₂ or Cl₂ in presence of Red Phosphorus", explanation: "Introduces halogen (Br/Cl) at the alpha-carbon.", options: ["LiAlH₄", "HCN", "Br₂ or Cl₂ in presence of Red Phosphorus", "Conc. H₂SO₄"] },
+            { id: 15, term: "HVZ reaction (Cl₂/Red P) on Ethanoic acid yields?", answer: "Chloroethanoic acid (ClCH₂COOH)", explanation: "Substitutes an alpha-hydrogen with chlorine.", options: ["Chloroethane", "Ethanoyl chloride", "Chloroethanoic acid (ClCH₂COOH)", "Dichloroethanoic acid (Cl₂CHCOOH)"] },
+            { id: 16, term: "Convert Ethanoyl chloride to Methanol using:", answer: "1. NH₃ 2. Br₂/NaOH 3. HNO₂", explanation: "Sequence: Acid chloride -> Amide -> Amine (one C less) -> Alcohol.", options: ["1. LiAlH₄", "1. H₂O 2. LiAlH₄", "1. NH₃ 2. Br₂/NaOH 3. HNO₂", "1. CH₃ONa 2. H₂O/H⁺"] },
+            { id: 17, term: "Hydrolysis of an amide (RCONH₂) yields:", answer: "Carboxylic acid and ammonia (or salts)", explanation: "Breaks the amide bond, reforming acid and ammonia/amine components.", options: ["An amine and water", "Carboxylic acid and ammonia (or salts)", "An alcohol and ammonia", "An aldehyde and ammonia"] },
+            { id: 18, term: "Heating Calcium acetate strongly yields?", answer: "Propanone (Acetone)", explanation: "Dry distillation of calcium acetate gives acetone and CaCO₃.", options: ["Ethane", "Ethanal", "Propanone (Acetone)", "Ethanol"] }
+        ];
+
+        let currentMode = null;
+        let currentFlashcardIndex = 0;
+        let currentMCQIndex = 0;
+        let mcqScore = 0;
+        let selectedMCQAnswerText = null;
+        let currentMCQOrder = [...studyData];
+        let currentFlashcardOrder = [...studyData];
+
+        const flashcardViewEl = document.getElementById('flashcard-view');
+        const mcqViewEl = document.getElementById('mcq-view');
+        const contentAreaEl = document.getElementById('content-area');
+
+        function setMode(mode) {
+            currentMode = mode;
+            contentAreaEl.classList.remove('hidden');
+            flashcardViewEl.classList.add('hidden');
+            mcqViewEl.classList.add('hidden');
+
+            if (mode === 'flashcard') {
+                flashcardViewEl.classList.remove('hidden');
+                currentFlashcardIndex = 0;
+                loadFlashcard();
+            } else {
+                mcqViewEl.classList.remove('hidden');
+                currentMCQIndex = 0;
+                mcqScore = 0;
+                currentMCQOrder = shuffleArray([...studyData]);
+                loadMCQ();
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadFlashcard() {
+            const q = currentFlashcardOrder[currentFlashcardIndex];
+            document.getElementById('card-info').textContent = `Card ${currentFlashcardIndex + 1} of ${studyData.length}`;
+            document.getElementById('card-front-text').textContent = q.term;
+            document.getElementById('card-back-answer').textContent = q.answer;
+            document.getElementById('card-back-explanation').textContent = q.explanation;
+            document.getElementById('card').classList.remove('flipped');
+            
+            document.getElementById('fc-prev-button').disabled = currentFlashcardIndex === 0;
+            document.getElementById('fc-next-button').disabled = currentFlashcardIndex === studyData.length - 1;
+        }
+
+        function flipFlashcard() { document.getElementById('card').classList.toggle('flipped'); }
+
+        function loadMCQ() {
+            if (currentMCQIndex >= currentMCQOrder.length) {
+                showMCQResults();
+                return;
+            }
+            const q = currentMCQOrder[currentMCQIndex];
+            document.getElementById('mcq-progress-indicator').textContent = `Question ${currentMCQIndex + 1} of ${studyData.length}`;
+            document.getElementById('mcq-question-text').textContent = q.term;
+            document.getElementById('mcq-feedback-explanation').classList.add('hidden');
+            document.getElementById('mcq-check-button').classList.remove('hidden');
+            document.getElementById('mcq-next-button').classList.add('hidden');
+            document.getElementById('mcq-check-button').disabled = true;
+            
+            const optionsContainer = document.getElementById('mcq-options-container');
+            optionsContainer.innerHTML = '';
+            
+            const shuffledOptions = shuffleArray([...q.options]);
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'mcq-option-button';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    document.querySelectorAll('.mcq-option-button').forEach(b => b.classList.remove('selected-option'));
+                    btn.classList.add('selected-option');
+                    selectedMCQAnswerText = opt;
+                    document.getElementById('mcq-check-button').disabled = false;
+                };
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkMCQAnswer() {
+            const q = currentMCQOrder[currentMCQIndex];
+            const feedbackBox = document.getElementById('mcq-feedback-explanation');
+            const status = document.getElementById('mcq-feedback-status');
+            const explanation = document.getElementById('mcq-explanation-text');
+            
+            feedbackBox.classList.remove('hidden');
+            explanation.textContent = q.explanation;
+            
+            const buttons = document.querySelectorAll('.mcq-option-button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === q.answer) btn.classList.add('correct-option');
+                else if (btn.textContent === selectedMCQAnswerText) btn.classList.add('incorrect-option');
+            });
+
+            if (selectedMCQAnswerText === q.answer) {
+                mcqScore++;
+                status.textContent = "Correct!";
+                status.style.color = "#10b981";
+            } else {
+                status.textContent = "Incorrect.";
+                status.style.color = "#ef4444";
+            }
+
+            document.getElementById('mcq-score-container').textContent = `Score: ${mcqScore} / ${studyData.length}`;
+            document.getElementById('mcq-check-button').classList.add('hidden');
+            document.getElementById('mcq-next-button').classList.remove('hidden');
+        }
+
+        function showMCQResults() {
+            document.getElementById('mcq-options-container').innerHTML = '';
+            document.getElementById('mcq-results-container').classList.remove('hidden');
+            document.getElementById('mcq-final-score').textContent = `Your final score is ${mcqScore} out of ${studyData.length}.`;
+        }
+
+        // Listeners
+        document.getElementById('select-flashcard-mode').onclick = () => setMode('flashcard');
+        document.getElementById('select-mcq-mode').onclick = () => setMode('mcq');
+        document.getElementById('fc-next-button').onclick = () => { currentFlashcardIndex++; loadFlashcard(); };
+        document.getElementById('fc-prev-button').onclick = () => { currentFlashcardIndex--; loadFlashcard(); };
+        document.getElementById('fc-flip-button').onclick = flipFlashcard;
+        document.getElementById('fc-shuffle-button').onclick = () => { currentFlashcardOrder = shuffleArray([...studyData]); currentFlashcardIndex = 0; loadFlashcard(); };
+        document.getElementById('mcq-check-button').onclick = checkMCQAnswer;
+        document.getElementById('mcq-next-button').onclick = () => { currentMCQIndex++; loadMCQ(); };
+
+        // Initial
+        document.getElementById('mcq-restart-button').onclick = () => setMode('mcq');
+        document.getElementById('fc-restart-button').onclick = () => { currentFlashcardIndex = 0; loadFlashcard(); };
+    </script>
+    <script src="../js/main.js"></script>
+</body>
+</html>

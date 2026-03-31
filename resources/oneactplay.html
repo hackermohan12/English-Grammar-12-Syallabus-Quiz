@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>One Act Play Analysis Collection</title>
+    <style>
+        /* Custom Styles for Enhanced Dark Mode - Replicated from poem.html */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #d1d5db; /* Tailwind gray-300 */
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, summary, .play-select-button { /* Added button to font rule */
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #c4b5fd 0%, #a78bfa 50%, #8b5cf6 100%); /* Violet gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Header Styling - Using a gradient instead of specific image */
+        header {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(55, 48, 163, 0.9) 100%); /* Dark Gray/Indigo gradient */
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+         /* Ensure header content is visible */
+        header > div {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Section Background Gradients - Adjusted slightly for variety */
+        .sunrise-gradient {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.7) 0%, rgba(55, 48, 163, 0.3) 100%);
+        }
+        .sunset-gradient {
+             background: linear-gradient(135deg, rgba(55, 48, 163, 0.3) 0%, rgba(17, 24, 39, 0.7) 100%);
+        }
+
+        /* Content Card Styling */
+        .content-card {
+            background-color: rgba(31, 41, 55, 0.6); /* Tailwind gray-800 with opacity */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 with opacity */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+        }
+
+        /* Details/Summary (Q&A) Styling */
+        details {
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1rem 1.25rem; /* Tailwind p-4 pr-5 */
+            background-color: rgba(55, 65, 81, 0.5); /* Tailwind gray-700 base with opacity */
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif; /* Use Poppins for question text */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            position: relative;
+        }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::before {
+            content: '+';
+            position: absolute;
+            right: 1.25rem; /* Tailwind right-5 */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #9ca3af; /* Tailwind gray-400 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary { background-color: rgba(75, 85, 99, 0.7); } /* Tailwind gray-600 open */
+        details[open] > summary::before { content: '−'; }
+        details > div { /* Q&A Answer Content Styling */
+             padding: 1.25rem; /* Tailwind p-5 */
+             margin-top: 0;
+             border-top: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 separator */
+             background-color: rgba(17, 24, 39, 0.5); /* Tailwind gray-900 darker background */
+             color: #d1d5db; /* Tailwind gray-300 */
+             font-size: 0.95rem;
+        }
+
+        /* Keyword Highlighting Styles - Reused from poem.html */
+        .kw-imagery { color: #f472b6; font-weight: 600; } /* Pink-500 */
+        .kw-theme { color: #34d399; font-weight: 600; } /* Emerald-400 */
+        .kw-concept { color: #60a5fa; font-weight: 600; } /* Blue-400 */
+        .kw-time { color: #fb923c; font-weight: 600; } /* Orange-400 */
+        .kw-person { color: #facc15; font-weight: 600; } /* Yellow-500 */
+        .kw-place { color: #22d3ee; font-weight: 600; } /* Cyan-400 */
+
+
+        /* Section Title Colors - Adjusted slightly */
+        .text-violet-title { color: #c4b5fd; } /* Violet-300 */
+        .text-blue-title { color: #93c5fd; } /* Blue-300 */
+
+        /* Footer Styling */
+        footer {
+            background-color: #1f2937; /* Tailwind gray-800 */
+            border-top: 1px solid #374151; /* Tailwind gray-700 */
+            color: #9ca3af; /* Tailwind gray-400 */
+        }
+
+        /* Styles for Play Selection */
+        #play-selection {
+            text-align: center;
+        }
+        .play-select-button {
+            background-color: rgba(55, 65, 81, 0.7); /* Tailwind gray-700 semi-transparent */
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 border */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin: 0.5rem; /* Tailwind m-2 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block; /* Fit content */
+            backdrop-filter: blur(5px);
+        }
+        .play-select-button:hover {
+            background-color: rgba(75, 85, 99, 0.9); /* Tailwind gray-600 darker on hover */
+            border-color: rgba(110, 121, 134, 0.7); /* Lighter border on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Style for Back Button */
+        .back-button {
+             background-color: rgba(75, 85, 99, 0.7); /* Tailwind gray-600 semi-transparent */
+             border: 1px solid rgba(92, 103, 117, 0.5);
+             color: #e5e7eb;
+             padding: 0.5rem 1rem;
+             border-radius: 0.5rem;
+             margin-top: 1.5rem; /* Tailwind mt-6 */
+             cursor: pointer;
+             transition: all 0.3s ease;
+             font-family: 'Inter', sans-serif; /* Use Inter for button text */
+             font-weight: 600;
+        }
+        .back-button:hover {
+            background-color: rgba(92, 103, 117, 0.9);
+            transform: translateY(-1px);
+        }
+
+        /* Hide content sections by default */
+        .play-content {
+            display: none;
+        }
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="antialiased">
+
+    <header class="min-h-[40vh] md:min-h-[50vh] flex items-center justify-center text-center p-8">
+        <div class="max-w-3xl">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4 gradient-text">One Act Play Analysis</h1>
+            <p class="text-xl md:text-2xl text-gray-100 italic mt-2">A Collection</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-200 leading-relaxed">
+                Select a play below to view its summary and analysis.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6 md:p-10 space-y-16">
+
+        <section id="play-selection" class="p-6 md:p-8 content-card sunrise-gradient">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-8 text-violet-title">Choose a Play</h2>
+            <div id="selection-buttons">
+                <button class="play-select-button" onclick="showPlay('matter-of-husbands')">A Matter of Husbands</button>
+                <button class="play-select-button" onclick="showPlay('facing-death')">Facing Death</button>
+                <button class="play-select-button" onclick="showPlay('the-bull')">The Bull</button>
+            </div>
+        </section>
+
+        <!-- A Matter of Husbands Content -->
+        <div id="matter-of-husbands" class="play-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-violet-title mt-8">Play: A Matter of Husbands (by Ferenc Molnar)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-violet-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>This one-act play features an <span class="kw-person">Earnest Young Woman</span> confronting a <span class="kw-person">Famous Actress</span> (<span class="kw-person">Sara</span>), accusing the <span class="kw-person">actress</span> of having an <span class="kw-theme">affair</span> with her husband, <span class="kw-person">Alfred</span> (a <span class="kw-person">lawyer</span>). The <span class="kw-person">Young Woman</span> presents <span class="kw-concept">evidence</span> like <span class="kw-imagery">flowers</span> sent by <span class="kw-person">Alfred</span> and a <span class="kw-imagery">love letter</span> she found. The <span class="kw-person">Famous Actress</span> initially denies everything but then cleverly twists the <span class="kw-concept">narrative</span>. She convinces the <span class="kw-theme">naive</span> <span class="kw-person">Young Woman</span> that <span class="kw-person">Alfred</span> isn't actually in love with the <span class="kw-person">Actress</span>; rather, he is merely pretending to have an <span class="kw-theme">affair</span> to make his own wife <span class="kw-theme">jealous</span> and win back her affection, a ploy supposedly common among theatre-associated <span class="kw-person">men</span>. The <span class="kw-person">Earnest Young Woman</span>, completely <span class="kw-theme">fooled</span>, realizes her "mistake," apologizes profusely, and leaves relieved. The <span class="kw-concept">ironic twist</span> comes immediately after she exits: the <span class="kw-person">Famous Actress</span> calls out to <span class="kw-person">Alfred</span>, who emerges from her personal <span class="kw-place">bedroom</span> (<span class="kw-place">boudoir</span>), revealing that the <span class="kw-theme">affair</span> was real all along, and the <span class="kw-person">actress</span> masterfully deceived the wife. The play <span class="kw-concept">satirizes</span> <span class="kw-theme">naivety</span>, marital <span class="kw-theme">infidelity</span>, and the <span class="kw-theme">deceptive</span> nature of appearances, especially in the world of theatre.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-blue-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why is the play 'A Matter of Husbands' a play of split personality? [2]</summary>
+                        <div>The play shows a '<span class="kw-concept">split personality</span>' mostly in the <span class="kw-person">Famous Actress</span>. She acts one way (kind, helpful) to the <span class="kw-person">Earnest Young Woman</span>, but her real actions are different (she's having an <span class="kw-theme">affair</span> and hiding the husband). It's like she has two sides: the innocent role she plays and the <span class="kw-theme">deceptive</span> person she really is. This difference makes it seem like a '<span class="kw-concept">split</span>'.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Sketch the character of Famous Actress.</summary>
+                        <div>The <span class="kw-person">Famous Actress</span> is young, beautiful, and well-known. She's a very skilled <span class="kw-person">actress</span> in life, not just on stage. She is <span class="kw-concept">clever</span>, <span class="kw-theme">cunning</span>, and very good at <span class="kw-concept">lying</span> convincingly. She easily <span class="kw-theme">fools</span> the <span class="kw-person">Earnest Young Woman</span> by making up a story to hide her <span class="kw-theme">affair</span> with <span class="kw-person">Alfred</span>. She seems nice but is actually <span class="kw-theme">deceptive</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Briefly describe your impression of the Famous Actress.</summary>
+                        <div>My impression is the <span class="kw-person">Famous Actress</span> is smart and a great <span class="kw-person">actor</span>, but also quite <span class="kw-theme">dishonest</span> and <span class="kw-concept">manipulative</span>. She uses her skills to easily <span class="kw-theme">fool</span> the trusting <span class="kw-person">Earnest Young Woman</span>. While her <span class="kw-concept">cleverness</span> is notable, her actions – having an <span class="kw-theme">affair</span> and <span class="kw-concept">lying</span> so smoothly – show she can be <span class="kw-theme">ruthless</span> and doesn't seem to care much about others' feelings.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Sketch the character of Alfred.</summary>
+                        <div><span class="kw-person">Alfred</span> is the husband of the <span class="kw-person">Earnest Young Woman</span>. He is a <span class="kw-person">lawyer</span>. In the play, he is having an <span class="kw-theme">affair</span> with the <span class="kw-person">Famous Actress</span>, sending her <span class="kw-imagery">flowers</span> and a <span class="kw-imagery">love letter</span>. He seems cowardly because he <span class="kw-theme">hides</span> in the <span class="kw-person">Actress</span>'s <span class="kw-place">bedroom</span> while his wife confronts her. He only appears at the very end when called. His actions start the play's main problem.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How can you say that Famous Actress succeeds at fooling Earnest Young Woman?</summary>
+                        <div>We know the <span class="kw-person">Famous Actress</span> succeeds because the <span class="kw-person">Earnest Young Woman</span> completely believes her fake story. The wife changes from being angry and sad to being happy and relieved. She apologizes to the <span class="kw-person">Actress</span>, kisses her thankfully, and leaves thinking her husband (<span class="kw-person">Alfred</span>) was just playing a trick to win her love back, exactly as the <span class="kw-person">Actress</span> told her.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Shed light on the difference between an ordinary woman and an actress.</summary>
+                        <div>In this play, the <span class="kw-person">ordinary woman</span> (<span class="kw-person">Earnest Young Woman</span>) is shown as simple, <span class="kw-theme">naive</span>, and quick to believe things. She shows her true feelings openly. The <span class="kw-person">Actress</span> (<span class="kw-person">Famous Actress</span>), however, is presented as worldly, <span class="kw-theme">cunning</span>, and able to control her emotions and act a part. She can easily hide the truth and <span class="kw-concept">manipulate</span> situations, using her skills like she would on stage.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why is the play 'A Matter of Husbands' a play of split personality?</summary>
+                        <div>The play seems like it's about '<span class="kw-concept">split personality</span>' because the <span class="kw-person">Famous Actress</span> shows two different faces. To the <span class="kw-person">Earnest Young Woman</span>, she acts innocent and helpful, denying the <span class="kw-theme">affair</span>. But secretly, she is having the <span class="kw-theme">affair</span> and hiding <span class="kw-person">Alfred</span>. This contrast between how she acts and what she is really doing makes her character seem split.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What, according to The Earnest Young Woman, are the indications that her husband has fallen in love with Famous Actress?</summary>
+                        <div>The <span class="kw-person">Earnest Young Woman</span> believes her husband (<span class="kw-person">Alfred</span>) is in love with the <span class="kw-person">Famous Actress</span> because she found <span class="kw-concept">proof</span>. He sends <span class="kw-imagery">flowers</span> regularly to the <span class="kw-person">Actress</span>'s <span class="kw-place">dressing room</span> (she checked with the florist). She also found a <span class="kw-imagery">love letter</span> from <span class="kw-person">Alfred</span> to the <span class="kw-person">Actress</span> on his desk, filled with loving words and "ten thousand kisses."</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What explanation related to the love letter helped the Famous Actress to convince the Earnest Young Woman?</summary>
+                        <div>The <span class="kw-person">Famous Actress</span> convinced the wife about the <span class="kw-imagery">letter</span> by saying it was fake. She claimed <span class="kw-person">Alfred</span> wrote it on purpose and left it for his wife to find, just to make her <span class="kw-theme">jealous</span>. She said husbands often use this trick with <span class="kw-person">actresses</span> to get their wives' attention back. This clever <span class="kw-concept">lie</span> made the <span class="kw-person">Earnest Young Woman</span> believe the <span class="kw-imagery">letter</span> wasn't real.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What role does the 'letter' have in the play 'A Matter of Husbands'?</summary>
+                        <div>The <span class="kw-imagery">letter</span> is very important. First, it's the <span class="kw-person">Earnest Young Woman</span>'s main <span class="kw-concept">proof</span> that her husband (<span class="kw-person">Alfred</span>) is having an <span class="kw-theme">affair</span>. But then, the <span class="kw-person">Famous Actress</span> cleverly uses the <span class="kw-imagery">letter</span> as part of her <span class="kw-concept">lie</span>. She claims <span class="kw-person">Alfred</span> faked it to make his wife <span class="kw-theme">jealous</span>. So the <span class="kw-imagery">letter</span> changes from <span class="kw-concept">proof</span> of truth to a tool for <span class="kw-theme">deception</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What favour does Earnest Young Woman ask from the Famous Actress?</summary>
+                        <div>The <span class="kw-person">Earnest Young Woman</span> asks the <span class="kw-person">Famous Actress</span> one simple, desperate favour: "Give me back my husband!" She believes the <span class="kw-person">Actress</span> has stolen <span class="kw-person">Alfred</span>'s love and directly pleads with her to end the relationship and let him come back to her, showing how upset and straightforward she is.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does Famous Actress try to convince Earnest Young Woman?</summary>
+                        <div>In Ferenc Molnar's 'A Matter of Husbands', the <span class="kw-person">Famous Actress</span> uses several clever steps to convince the very upset <span class="kw-person">Earnest Young Woman</span> that there is no <span class="kw-theme">affair</span>.<br><br>First, she acts surprised and strongly denies knowing about any <span class="kw-imagery">flowers</span> or the <span class="kw-imagery">love letter</span> the wife mentions. Then, instead of just denying, she creates a whole new story. She suggests that the wife's husband, <span class="kw-person">Alfred</span>, is actually playing a "little comedy." She explains (falsely) that many <span class="kw-person">men</span> pretend to have <span class="kw-theme">affairs</span> with <span class="kw-person">famous actresses</span> to make their wives <span class="kw-theme">jealous</span> and win back their affection. She uses the wife's own <span class="kw-concept">proof</span> - the <span class="kw-imagery">letter</span> and <span class="kw-imagery">flowers</span> - as <span class="kw-concept">evidence</span> of this trick, saying <span class="kw-person">Alfred</span> planned for his wife to find them. She acts very sympathetic and understanding, making the wife feel foolish but also relieved.<br><br>By denying, creating a believable fake story, using the wife's <span class="kw-concept">evidence</span> against her, and acting kindly, the <span class="kw-person">Famous Actress</span> completely <span class="kw-theme">fools</span> the <span class="kw-person">Earnest Young Woman</span>.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">According to famous actress, men associated with theatre use the theatre actresses to make their estranged wives jealous so as to woo them back. Do you agree with her argument? Why? Why not?</summary>
+                        <div>In <span class="kw-person">Ferenc Molnar</span>'s 'A Matter of Husbands', the <span class="kw-person">Famous Actress</span> claims that <span class="kw-person">men</span> often use <span class="kw-person">famous actresses</span> like her to make their wives <span class="kw-theme">jealous</span>. She says they pretend to have an <span class="kw-theme">affair</span> just to get their wives' love back. I do not agree with this argument as a real fact presented by the play itself.<br><br>This explanation seems like a very clever <span class="kw-concept">lie</span> created by the <span class="kw-person">Actress</span> in that moment. She invents it to <span class="kw-theme">fool</span> the <span class="kw-person">Earnest Young Woman</span> and hide her actual <span class="kw-theme">affair</span> with <span class="kw-person">Alfred</span>. The play gives us no reason to believe this is a common trick used by many <span class="kw-person">men</span>. Instead, it shows the <span class="kw-person">Actress</span>'s quick thinking and ability to <span class="kw-theme">deceive</span>. The fact that <span class="kw-person">Alfred</span> is physically hiding in her <span class="kw-place">bedroom</span> is strong <span class="kw-concept">proof</span> that the <span class="kw-theme">affair</span> is real, not just a game.<br><br>Therefore, the <span class="kw-person">Actress</span>'s argument isn't meant to be taken as truth about <span class="kw-person">men</span> in general; it's just a perfect example of her <span class="kw-theme">cunning</span> and <span class="kw-concept">manipulation</span> to protect herself.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <!-- Facing Death Content -->
+        <div id="facing-death" class="play-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-violet-title mt-8">Play: Facing Death (by August Strindberg)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-violet-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p><span class="kw-person">Monsieur Durand</span>, a former railroad worker, widower, and pensioner, is <span class="kw-theme">financially ruined</span>. He lives with his three <span class="kw-person">daughters</span>, <span class="kw-person">Adele</span> (27), <span class="kw-person">Annette</span> (24), and <span class="kw-person">Therese</span> (24), in a <span class="kw-place">house</span> they've turned into a <span class="kw-place">lodge</span>. The relationship with his <span class="kw-person">daughters</span>, who largely blame him for their <span class="kw-theme">poverty</span>, is strained. They face mounting debts to the baker, butcher, and grocer. <span class="kw-person">Durand</span> plans a desperate act to secure his <span class="kw-person">daughters</span>' future. He intends to commit <span class="kw-theme">suicide</span> and set the <span class="kw-place">house</span> on <span class="kw-imagery">fire</span> so his <span class="kw-person">daughters</span> can collect 5000 francs from the <span class="kw-concept">fire insurance</span>. Throughout the play, tensions rise: <span class="kw-person">daughters</span> misbehave, <span class="kw-person">Durand</span> reveals secrets about his past (being born in <span class="kw-place">France</span>, fighting against it, how inheritances were lost partly due to his late wife's actions), and confronts their hatred, which was fueled by their mother. He tries to eat rat <span class="kw-imagery">poison</span> out of hunger but survives. In the end, after ensuring his <span class="kw-person">daughter</span> <span class="kw-person">Therese</span> can marry her love (<span class="kw-person">Antonio</span>, a guest) and asking <span class="kw-person">Adele</span> to care for her sisters, he reveals his plan regarding the insurance, drinks <span class="kw-imagery">poison</span>, and the <span class="kw-place">house</span> is seen burning. The play depicts a <span class="kw-person">father's</span> <span class="kw-theme">tragic</span>, heroic <span class="kw-theme">sacrifice</span> driven by love and despair in the face of <span class="kw-theme">financial ruin</span> and familial resentment.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-blue-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">State the relationship between the father and the children.</summary>
+                        <div>The relationship between the <span class="kw-person">father</span> (<span class="kw-person">Monsieur Durand</span>) and his <span class="kw-person">children</span> (especially <span class="kw-person">Therese</span> and <span class="kw-person">Annette</span>) is very bad. The <span class="kw-person">daughters</span> blame him for their <span class="kw-theme">poverty</span> and are often rude and unkind to him. They don't respect him. However, <span class="kw-person">Durand</span> still loves them deeply and worries about their future. He plans to <span class="kw-theme">sacrifice</span> his life for their well-being, showing his hidden love.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Critically examine the relationship between Monsieur Duran and his wife.</summary>
+                        <div>The relationship between <span class="kw-person">Monsieur Durand</span> and his late wife was very poor. He reveals she was careless, wasted their inheritance (paternal and maternal) on things like lottery tickets, and blamed him for their problems. She even taught their <span class="kw-person">daughters</span> to hate him. He claims she lied often, even on her deathbed. He endured this silently to protect her image for the <span class="kw-person">children</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Discuss "Facing Death" as a modern tragedy.</summary>
+                        <div>"Facing Death" is a <span class="kw-concept">modern tragedy</span> because it deals with a common <span class="kw-person">man</span> (<span class="kw-person">Monsieur Durand</span>) facing realistic problems like <span class="kw-theme">financial ruin</span> and <span class="kw-theme">family conflict</span>, not a king facing fate. His downfall comes from social and economic pressures. The ending is unhappy – his <span class="kw-theme">suicide</span>. It shows the harsh realities of life for ordinary people, fitting the style of <span class="kw-concept">modern tragedy</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did Monsieur Durand sell his life insurance?</summary>
+                        <div><span class="kw-person">Monsieur Durand</span> had already sold his life insurance policy before the play begins. He did this likely because he was desperately poor (<span class="kw-theme">bankrupt</span>) and needed money to pay off debts or simply to survive day-to-day. This past action prevents him from using life insurance money to help his <span class="kw-person">daughters</span> after his death.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the different things that one can vision from the dining room?</summary>
+                        <div>From the open door of the <span class="kw-place">dining room</span>, one can see outside: churchyard <span class="kw-imagery">cypress trees</span>, <span class="kw-place">Lake Leman</span> (Lake Geneva), the <span class="kw-place">Savoy Alps</span> (mountains), and the French town of <span class="kw-place">Evian</span> across the lake. This view provides a specific setting in <span class="kw-place">French Switzerland</span> and contrasts the beauty outside with the unhappy situation inside the <span class="kw-place">house</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">State the relationship between the father and the children</summary>
+                        <div>The relationship is strained and unhappy. The <span class="kw-person">children</span> (<span class="kw-person">daughters</span>) resent their <span class="kw-person">father</span> (<span class="kw-person">Durand</span>), blaming him for their <span class="kw-theme">poverty</span> and showing him little respect. They are often rude. The <span class="kw-person">father</span>, despite this, secretly cares deeply for them and plans to <span class="kw-theme">sacrifice</span> himself for their financial future, showing a one-sided, tragic love.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does Monsieur Duran die?</summary>
+                        <div><span class="kw-person">Monsieur Durand</span> dies by committing <span class="kw-theme">suicide</span> at the end of the play. He drinks <span class="kw-imagery">poison</span> after setting his <span class="kw-place">house</span> on <span class="kw-imagery">fire</span>. He does this deliberately so that his <span class="kw-person">daughters</span> can collect money from the <span class="kw-concept">fire insurance</span> policy, hoping it will give them a better future after his death.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What are the different things that one can view from the dining room?</summary>
+                         <div>From the <span class="kw-place">dining room</span>, one can see a view outside the open door. This view includes <span class="kw-imagery">cypress trees</span> from a churchyard, the large lake called <span class="kw-place">Lake Leman</span>, the <span class="kw-place">Savoy Alps</span> mountains in the distance, and the French town of <span class="kw-place">Evian</span>. This shows the <span class="kw-place">house</span> is located near the lake in <span class="kw-place">Switzerland</span>, facing <span class="kw-place">France</span>.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you think it was the right step that Monsieur Durand took at the end of the play? Why, why not? Justify your opinion.</summary>
+                        <div>Whether <span class="kw-person">Monsieur Durand's</span> final step – <span class="kw-theme">suicide</span> and <span class="kw-concept">arson</span> (setting <span class="kw-imagery">fire</span>) – was "right" is very complex. From his point of view, it was the only way left to help his <span class="kw-person">daughters</span>.<br><br>He was completely <span class="kw-theme">bankrupt</span>, unable to even buy bread, and his <span class="kw-person">daughters</span> faced a terrible future. He believed the <span class="kw-concept">fire insurance</span> money (5000 francs) was their only hope. He saw his <span class="kw-theme">sacrifice</span> as an act of desperate fatherly love, trying to provide for them after his death when he failed in life. He endured years of hardship and blame, and perhaps saw this as his final duty. However, <span class="kw-theme">suicide</span> is a tragic choice, leaving his <span class="kw-person">daughters</span> alone with the trauma. Also, <span class="kw-concept">insurance fraud</span> (<span class="kw-concept">arson</span>) is illegal and morally wrong. While we understand his desperation, destroying himself and committing a crime are extreme actions.<br><br>So, while his <span class="kw-concept">motive</span> was love and desperation, the action itself – <span class="kw-theme">suicide</span> and <span class="kw-concept">arson</span> – is tragic and ethically questionable. It wasn't "right" in a moral sense, but understandable given his extreme despair.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you think money is the chief determinant of maintaining relationship between characters in the play 'Facing Death'? Why, why not? Give reasons to support your answer.</summary>
+                        <div>Yes, in <span class="kw-person">August Strindberg's</span> "Facing Death," money (or the lack of it) seems to be the main thing determining relationships between the characters. The family's deep <span class="kw-theme">poverty</span> has ruined their connections.<br><br>The <span class="kw-person">daughters</span>, especially <span class="kw-person">Therese</span> and <span class="kw-person">Annette</span>, openly resent their <span class="kw-person">father</span>, <span class="kw-person">Monsieur Durand</span>, because he cannot provide for them and has wasted their inheritance. Their rudeness and lack of respect stem directly from their <span class="kw-concept">financial hardship</span>. Their attitude changes completely for a moment when <span class="kw-person">Durand</span> hints he might get money; <span class="kw-person">Therese</span> suddenly becomes kind and apologetic. Even the relationship with the lodger, <span class="kw-person">Antonio</span>, ends partly because <span class="kw-person">Durand</span> can no longer afford to keep the <span class="kw-place">house</span> running. The constant worry about bills and lack of food creates tension and bitterness, overshadowing any feelings of love or respect.<br><br>While other issues exist (like the mother's past influence), the constant pressure of <span class="kw-theme">poverty</span> is shown as the primary force driving the characters' negative interactions and behaviour.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Discuss 'Facing Death' as a modern tragedy.</summary>
+                        <div><span class="kw-person">August Strindberg's</span> "Facing Death" fits the definition of a <span class="kw-concept">modern tragedy</span> very well. Unlike classical tragedies about kings and fate, it focuses on an <span class="kw-person">ordinary man</span>, <span class="kw-person">Monsieur Durand</span>, struggling with realistic, contemporary problems.<br><br>The tragedy comes not from gods or fate, but from social and economic pressures. <span class="kw-person">Durand</span> is <span class="kw-theme">bankrupt</span>, a former railway worker facing debts and unable to support his family. His conflict is with <span class="kw-theme">poverty</span> and the breakdown of his <span class="kw-theme">family relationships</span>, which are shown realistically and without romanticism (<span class="kw-concept">naturalism</span>). His <span class="kw-person">daughters</span> resent him, adding to his misery. His final, desperate act is <span class="kw-theme">suicide</span>, driven by a desire to provide for his <span class="kw-person">children</span> through <span class="kw-concept">insurance fraud</span> – a very modern, grim kind of <span class="kw-theme">sacrifice</span>. The play ends unhappily, focusing on the bleak reality of a common person's downfall due to circumstances and character flaws.<br><br>This focus on a common protagonist, realistic problems, social environment, and an unhappy, non-heroic ending makes "Facing Death" a clear example of <span class="kw-concept">modern tragedy</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Discuss the play as a play of a financially bankrupt father who sacrifices his life for his daughter's secured future.</summary>
+                        <div>"Facing Death" centrally portrays the story of <span class="kw-person">Monsieur Durand</span>, a <span class="kw-theme">financially bankrupt</span> <span class="kw-person">father</span> who makes the ultimate <span class="kw-theme">sacrifice</span> – his own life – in a desperate attempt to secure his <span class="kw-person">daughters'</span> future.<br><br>The play establishes <span class="kw-person">Durand</span>'s complete <span class="kw-theme">financial ruin</span> early on; the family cannot even afford bread, and bills are piling up. His <span class="kw-person">daughters</span> face a bleak future with no prospects or dowries. Feeling responsible and seeing no other way out, <span class="kw-person">Durand</span> forms a plan. He ensures the <span class="kw-concept">fire insurance</span> is paid up, knowing it will pay 5000 francs if the <span class="kw-place">house</span> burns. He then deliberately sets the <span class="kw-place">house</span> on <span class="kw-imagery">fire</span> and drinks <span class="kw-imagery">poison</span>, committing <span class="kw-theme">suicide</span>. His goal is purely for his <span class="kw-person">daughters</span> to receive the insurance money after his death, hoping it will save them from <span class="kw-theme">poverty</span> and allow them to live better lives, perhaps enabling <span class="kw-person">Therese</span> to marry <span class="kw-person">Antonio</span>.<br><br>It's a tragic, selfless act born of desperation, highlighting the extreme lengths a loving, albeit failed, <span class="kw-person">father</span> might go to provide for his <span class="kw-person">children</span> when trapped by <span class="kw-theme">bankruptcy</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How can you say that 'Facing Death' is a modern tragedy?</summary>
+                        <div>"Facing Death" is a <span class="kw-concept">modern tragedy</span> because it shifts away from ancient tragic themes of fate and noble heroes. Instead, it presents an <span class="kw-person">ordinary man</span>, <span class="kw-person">Monsieur Durand</span>, as the central figure. His suffering doesn't come from gods but from realistic, modern problems: <span class="kw-theme">financial bankruptcy</span>, social pressure, and difficult <span class="kw-theme">family relationships</span>. The play uses <span class="kw-concept">realism</span> and <span class="kw-concept">naturalism</span> to show the harshness of his situation. His final act, <span class="kw-theme">suicide</span> combined with <span class="kw-concept">insurance fraud</span>, is a grim, unheroic solution driven by desperation, not noble destiny. The unhappy ending focuses on the bleak downfall of a common individual crushed by his circumstances.<br><br>This focus on an ordinary protagonist, realistic social/economic problems, and a bleak, non-redemptive ending are key features that define it as a <span class="kw-concept">modern tragedy</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the sacrifice made by Monsieur Duran to ensure the well being of his three daughters?</summary>
+                        <div><span class="kw-person">Monsieur Durand</span> makes the ultimate <span class="kw-theme">sacrifice</span> for his three <span class="kw-person">daughters</span> by taking his own life in a carefully planned way. Facing complete <span class="kw-theme">bankruptcy</span> and knowing his <span class="kw-person">daughters</span> have no future prospects, he decides to use the <span class="kw-concept">fire insurance</span> on their <span class="kw-place">house</span>. He secretly plans to burn down the <span class="kw-place">house</span> and then commit <span class="kw-theme">suicide</span> by drinking <span class="kw-imagery">poison</span>. He believes that after his death, his <span class="kw-person">daughters</span> will receive 5000 francs from the insurance payout. He hopes this money will secure their well-being, perhaps allowing <span class="kw-person">Therese</span> to marry and <span class="kw-person">Adele</span> to care for <span class="kw-person">Annette</span>. He endures their unkindness and hides his plan (except from <span class="kw-person">Adele</span>) to make his <span class="kw-theme">sacrifice</span> effective.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What do you think would have happened if Mr. Durand had not committed suicide ? What life options would you see in front of Mr. Durand?</summary>
+                        <div>If <span class="kw-person">Monsieur Durand</span> had not committed <span class="kw-theme">suicide</span>, his and his <span class="kw-person">daughters</span>' lives would likely have become even harder. They were already <span class="kw-theme">bankrupt</span>, facing eviction, and unable to buy food.<br><br>Without the insurance money, their options were grim. They might have become homeless. The <span class="kw-person">daughters</span>, as <span class="kw-person">Durand</span> feared and their mother apparently threatened, might have been forced into prostitution or other desperate acts to survive. <span class="kw-person">Durand</span> himself had few choices; perhaps seeking charity, trying to find manual labour despite his age and poor health, or relying completely on <span class="kw-person">Adele</span>. It's unlikely <span class="kw-person">Antonio</span> would have stayed to marry <span class="kw-person">Therese</span> without any money. Their situation was a dead end, and without <span class="kw-person">Durand</span>'s drastic action, extreme <span class="kw-theme">poverty</span> and social decline seemed almost certain.<br><br>His <span class="kw-theme">suicide</span>, while tragic, was seen by him as the only way to provide any option other than utter destitution for his <span class="kw-person">daughters</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Sketch the character of Monsieur Durand.</summary>
+                        <div><span class="kw-person">Monsieur Durand</span> is the tragic central character of "Facing Death." He is an <span class="kw-person">ordinary man</span>, a former railway worker and now a widower running a failing boarding <span class="kw-place">house</span>. He is <span class="kw-theme">financially ruined</span> and deeply troubled by his inability to provide for his three <span class="kw-person">daughters</span>. He appears worn down by years of hardship and the lack of respect from his <span class="kw-person">children</span>. Despite their <span class="kw-theme">cruelty</span>, he shows deep, hidden love and concern for their future, revealing his past secrets only to justify his final <span class="kw-theme">sacrifice</span>. He endures suffering silently (like his wife's blame and his <span class="kw-person">daughters'</span> unkindness). He is ultimately <span class="kw-theme">desperate</span> enough to commit <span class="kw-theme">suicide</span> and <span class="kw-concept">arson</span> in a misguided attempt to secure their financial well-being, making him a complex figure of failure, love, and tragic sacrifice.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+         <!-- The Bull Content -->
+        <div id="the-bull" class="play-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-violet-title mt-8">Play: The Bull (by Bhimnidhi Tiwari)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-violet-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>Set in <span class="kw-place">Nepal</span> in <span class="kw-time">1854 B.S.</span> (<span class="kw-time">Ashwin</span>), this one-act play <span class="kw-concept">satirizes</span> the <span class="kw-concept">feudal system</span> during the reign of <span class="kw-person">King Ranabahadur Shah</span>, who was obsessed with bulls. The play opens with two panicked <span class="kw-person">cowherds</span>, <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span>, rushing to <span class="kw-person">Laxminarayan</span> (a legal officer and the king's bull doctor) to report the death of the king's favorite bull, <span class="kw-person">Male</span>. All three fear the king's severe punishment, possibly death. <span class="kw-person">Laxminarayan</span>, remembering past punishment (lips burned, mustache non-existent on one side), advises caution. He instructs the <span class="kw-person">cowherds</span> not to say the bull is dead, but ill. <span class="kw-person">Laxminarayan</span> goes to the <span class="kw-place">palace</span> and informs the <span class="kw-person">king</span> the bull is sick, describing symptoms and praising the bull's past glory. The <span class="kw-person">king</span> decides to see the bull himself. At the <span class="kw-place">cowshed</span> in <span class="kw-place">Thulo Gauchar</span>, <span class="kw-person">Laxminarayan</span> tells <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span> to pretend to care for the dead bull (massaging feet, fanning) when the <span class="kw-person">king</span> arrives. The <span class="kw-person">king</span> observes the motionless bull and declares it dead himself. To save themselves, <span class="kw-person">Jitman</span> and <span class="kw-person">Gore</span> erupt in exaggerated displays of grief, claiming the bull was dearer than family, impressing the <span class="kw-person">king</span> who rewards them with tips (400 & 500 rupees) and tells them to be quiet. <span class="kw-person">Laxminarayan</span> also feigns agony. The <span class="kw-person">king</span> orders <span class="kw-person">Laxminarayan</span> to handle the burial and rites. <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span> are immensely relieved to be alive. The play powerfully critiques the <span class="kw-theme">dehumanization</span> under <span class="kw-concept">feudalism</span>, where <span class="kw-person">servants</span> live in terror and an animal's life is valued over human well-being, forcing people into <span class="kw-concept">sycophancy</span> and <span class="kw-theme">deception</span> for survival.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-blue-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the play make a satire on the feudal system?</summary>
+                        <div>The play makes <span class="kw-concept">satire</span> by showing how absurd the <span class="kw-concept">feudal system</span> was. The <span class="kw-person">king</span> cares more about his bull than people. <span class="kw-person">Servants</span> like <span class="kw-person">Gore</span>, <span class="kw-person">Jitman</span>, and <span class="kw-person">Laxminarayan</span> live in extreme <span class="kw-theme">fear</span> of harsh punishment for the bull's death. They must pretend and <span class="kw-theme">flatter</span> (<span class="kw-theme">chakari</span>) ridiculously just to survive. This exaggeration makes fun of the <span class="kw-theme">cruel</span> and silly priorities of the system.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What does the play 'The Bull' tell us about contemporary Nepali society?</summary>
+                        <div>The play "The Bull" doesn't describe contemporary (modern) Nepali society. It shows Nepali society in the <span class="kw-time">late 18th century</span>. At that <span class="kw-time">time</span>, there was a powerful <span class="kw-person">king</span> (<span class="kw-concept">feudal system</span>), common people lived in <span class="kw-theme">fear</span>, had few rights, and women had low status (polygamy). People used <span class="kw-theme">flattery</span> (<span class="kw-theme">chakari</span>) to please rulers. It depicts a past society, not today's <span class="kw-place">Nepal</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does Laxminarayan outsmart Ranabahadur?</summary>
+                        <div><span class="kw-person">Laxminarayan</span> outsmarts the <span class="kw-person">king</span> with <span class="kw-concept">cleverness</span> and <span class="kw-concept">lies</span>. Instead of saying the bull is dead, he reports it's very sick. He praises the <span class="kw-person">king</span> and the bull. He tells the <span class="kw-person">cowherds</span> to pretend to care for the dead bull (massaging feet, fanning). By doing this, he makes the <span class="kw-person">king</span> believe everything possible was done, avoids blame, and saves himself and the <span class="kw-person">cowherds</span> from punishment.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why have Gore and Jitman come to see Laxminarayan?</summary>
+                        <div><span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span>, the <span class="kw-person">cowherds</span>, came terrified to <span class="kw-person">Laxminarayan</span> (the bull doctor and court officer) because the <span class="kw-person">king</span>'s favourite bull, <span class="kw-person">Male</span>, had died. They knew the <span class="kw-person">king</span> would be furious and might punish them severely, possibly even kill them. They needed <span class="kw-person">Laxminarayan</span>'s help and advice on how to report the death and survive.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What, according to cowherds, is the reason behind the death of Male?</summary>
+                        <div>According to the <span class="kw-person">cowherds</span>, the bull <span class="kw-person">Male</span> died because he wasn't eating enough grass (his natural food). Instead, he was given rich food like <span class="kw-imagery">fine rice</span> and <span class="kw-imagery">split gram soup</span>, which he couldn't digest properly. This improper diet, despite being meant as good care, made him sick and eventually led to his death.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does Ranabahadur want to see the bull himself?</summary>
+                        <div><span class="kw-person">Ranabahadur Shah</span> wanted to see the bull himself because he loved it dearly and was very concerned after <span class="kw-person">Laxminarayan</span> reported it was seriously ill. He didn't fully trust the report or the suggestion to move the bull to a hill. He wanted to check the bull's condition personally before deciding what to do next.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Shed light on the practice of chakari as portrayed in the play?</summary>
+                        <div><span class="kw-theme">Chakari</span> (<span class="kw-theme">flattery</span> and excessive service to please superiors) is shown clearly in the play. <span class="kw-person">Laxminarayan</span> uses polite language and praise with the <span class="kw-person">king</span>. He and the <span class="kw-person">cowherds</span> pretend to care for the dead bull (massaging, fanning) to impress the <span class="kw-person">king</span>. <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span> cry fake tears and express exaggerated loyalty to the bull to avoid punishment. This shows <span class="kw-theme">chakari</span> was needed for survival.</div>
+                    </details>
+
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Is 'The Bull' a satire against the feudal system of the Rana period? How? Justify your answer.</summary>
+                        <div>Yes, <span class="kw-person">Bhimnidhi Tiwari</span>'s "The Bull" is definitely a strong <span class="kw-concept">satire</span> against the <span class="kw-concept">feudal system</span> prevalent in <span class="kw-place">Nepal</span> during the <span class="kw-time">late 18th century</span> (Shah period, similar in nature to the later Rana period). <span class="kw-concept">Satire</span> uses humor, exaggeration, or irony to criticize foolishness or wrongdoing.<br><br>The play shows the absurdity of the system through extreme exaggeration. The <span class="kw-person">king</span>, <span class="kw-person">Ranabahadur Shah</span>, cares immensely more for his bull, <span class="kw-person">Male</span>, than for his human subjects. The <span class="kw-person">servants</span> – <span class="kw-person">Laxminarayan</span>, <span class="kw-person">Gore</span>, and <span class="kw-person">Jitman</span> – live in absolute <span class="kw-theme">terror</span> of the <span class="kw-person">king</span>'s anger over the bull's death, fearing execution or shaving (a great humiliation). Their desperate attempts to hide the truth, the elaborate pretence of caring for the dead bull (massaging its feet, fanning it), and their fake, exaggerated crying to please the <span class="kw-person">king</span> highlight the system's irrationality and <span class="kw-theme">cruelty</span>. The massive rewards given for this fake grief further satirize the ruler's vanity and the system's flawed values.<br><br>Through these exaggerated situations, Tiwari criticizes the <span class="kw-theme">dehumanizing</span> power of feudal lords and the climate of <span class="kw-theme">fear</span> they created.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Discuss the late eighteenth century Nepali society as depicted in the play.</summary>
+                        <div><span class="kw-person">Bhimnidhi Tiwari's</span> "The Bull" paints a picture of <span class="kw-time">late eighteenth-century</span> Nepali society under the Shah dynasty as deeply <span class="kw-concept">feudal</span> and hierarchical. Power was concentrated in the hands of the <span class="kw-person">king</span> (<span class="kw-person">Ranabahadur Shah</span>), who ruled with absolute authority and inspired great <span class="kw-theme">fear</span> among his subjects.<br><br>Common people, like the <span class="kw-person">cowherds</span> <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span>, had very low status and few rights. Their lives depended entirely on the <span class="kw-person">king</span>'s mood. They lived in <span class="kw-theme">poverty</span> (sleeping on straw while the bull had luxuries) and faced severe punishment for minor mistakes or even perceived disrespect, like <span class="kw-person">Laxminarayan</span>'s burnt lips. The practice of <span class="kw-theme">chakari</span> (<span class="kw-theme">flattery</span> to gain favour) was essential for survival. The play also hints at the low status of women through <span class="kw-person">Laxminarayan</span>'s casual mention of having seven wives. Overall, it depicts a society where common humans were <span class="kw-theme">dehumanized</span>, living in constant anxiety under a powerful, unpredictable ruler whose priorities heavily favoured status and pets over people.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Is 'The Bull' a satire against the feudal system of the Rana period? How? Justify your answer.</summary>
+                        <div>Yes, "The Bull" acts as a powerful <span class="kw-concept">satire</span> against the <span class="kw-concept">feudal system</span>, representative of the autocratic rule found in <span class="kw-place">Nepal</span>'s history, including the Shah period depicted and systems similar to the later Rana period. <span class="kw-concept">Satire</span> criticizes society's flaws, often using exaggeration.<br><br>The play achieves this by showing the extreme and illogical situation where a bull's life and comfort are valued far above human lives and dignity. The <span class="kw-person">king</span> <span class="kw-person">Ranabahadur Shah</span>'s obsession with his bull, <span class="kw-person">Male</span>, is exaggerated. The intense <span class="kw-theme">fear</span> of the <span class="kw-person">servants</span> (<span class="kw-person">Laxminarayan</span>, <span class="kw-person">Gore</span>, <span class="kw-person">Jitman</span>) is palpable – they <span class="kw-theme">fear</span> death or humiliation over a dead animal. Their elaborate plan to deceive the <span class="kw-person">king</span>, involving fanning a dead bull and fake crying, is absurd. The <span class="kw-person">king</span> rewarding this fake grief with large sums of money further highlights the ridiculous values of the <span class="kw-concept">feudal</span> ruler.<br><br>By presenting these extreme scenarios, Tiwari makes the audience see the <span class="kw-theme">injustice</span>, <span class="kw-theme">cruelty</span>, and sheer foolishness of the <span class="kw-concept">feudal system</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">"The play depicts the social picture where the King's pet gets extra care and the people are neglected." Explain the social satire with reference to this example.</summary>
+                        <div>This statement correctly identifies a key element of <span class="kw-concept">social satire</span> in <span class="kw-person">Bhimnidhi Tiwari's</span> "The Bull." The play sharply criticizes the <span class="kw-concept">feudal</span> society by showing the huge difference in treatment between the <span class="kw-person">King</span>'s pet bull, <span class="kw-person">Male</span>, and his human subjects.<br><br>The bull receives extra care: it eats <span class="kw-imagery">fine rice</span> and special soup (even if it can't digest it), sleeps on a <span class="kw-imagery">mattress</span> with a quilt and <span class="kw-imagery">mosquito net</span>, has a personal doctor (<span class="kw-person">Laxminarayan</span>), and its death causes extreme panic among the caretakers. The <span class="kw-person">king</span> himself comes to check on it. In stark contrast, the people are neglected and live in <span class="kw-theme">fear</span>. The <span class="kw-person">cowherds</span> mention sleeping on straw in winter. <span class="kw-person">Laxminarayan</span> was punished harshly just for speaking loudly. <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span> fear for their lives over the bull's death. This contrast is the <span class="kw-concept">satire</span>: it highlights how inhumane and absurd a society is when an animal gets royal treatment while people live in <span class="kw-theme">poverty</span> and <span class="kw-theme">fear</span>. It mocks the priorities of the ruling class.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did Rana Bahadur Shah award Gore and Jitman, while he punished the bull doctor?</summary>
+                        <div><span class="kw-person">Ranabahadur Shah</span> reacted differently based on what pleased his <span class="kw-concept">feudal</span> ego and sense of importance, not on fairness or logic. He had punished <span class="kw-person">Laxminarayan</span> (the bull doctor) in the past for perceived disrespect (speaking loudly) and threatened him again if the bull died under his care – punishing failure or lack of reverence.<br><br>However, he awarded <span class="kw-person">Gore</span> and <span class="kw-person">Jitman</span> with large tips (400 and 500 rupees) after the bull died because their reaction, although fake, deeply <span class="kw-theme">flattered</span> him. Their intense (pretend) crying, claims of being orphaned, and dramatic statements that the bull was more important than their own families showed extreme loyalty and devotion to the <span class="kw-person">king</span>'s prized possession. This exaggerated grief pleased the <span class="kw-person">king</span>'s vanity. He wasn't rewarding their caretaking skill (the bull died!), but their performance of absolute devotion to his interests, which was highly valued in the <span class="kw-concept">feudal system</span>.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 One Act Play Analysis | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+
+    <script>
+        // Get references to the sections
+        const playSelectionSection = document.getElementById('play-selection');
+        const playContentDivs = document.querySelectorAll('.play-content');
+
+        // Function to show a specific play's content
+        function showPlay(playId) {
+            // Hide the selection section
+            playSelectionSection.style.display = 'none';
+
+            // Hide all play content sections first
+            playContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selected play's content section
+            const selectedPlay = document.getElementById(playId);
+            if (selectedPlay) {
+                selectedPlay.style.display = 'block';
+                window.scrollTo(0, 0); // Scroll to top
+            }
+        }
+
+        // Function to show the selection section and hide play content
+        function showSelection() {
+            // Hide all play content sections
+            playContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selection section
+            playSelectionSection.style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        // Initially, ensure only the selection is visible (CSS handles this by default)
+        // showSelection(); // Call this if you want JS to explicitly set the initial state
+
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Poem Analysis Collection</title>
+    <style>
+        /* Custom Styles for Enhanced Dark Mode - Replicated from previous design */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #d1d5db; /* Tailwind gray-300 */
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, summary, .poem-select-button { /* Added button to font rule */
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fbcfe8 0%, #f9a8d4 50%, #f472b6 100%); /* Pink gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Header Styling - Using a gradient instead of specific image */
+        header {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(55, 48, 163, 0.9) 100%); /* Dark Blue/Indigo gradient */
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+         /* Ensure header content is visible */
+        header > div {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Section Background Gradients */
+        .sunrise-gradient {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.7) 0%, rgba(55, 48, 163, 0.3) 100%);
+        }
+        .sunset-gradient {
+             background: linear-gradient(135deg, rgba(55, 48, 163, 0.3) 0%, rgba(31, 41, 55, 0.7) 100%);
+        }
+
+        /* Content Card Styling */
+        .content-card {
+            background-color: rgba(31, 41, 55, 0.6); /* Tailwind gray-800 with opacity */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 with opacity */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+        }
+
+        /* Details/Summary (Q&A) Styling */
+        details {
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1rem 1.25rem; /* Tailwind p-4 pr-5 */
+            background-color: rgba(55, 65, 81, 0.5); /* Tailwind gray-700 base with opacity */
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif; /* Use Poppins for question text */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            position: relative;
+        }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::before {
+            content: '+';
+            position: absolute;
+            right: 1.25rem; /* Tailwind right-5 */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #9ca3af; /* Tailwind gray-400 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary { background-color: rgba(75, 85, 99, 0.7); } /* Tailwind gray-600 open */
+        details[open] > summary::before { content: '−'; }
+        details > div { /* Q&A Answer Content Styling */
+             padding: 1.25rem; /* Tailwind p-5 */
+             margin-top: 0;
+             border-top: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 separator */
+             background-color: rgba(17, 24, 39, 0.5); /* Tailwind gray-900 darker background */
+             color: #d1d5db; /* Tailwind gray-300 */
+             font-size: 0.95rem;
+        }
+
+        /* Keyword Highlighting Styles - Added kw-person and kw-place */
+        .kw-imagery { color: #f472b6; font-weight: 600; } /* Pink-500 */
+        .kw-theme { color: #34d399; font-weight: 600; } /* Emerald-400 */
+        .kw-concept { color: #60a5fa; font-weight: 600; } /* Blue-400 */
+        .kw-time { color: #fb923c; font-weight: 600; } /* Orange-400 */
+        .kw-person { color: #facc15; font-weight: 600; } /* Yellow-500 */
+        .kw-place { color: #22d3ee; font-weight: 600; } /* Cyan-400 */
+
+
+        /* Section Title Colors */
+        .text-pink-title { color: #f9a8d4; } /* Pink-300 */
+        .text-purple-title { color: #c4b5fd; } /* Violet-300 */
+
+        /* Footer Styling */
+        footer {
+            background-color: #1f2937; /* Tailwind gray-800 */
+            border-top: 1px solid #374151; /* Tailwind gray-700 */
+            color: #9ca3af; /* Tailwind gray-400 */
+        }
+
+        /* Styles for Poem Selection */
+        #poem-selection {
+            text-align: center;
+        }
+        .poem-select-button {
+            background-color: rgba(55, 65, 81, 0.7); /* Tailwind gray-700 semi-transparent */
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Tailwind gray-600 border */
+            color: #e5e7eb; /* Tailwind gray-200 */
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin: 0.5rem; /* Tailwind m-2 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block; /* Fit content */
+            backdrop-filter: blur(5px);
+        }
+        .poem-select-button:hover {
+            background-color: rgba(75, 85, 99, 0.9); /* Tailwind gray-600 darker on hover */
+            border-color: rgba(110, 121, 134, 0.7); /* Lighter border on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Style for Back Button */
+        .back-button {
+             background-color: rgba(75, 85, 99, 0.7); /* Tailwind gray-600 semi-transparent */
+             border: 1px solid rgba(92, 103, 117, 0.5);
+             color: #e5e7eb;
+             padding: 0.5rem 1rem;
+             border-radius: 0.5rem;
+             margin-top: 1.5rem; /* Tailwind mt-6 */
+             cursor: pointer;
+             transition: all 0.3s ease;
+             font-family: 'Inter', sans-serif; /* Use Inter for button text */
+             font-weight: 600;
+        }
+        .back-button:hover {
+            background-color: rgba(92, 103, 117, 0.9);
+            transform: translateY(-1px);
+        }
+
+        /* Hide content sections by default */
+        .poem-content {
+            display: none;
+        }
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <body class="antialiased">
+
+    <header class="min-h-[40vh] md:min-h-[50vh] flex items-center justify-center text-center p-8">
+        <div class="max-w-3xl">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4 gradient-text">Poem Analysis</h1>
+            <p class="text-xl md:text-2xl text-gray-100 italic mt-2">A Collection</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-200 leading-relaxed">
+                Select a poem below to view its summary and analysis.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6 md:p-10 space-y-16">
+
+        <section id="poem-selection" class="p-6 md:p-8 content-card sunrise-gradient">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-8 text-pink-title">Choose a Poem</h2>
+            <div id="selection-buttons">
+                <button class="poem-select-button" onclick="showPoem('a-day')">A Day</button>
+                <button class="poem-select-button" onclick="showPoem('every-morning')">Every Morning I Wake</button>
+                <button class="poem-select-button" onclick="showPoem('own-route')">I Was My Own Route</button>
+                <button class="poem-select-button" onclick="showPoem('awakening-age')">The Awakening Age</button>
+                <button class="poem-select-button" onclick="showPoem('soft-storm')">Soft Storm</button>
+            </div>
+        </section>
+
+        <div id="a-day" class="poem-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-pink-title mt-8">Poem: A Day (by Emily Dickinson)</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-pink-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                     <p>The poem "A Day," by Emily Dickinson, describes a full <span class="kw-time">day</span> from <span class="kw-time">sunrise</span> to <span class="kw-time">sunset</span>. The <span class="kw-person">speaker</span>, sounding <span class="kw-theme">innocent</span> like a <span class="kw-person">child</span>, first explains how the sun rises. She uses beautiful, clear <span class="kw-concept">pictures</span>: the light looks like <span class="kw-imagery">"ribbons,"</span> church steeples shine like <span class="kw-imagery">"amethyst,"</span> and the hills seem to remove their <span class="kw-imagery">"bonnets."</span> She sounds confident and full of wonder about the <span class="kw-time">morning</span>.</p>
+                     <p>Then, the <span class="kw-person">speaker</span> describes the <span class="kw-time">sunset</span>. But here, she becomes <span class="kw-theme">uncertain</span> and admits she doesn't know exactly how it happens. She sees a <span class="kw-theme">mysterious</span> <span class="kw-imagery">"purple stile"</span> (like steps) and <span class="kw-person">children</span> climbing it towards a <span class="kw-person">guide</span> (<span class="kw-imagery">"Dominie"</span>) who leads them away into the dark.</p>
+                     <p>This change makes the simple <span class="kw-time">day</span> feel like a picture, or <span class="kw-concept">metaphor</span>, for <span class="kw-theme">life's journey</span>: the bright, understandable <span class="kw-theme">beginning</span> (<span class="kw-theme">childhood</span>) compared to the <span class="kw-theme">mysterious</span>, <span class="kw-theme">unknown ending</span> (<span class="kw-theme">death</span>).</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-purple-title">Questions & Answers</h3>
+                <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Is the speaker watching the morning sun? Why? Why not?</summary>
+                        <div>Yes, the <span class="kw-person">speaker</span> is watching the <span class="kw-time">morning sun</span>. We know this because she gives very specific details about how it looks. She describes the light like <span class="kw-imagery">"ribbons,"</span> how the church steeples change color, and mentions hearing birds singing. These details show she is observing the <span class="kw-time">sunrise</span> closely as it happens.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Write the main theme of the poem.</summary>
+                        <div>The main <span class="kw-concept">theme</span> of "A Day" is the <span class="kw-theme">journey of life</span>. It uses the <span class="kw-time">day</span>, from <span class="kw-time">sunrise</span> to <span class="kw-time">sunset</span>, as a <span class="kw-concept">metaphor</span> or picture for <span class="kw-theme">life</span>. It shows the bright, clear <span class="kw-theme">beginning of life</span> (like <span class="kw-theme">birth</span> or <span class="kw-theme">childhood</span>) and contrasts it with the <span class="kw-theme">mysterious</span>, <span class="kw-theme">unknown ending</span> (like <span class="kw-theme">death</span> or what comes after).</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does the sun set?</summary>
+                        <div>The <span class="kw-person">speaker</span> admits she doesn't know exactly how the <span class="kw-time">sun sets</span>. Instead, she describes seeing a <span class="kw-imagery">"purple stile"</span> appear, like steps leading somewhere <span class="kw-theme">unknown</span>. Little <span class="kw-person">children</span> were climbing this stile towards the darkness, until they were met and led away by a <span class="kw-imagery">"Dominie."</span> The <span class="kw-time">sunset</span> is shown as a <span class="kw-theme">mysterious transition</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What were the children doing during the sunset?</summary>
+                        <div>During the <span class="kw-time">sunset</span>, the poem says <span class="kw-imagery">"little yellow boys and girls"</span> were climbing up something called a <span class="kw-imagery">"purple stile."</span> This stile seems like steps or a barrier leading towards the darkness. They climbed until they met a <span class="kw-imagery">"Dominie in gray"</span> (a <span class="kw-person">guide</span>) who led them away into the <span class="kw-time">night</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the appropriateness of the title of the poem 'A Day'.</summary>
+                        <div>The title "A Day" is very appropriate. The poem literally describes the events of one full <span class="kw-time">day</span>, from <span class="kw-time">sunrise</span> to <span class="kw-time">sunset</span>. More importantly, the poet uses this single <span class="kw-time">day</span> as the central <span class="kw-concept">metaphor</span> to explore the much bigger <span class="kw-concept">theme</span> of the entire <span class="kw-theme">human life cycle</span> - from its clear <span class="kw-theme">start</span> to its <span class="kw-theme">mysterious end</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">How does the poet describe the morning sun in the first stanza?</summary>
+                        <div>In the first stanza, the poet describes the <span class="kw-time">morning sun</span> rising gently, like <span class="kw-imagery">"A ribbon at a time."</span> The sunlight makes the church steeples look purple, like they <span class="kw-imagery">"swam in amethyst."</span> The news of the <span class="kw-time">sunrise</span> spreads very quickly, <span class="kw-imagery">"like squirrels ran."</span> These <span class="kw-concept">images</span> create a picture of a beautiful <span class="kw-time">dawn</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What does the line 'The news like squirrels ran' mean?</summary>
+                        <div>The line <span class="kw-imagery">'The news like squirrels ran'</span> means that awareness of the <span class="kw-time">sunrise</span> spread very quickly. Just like squirrels dart around fast, the arrival of the <span class="kw-time">morning light</span> seemed to happen rapidly, with its effects becoming visible everywhere almost at once. It emphasizes the speed of the <span class="kw-time">dawn</span>.</div>
+                    </details>
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain the figurative or metaphorical meaning of the poem, A Day. (VVVIMP)</summary>
+                        <div>Emily Dickinson's poem "A Day" uses the simple picture of a <span class="kw-time">sunrise</span> and <span class="kw-time">sunset</span> to explore the deeper meaning of <span class="kw-theme">human life</span>. It presents the <span class="kw-time">day</span> as a <span class="kw-concept">metaphor</span>, or symbol, for our <span class="kw-theme">journey from birth to death</span>. The <span class="kw-time">sunrise</span> is shown with bright, clear <span class="kw-concept">images</span> like <span class="kw-imagery">"ribbons"</span> of light and colourful <span class="kw-imagery">"amethyst"</span> steeples. This represents the <span class="kw-theme">beginning of life</span> - <span class="kw-theme">birth</span> and <span class="kw-theme">childhood</span> - which seems full of <span class="kw-theme">wonder</span> and feels relatively easy to understand. The <span class="kw-person">speaker</span> sounds confident describing this part.<br><br>In contrast, the <span class="kw-time">sunset</span> is described with <span class="kw-theme">uncertainty</span> (<span class="kw-imagery">"how he set, I know not"</span>). The fading light and the <span class="kw-imagery">"purple stile"</span> (like steps over a barrier) suggest crossing into the <span class="kw-theme">unknown</span>, likely representing <span class="kw-theme">death</span> or what comes after. <span class="kw-person">Children</span> climbing towards a <span class="kw-theme">mysterious</span> <span class="kw-person">guide</span> (<span class="kw-imagery">"Dominie"</span>) further hint at this transition away from the known world. Therefore, the poem beautifully contrasts the understandable <span class="kw-theme">beginning of life</span> with the <span class="kw-theme">mysterious</span> nature of its <span class="kw-theme">end</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does the poet compare the beauty of sunrise with childhood?</summary>
+                        <div>In "A Day," Emily Dickinson shows how the <span class="kw-concept">beauty</span> of <span class="kw-time">sunrise</span> is like <span class="kw-theme">childhood</span>. She describes the <span class="kw-time">morning</span> using bright pictures and lots of energy, which reminds us of early <span class="kw-theme">life</span>. The clear <span class="kw-concept">images</span>, like light spreading in <span class="kw-imagery">"ribbons"</span> and shiny <span class="kw-imagery">"amethyst"</span> steeples, show the great <span class="kw-concept">beauty</span> and feeling of <span class="kw-theme">wonder</span> that a <span class="kw-person">child</span> might see in the world.<br><br>The energy of the <span class="kw-time">morning</span>, with news spreading fast like <span class="kw-imagery">"squirrels"</span> and <span class="kw-imagery">"bobolinks"</span> singing, is like the excitement and feeling of new beginnings in <span class="kw-theme">childhood</span>. Also, the <span class="kw-person">speaker</span> sounds very confident ("I'll tell you..."). This is similar to the <span class="kw-theme">innocent certainty</span> that <span class="kw-person">children</span> often have before they learn about life's problems. So, the beautiful <span class="kw-time">sunrise</span> acts as a strong picture or <span class="kw-concept">metaphor</span> for the bright, <span class="kw-theme">innocent</span>, and seemingly easy-to-understand time of <span class="kw-theme">childhood</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How do the imagaries support the theme of the poem "A Day"?</summary>
+                        <div>The main <span class="kw-concept">theme</span> of "A Day" is about <span class="kw-theme">life's journey</span>, showing the clear <span class="kw-theme">beginning</span> (like <span class="kw-theme">birth</span> or <span class="kw-theme">childhood</span>) and the <span class="kw-theme">mysterious end</span> (like <span class="kw-theme">death</span>). The poem uses strong pictures, called <span class="kw-concept">imagery</span>, to make us feel this <span class="kw-concept">theme</span>.<br><br>The <span class="kw-concept">imagery</span> of the <span class="kw-time">sunrise</span> uses bright, happy pictures. We see <span class="kw-imagery">"ribbons"</span> of light and <span class="kw-imagery">"amethyst"</span> steeples. These clear, beautiful <span class="kw-concept">images</span> support the idea that the start of <span class="kw-theme">life</span> feels wonderful, energetic, and easy to understand, like <span class="kw-theme">childhood innocence</span>.<br><br>Then, the <span class="kw-concept">imagery</span> of the <span class="kw-time">sunset</span> uses darker, less clear pictures. The <span class="kw-imagery">"purple stile"</span> suggests a barrier or a crossing into something <span class="kw-theme">unknown</span>. The <span class="kw-person">speaker</span> feeling <span class="kw-theme">uncertain</span> (<span class="kw-imagery">"I know not"</span>) and the <span class="kw-theme">mysterious</span> <span class="kw-imagery">"Dominie"</span> leading <span class="kw-person">children</span> away support the idea that the <span class="kw-theme">end of life</span> is <span class="kw-theme">mysterious</span> and hard to understand. So, the contrast between the bright <span class="kw-time">morning</span> pictures and the dimmer, uncertain <span class="kw-time">evening</span> pictures perfectly supports the poem's main <span class="kw-concept">theme</span> about the understandable <span class="kw-theme">start</span> and <span class="kw-theme">mysterious end</span> of <span class="kw-theme">life's journey</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">How does the poet explore the beauty of nature? 150 wrods in similer english</summary>
+                        <div>In "A Day," Emily Dickinson explores the <span class="kw-concept">beauty of nature</span> by carefully watching and describing what happens from <span class="kw-time">morning</span> to <span class="kw-time">night</span>. She shows <span class="kw-concept">nature's beauty</span> through vivid pictures and sounds.<br><br>For the <span class="kw-time">sunrise</span>, she paints a beautiful picture using colors and light. The sun's rays are like <span class="kw-imagery">"ribbons,"</span> and the light makes church steeples shine like purple <span class="kw-imagery">"amethyst."</span> She describes the hills taking off their misty covers like <span class="kw-imagery">"bonnets"</span> and mentions the cheerful singing of birds (<span class="kw-imagery">"bobolinks"</span>). These details show the bright, energetic <span class="kw-concept">beauty</span> of the <span class="kw-time">morning</span>.<br><br>Even though the <span class="kw-time">sunset</span> is more <span class="kw-theme">mysterious</span>, the poet still finds <span class="kw-concept">beauty</span> in it. She describes the <span class="kw-imagery">"purple stile"</span> and the <span class="kw-imagery">"yellow boys and girls"</span> climbing in the fading light. This shows a quieter, softer <span class="kw-concept">beauty</span> as the <span class="kw-time">day</span> ends.<br><br>By using these detailed descriptions and comparing parts of <span class="kw-concept">nature</span> to things we know (like <span class="kw-imagery">ribbons</span> or <span class="kw-imagery">bonnets</span>), the poet helps us see and appreciate the <span class="kw-concept">beauty</span> found in <span class="kw-concept">nature</span> throughout the whole <span class="kw-time">day</span>.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <div id="every-morning" class="poem-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-pink-title mt-8">Poem: Every Morning I Wake</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-pink-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>The poem "Every Morning I Wake" is a simple <span class="kw-concept">prayer</span>. The <span class="kw-person">speaker</span> talks directly to <span class="kw-person">God</span> every <span class="kw-time">morning</span> when he wakes up and every <span class="kw-time">evening</span> before sleeping.</p>
+                    <p>He asks <span class="kw-person">God</span> to lovingly watch over and <span class="kw-theme">protect</span> all <span class="kw-person">people</span>, whom he calls <span class="kw-person">"poor creatures born to die,"</span> especially those in his town, <span class="kw-place">Milk Wood</span>. He knows that <span class="kw-theme">life</span> is <span class="kw-theme">uncertain</span> ("touch-and-go"), and <span class="kw-person">people</span> are fragile and need <span class="kw-person">God's</span> help to survive each <span class="kw-time">night</span> and see the <span class="kw-time">morning</span>.</p>
+                    <p>The <span class="kw-person">speaker</span> has strong <span class="kw-concept">faith</span>. He believes <span class="kw-person">God</span> understands that <span class="kw-person">people</span> are a mix of good and bad, and trusts <span class="kw-person">God</span> will focus on their <span class="kw-concept">"best side,"</span> not their <span class="kw-concept">"worst."</span> He finishes with <span class="kw-theme">hope</span>, saying goodbye to the setting sun "just for <span class="kw-time">now</span>," expecting to see a new <span class="kw-time">day</span> because of <span class="kw-person">God's</span> <span class="kw-concept">grace</span> and asking for <span class="kw-person">God's</span> blessing.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-purple-title">Questions & Answers</h3>
+                 <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines from the poem Every Morning I Wake with reference to the context. We are not wholly bad or good / Who lives our live under Milk Wood, / And Thou, I know, wilt be the first / To see our best side, not our worst.</summary>
+                        <div>These lines, from the <span class="kw-concept">prayer</span> "Every Morning I Wake," mean that the <span class="kw-person">people</span> living in <span class="kw-place">Milk Wood</span> are not perfect they are a mix of good and bad. The <span class="kw-person">speaker</span> believes that <span class="kw-person">God</span> ("Thou") knows this better than anyone. Importantly, the <span class="kw-person">speaker</span> trusts that <span class="kw-person">God</span> will focus on their good qualities (<span class="kw-concept">"best side"</span>) instead of judging them harshly for their mistakes (<span class="kw-concept">"worst side"</span>). This shows <span class="kw-concept">faith</span> in <span class="kw-person">God's</span> understanding and kindness.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Who are the people living under the Milkwood?</summary>
+                        <div>The <span class="kw-person">people</span> living under <span class="kw-place">Milk Wood</span> are the ordinary residents of that town or community. The <span class="kw-person">speaker</span> refers to them, and all <span class="kw-person">humans</span>, as <span class="kw-person">"poor creatures born to die."</span> They are presented as everyday <span class="kw-person">people</span> who need <span class="kw-person">God's</span> help and <span class="kw-theme">protection</span> as they live their lives.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What does the speaker pray for? Why?</summary>
+                        <div>The <span class="kw-person">speaker</span> prays for <span class="kw-person">God's</span> loving care and <span class="kw-theme">protection</span> ("keep Thy loving eye") for all <span class="kw-person">people</span> (<span class="kw-person">"poor creatures"</span>). He asks for blessings on the town and hopes they survive the <span class="kw-time">night</span>. He prays because he knows <span class="kw-theme">life</span> is <span class="kw-theme">uncertain</span> ("touch-and-go") and <span class="kw-person">people</span> are fragile and mortal, needing <span class="kw-person">God's</span> <span class="kw-concept">mercy</span> and <span class="kw-concept">grace</span> to live and face each <span class="kw-time">day</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Whom does the poet call 'poor creature' and why? Give reasons.</summary>
+                        <div>The poet calls all <span class="kw-person">humans</span>, especially the <span class="kw-person">people</span> of <span class="kw-place">Milk Wood</span>, <span class="kw-person">'poor creatures.'</span> The reason is that <span class="kw-person">humans</span> are mortal - the poem says they are <span class="kw-person">"born to die."</span> This means <span class="kw-person">people</span> are fragile, have limited lives, and eventually face <span class="kw-theme">death</span>. They need <span class="kw-person">God's</span> <span class="kw-concept">mercy</span> and <span class="kw-theme">protection</span> because they are not all-powerful themselves.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Do you agree or disagree...? Write your opinion about the existence of God</summary>
+                        <div>I agree with the poet's view of <span class="kw-person">God's</span> magnificence. The poem shows <span class="kw-person">God</span> as the ultimate <span class="kw-theme">protector</span> <span class="kw-person">people</span> rely on daily for <span class="kw-theme">life</span> and <span class="kw-concept">mercy</span>, suggesting great power and care. Personally, believing in <span class="kw-person">God's</span> existence is based on <span class="kw-concept">faith</span>. Many, like the poet, find <span class="kw-theme">hope</span> and meaning in believing a higher power is watching over us.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why does the poet pray early in the morning?</summary>
+                        <div>The poet prays early in the <span class="kw-time">morning</span> when he wakes up. He asks <span class="kw-person">God</span> to watch over everyone ("keep Thy loving eye") for the new <span class="kw-time">day</span> ahead. It's likely also a moment of gratitude for surviving the <span class="kw-theme">uncertain</span> <span class="kw-time">night</span>. He seeks <span class="kw-person">God's</span> guidance and <span class="kw-theme">protection</span> right from the start of the <span class="kw-time">day</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain the lines: And thou, I know wilt be the first / To see our best side, not our wors</summary>
+                         <div>Within the poem's <span class="kw-concept">prayer</span>, these lines show the <span class="kw-person">speaker</span> talking to <span class="kw-person">God</span> ("Thou"). He strongly believes ("I know") that <span class="kw-person">God</span> will look past <span class="kw-person">people's</span> mistakes (<span class="kw-concept">"worst side"</span>). Instead, <span class="kw-person">God</span> will be the very first to notice and appreciate their good qualities and intentions (<span class="kw-concept">"best side"</span>). It shows the <span class="kw-person">speaker's</span> deep <span class="kw-concept">faith</span> in <span class="kw-person">God's</span> kindness and forgiving nature</div>
+                    </details>
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why does the speaker make a prayer to the God, but not to a king, a billionaire or a scientist?</summary>
+                        <div>The <span class="kw-person">speaker</span> in "Every Morning I Wake" prays to <span class="kw-person">God</span> because <span class="kw-person">God</span> is seen as the only one with true, ultimate power. <span class="kw-person">Kings</span>, <span class="kw-person">billionaires</span>, and <span class="kw-person">scientists</span> are powerful in human ways with money, laws, or knowledge - but they are still just <span class="kw-person">humans</span>. The poem calls everyone <span class="kw-person">"poor creatures born to die."</span> This means even the most powerful <span class="kw-person">people</span> are limited and will eventually <span class="kw-theme">die</span>.<br><br>The <span class="kw-person">speaker</span> asks for things like <span class="kw-theme">protection</span> through the <span class="kw-time">night</span>, blessings, <span class="kw-concept">mercy</span>, and for <span class="kw-person">God</span> to see their <span class="kw-concept">"best side."</span> These are deep, <span class="kw-concept">spiritual needs</span> that earthly power or money can't truly fulfill. Only <span class="kw-person">God</span>, believed to be all-powerful, eternal, and all-knowing, can offer this kind of ultimate care and <span class="kw-theme">protection</span> over <span class="kw-theme">life</span> and <span class="kw-theme">death</span>. That's why the <span class="kw-concept">prayer</span> goes to <span class="kw-person">God</span>, not to any <span class="kw-person">human</span>, no matter how important they seem.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <div id="own-route" class="poem-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-pink-title mt-8">Poem: I Was My Own Route</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-pink-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>Julia de Burgos's poem "I Was My Own Route" tells the story of a <span class="kw-person">woman</span> <span class="kw-theme">breaking free</span>. At first, she tried to be what <span class="kw-person">men</span> wanted her to be, which felt like hiding her true self (<span class="kw-imagery">"hide and seek"</span>). But she rejected this <span class="kw-time">past</span> and refused to <span class="kw-imagery">"walk backwards."</span></p>
+                    <p>Instead, she bravely decided to create her <span class="kw-concept">"own route,"</span> moving forward towards <span class="kw-theme">independence</span> and <span class="kw-concept">self-discovery</span>. This wasn't easy; she faced painful opposition from the <span class="kw-person">"old guard"</span> (<span class="kw-person">people</span> supporting old <span class="kw-concept">patriarchal rules</span>). Despite the struggle, by choosing her own path, she found a deep, personal <span class="kw-concept">"intimate liberation."</span> She felt whole, connected to her true self, and able to live fully in the <span class="kw-time">present</span>. The poem is a powerful call for <span class="kw-person">women</span> to reject limits imposed by others and have the courage to define their own <span class="kw-concept">identities</span>.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-purple-title">Questions & Answers</h3>
+                 <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why does the speaker prefer the present to the past?</summary>
+                        <div>The <span class="kw-person">speaker</span> prefers the <span class="kw-time">present</span> because her <span class="kw-time">past</span> was painful. She tried to follow old <span class="kw-concept">patriarchal rules</span> set by <span class="kw-person">men</span>, which restricted her and made her feel rootless. In the <span class="kw-time">present</span>, she has <span class="kw-theme">broken free</span>. She walks her <span class="kw-concept">own path</span> proudly, feeling <span class="kw-theme">liberated</span> and equal. This <span class="kw-theme">freedom</span> makes the <span class="kw-time">present</span> much better than the restricted <span class="kw-time">past</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Critically evaluate the speaker's 'feeling of intimate liberation' in the poem.</summary>
+                        <div>The <span class="kw-person">speaker's</span> <span class="kw-concept">'feeling of intimate liberation'</span> is a deep, personal sense of <span class="kw-theme">freedom</span>. She achieves it by rejecting the old rules and expectations for <span class="kw-person">women</span> (<span class="kw-concept">patriarchy</span>). It comes from within as she bravely chooses her own <span class="kw-concept">identity</span> and path (<span class="kw-concept">"route"</span>). This <span class="kw-concept">liberation</span> means she is no longer hiding her true self and feels detached from <span class="kw-time">past</span> limits.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines with reference to the context: At each advancing step on my route forward / my back was ripped by the desperate flapping wings / of the old guard.</summary>
+                        <div>These lines describe the <span class="kw-person">speaker's</span> struggle for <span class="kw-theme">freedom</span>. As she took each step forward on her new path (<span class="kw-imagery">"advancing step"</span>), she faced strong opposition. Her <span class="kw-imagery">"back was ripped"</span> means she felt attacked or hurt by the <span class="kw-person">"old guard"</span> - the <span class="kw-person">people</span> and ideas defending the old <span class="kw-concept">patriarchal rules</span>. Their <span class="kw-imagery">"desperate flapping wings"</span> show how hard they tried to stop her progress.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Why did the old guards grow desperate?</summary>
+                        <div>The <span class="kw-person">"old guards"</span> (supporters of old <span class="kw-concept">patriarchal rules</span>) grew desperate because the <span class="kw-person">speaker</span> was successfully challenging their system. She separated herself from their values and started walking her <span class="kw-concept">own path</span> towards equality. They saw her <span class="kw-theme">breaking free</span> and becoming <span class="kw-theme">independent</span>, which threatened their control and traditional ways, making them desperate to stop her.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why did the speaker desire to follow men warp in her?</summary>
+                        <div>The <span class="kw-person">speaker's</span> desire to follow <span class="kw-person">men</span> "warped" (became twisted or wrong) because trying to live by <span class="kw-concept">patriarchal rules</span> failed her. She couldn't please them, felt restricted, and lost her own <span class="kw-concept">identity</span>. This negative experience made the original desire seem unnatural and undesirable. It pushed her to reject that path and instead create her <span class="kw-concept">own route</span> forward.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">As the chief of a local government unit of your country, what would you do to address the feelings of the women like Julia de Burgos? Explain.</summary>
+                        <div><strong>Introduction:</strong> As a local chief, addressing the feelings of <span class="kw-person">women</span> like <span class="kw-person">Julia de Burgos</span>-who feel burdened by old rules and want <span class="kw-theme">freedom</span>-would be a high priority. Her poem highlights the need for change and respect.<br><br><strong>Body:</strong> First, I would actively listen to <span class="kw-person">women</span> in the community to understand their specific challenges and desires for equality and <span class="kw-theme">independence</span>. I would work to change local rules or practices that unfairly limit <span class="kw-person">women's</span> opportunities in education, work, or public life. I'd promote awareness campaigns against harmful traditions (the <span class="kw-person">"old guard"</span> mentality) and support programs that empower <span class="kw-person">women</span> economically and socially. Creating safe spaces for <span class="kw-person">women</span> to voice concerns and ensuring their participation in local decision-making would be crucial to show they are valued and can follow their <span class="kw-concept">own paths</span>.<br><br><strong>Conclusion:</strong> Therefore, my actions would focus on listening, changing unfair systems, empowering <span class="kw-person">women</span>, and ensuring they have the <span class="kw-theme">freedom</span> and respect to choose their <span class="kw-concept">own routes</span> in life.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines with reference to the context: At each advancing step on my route forward my back was ripped by the desperate flapping wings of the old guard.</summary>
+                        <div>(This question appears identical to a previous one in this section - providing the same answer) These lines describe the <span class="kw-person">speaker's</span> struggle for <span class="kw-theme">freedom</span>. As she took each step forward on her new path (<span class="kw-imagery">"advancing step"</span>), she faced strong opposition. Her <span class="kw-imagery">"back was ripped"</span> means she felt attacked or hurt by the <span class="kw-person">"old guard"</span> - the <span class="kw-person">people</span> and ideas defending the old <span class="kw-concept">patriarchal rules</span>. Their <span class="kw-imagery">"desperate flapping wings"</span> show how hard they tried to stop her progress.</div>
+                    </details>
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explicate the radical feminist ideas expressed by Julia in her poem, I was my Own Route.</summary>
+                        <div><strong>Introduction:</strong> <span class="kw-person">Julia de Burgos's</span> poem, "I Was My Own Route," strongly expresses <span class="kw-concept">radical feminist</span> ideas. It focuses on completely rejecting male control (<span class="kw-concept">patriarchy</span>) and finding true female <span class="kw-theme">freedom</span>.<br><br><strong>Body:</strong> The <span class="kw-person">speaker</span> first tried to live how <span class="kw-person">men</span> wanted, but she felt this was not her real life. She refused to follow old rules or go <span class="kw-imagery">"backwards."</span> Instead, she bravely decided to create her <span class="kw-concept">"own route"</span> forward, showing a desire for total <span class="kw-theme">independence</span>. This path was difficult, as the <span class="kw-person">"old guard"</span> (representing the old system of male power) tried desperately to stop her, causing her pain (<span class="kw-imagery">"my back was ripped"</span>). Still, she found a deep, personal <span class="kw-concept">"intimate liberation"</span> by defining herself and her journey on her own terms, completely separate from male expectations.<br><br><strong>Conclusion:</strong> Therefore, the poem makes a radical demand for <span class="kw-person">women</span> to completely <span class="kw-theme">break free</span> from <span class="kw-concept">patriarchal</span> limits and define their own <span class="kw-concept">identities</span> and paths.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What route did the Persona in the poem 'I was My Own Route' prefer? Why?</summary>
+                        <div><strong>Introduction:</strong> In <span class="kw-person">Julia de Burgos's</span> "I Was My Own Route," the persona, or <span class="kw-person">speaker</span>, clearly shows she prefers the path she creates for herself over the one society or <span class="kw-person">men</span> expected her to follow.<br><br><strong>Body:</strong> She rejects the old route because it forced her to be someone she wasn't, like playing <span class="kw-imagery">"hide and seek"</span> with her true self. Trying to live how <span class="kw-person">men</span> wanted felt restrictive and like going <span class="kw-imagery">"backwards."</span> That path brought pain and made her lose her <span class="kw-concept">identity</span>. She strongly prefers her <span class="kw-concept">"own route"</span> because it means moving <span class="kw-imagery">"forward, forward,"</span> <span class="kw-theme">breaking free</span> from <span class="kw-time">past</span> limitations (<span class="kw-imagery">"mocking the ashes"</span>). This chosen path allows her to live in the <span class="kw-time">present</span> (<span class="kw-imagery">"made of nows"</span>) and brings a deep sense of personal <span class="kw-theme">freedom</span>- her <span class="kw-concept">"intimate liberation."</span><br><br><strong>Conclusion:</strong> Therefore, the persona prefers her <span class="kw-concept">own route</span> because it represents <span class="kw-theme">freedom</span>, authenticity, and the power to define her own life, unlike the limiting path set by others.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">The poem "I Was My Own Route" is about the women have been burdened with the patriarchal ideologies from the past so as to detach them from such burden, they have to establish their own identity for their intimate liberation and respect. Justify.</summary>
+                        <div><strong>Introduction:</strong> <span class="kw-person">Julia de Burgos's</span> "I Was My Own Route" certainly justifies the idea that <span class="kw-person">women</span>, burdened by <span class="kw-time">past</span> <span class="kw-concept">patriarchal ideologies</span>, must create their own <span class="kw-concept">identity</span> for <span class="kw-concept">liberation</span>.<br><br><strong>Body:</strong> The poem shows this burden when the <span class="kw-person">speaker</span> describes trying to be <span class="kw-imagery">"like men wanted,"</span> which felt like hiding her true self. This <span class="kw-concept">patriarchal past</span> tried to keep her <span class="kw-imagery">"walking backwards."</span> To escape this, she detaches herself, refusing the old ways and bravely choosing her <span class="kw-concept">"own route"</span> forward. This active creation of her own <span class="kw-concept">identity</span> is her way of fighting the <span class="kw-person">"old guard"</span> (<span class="kw-concept">patriarchal society</span>). It's through this self-defined path that she finds <span class="kw-concept">"intimate liberation"</span> - a deep, personal <span class="kw-theme">freedom</span> - and earns respect for her strength, even if the old system doesn't offer it (<span class="kw-imagery">"homage was left waiting"</span>).<br><br><strong>Conclusion:</strong> Therefore, the poem strongly makes the case that rejecting <span class="kw-time">past</span> burdens and establishing one's own <span class="kw-concept">identity</span> are essential steps for <span class="kw-person">women</span> to achieve <span class="kw-concept">liberation</span> and respect.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <div id="awakening-age" class="poem-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-pink-title mt-8">Poem: The Awakening Age</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-pink-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>The poem "The Awakening Age" is a message of <span class="kw-theme">hope</span> for <span class="kw-person">people</span> who have <span class="kw-theme">suffered</span> greatly, perhaps from <span class="kw-theme">poverty</span> and <span class="kw-theme">war</span> (like the <span class="kw-person">Nigerians</span> after their civil war). The poet speaks to those who <span class="kw-imagery">"travel the meridian line,"</span> asking them to have a vision of a <span class="kw-concept">"new world"</span> and see beyond their <span class="kw-time">past</span> pain towards a better <span class="kw-time">future</span> he calls the <span class="kw-time">"awakening age."</span></p>
+                    <p>He emphasizes that all <span class="kw-person">people</span> are connected by <span class="kw-theme">hope</span>, which is strong like a <span class="kw-imagery">"mountain rope."</span> He encourages them to work together (<span class="kw-imagery">"ascend to a new height"</span>) using their inner <span class="kw-concept">truth</span> and <span class="kw-concept">wisdom</span> (<span class="kw-imagery">"heart's clearest light"</span>).</p>
+                    <p>The poem suggests that by changing how they see things (<span class="kw-concept">"perceptions"</span>), <span class="kw-person">people</span> can gain <span class="kw-concept">truth</span> instead of <span class="kw-theme">pain</span>. It reminds them they possess valuable <span class="kw-concept">"work, wisdom, and creativity,"</span> not just <span class="kw-theme">poverty</span>. The final goal is <span class="kw-concept">unity</span> and creating a peaceful, positive <span class="kw-time">future</span> together (a <span class="kw-imagery">"loving harvest"</span>).</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-purple-title">Questions & Answers</h3>
+                 <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">What can we gain after our perceptions are changed?</summary>
+                        <div>After our <span class="kw-concept">perceptions</span> are changed, the poem says we can gain a lot. Instead of <span class="kw-theme">pain</span>, we find <span class="kw-concept">truth</span>. We can move away from problems and achieve <span class="kw-concept">unity</span>, prosperity, <span class="kw-concept">work</span>, <span class="kw-concept">wisdom</span>, and <span class="kw-concept">creativity</span>. Changing how we see things helps us see the good in <span class="kw-person">people</span> beyond just their <span class="kw-theme">poverty</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Explain with reference to the context: Together we can ascend to a new height, / Guided by our heart's clearest light.</summary>
+                        <div>These lines mean that if <span class="kw-person">people</span> work together in <span class="kw-concept">unity</span>, they can reach a better <span class="kw-time">future</span> (a <span class="kw-imagery">"new height"</span>) like achieving prosperity and progress. To do this, they should be guided by their inner goodness, <span class="kw-concept">wisdom</span>, and <span class="kw-concept">truth</span> (their <span class="kw-imagery">"heart's clearest light"</span>), not by hate or old problems.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is the central idea of the poem, The Awakening Age?</summary>
+                        <div>The central idea of "The Awakening Age" is <span class="kw-theme">hope</span> and <span class="kw-concept">unity</span> for <span class="kw-person">people</span> who have <span class="kw-theme">suffered</span> (like <span class="kw-person">Nigerians</span> after the civil war). It calls for them to change their <span class="kw-concept">perceptions</span>, believe in a better <span class="kw-time">future</span> (<span class="kw-time">"awakening age"</span>), and work together. They should use their <span class="kw-concept">wisdom</span> and <span class="kw-concept">creativity</span> to overcome <span class="kw-theme">poverty</span> and achieve peace and prosperity.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Who are the people 'who travel the meridian line?</summary>
+                        <div>The <span class="kw-person">people</span> <span class="kw-imagery">'who travel the meridian line'</span> likely represent the <span class="kw-person">Nigerian people</span> (or <span class="kw-person">Africans</span>, or even all <span class="kw-theme">suffering people</span>) who have endured great hardship, like <span class="kw-theme">poverty</span>, hunger, and <span class="kw-theme">war</span>. They are <span class="kw-person">people</span> who need to cross over from <span class="kw-time">past</span> suffering to a new <span class="kw-time">future</span> with a new vision of <span class="kw-theme">hope</span> and <span class="kw-concept">unity</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why and how does the poet appeal to the Nigerians to rise up for the 'Awakening Age'?</summary>
+                        <div>The poet appeals to <span class="kw-person">Nigerians</span> to rise up because they have <span class="kw-theme">suffered</span> greatly from <span class="kw-theme">poverty</span> and division. He wants them to have <span class="kw-theme">hope</span> for a better <span class="kw-time">future</span>. How they should rise up is by: uniting, changing their negative <span class="kw-concept">perceptions</span>, using their <span class="kw-concept">wisdom</span> and <span class="kw-concept">creativity</span>, and being guided by <span class="kw-theme">hope</span> and <span class="kw-concept">truth</span> (<span class="kw-imagery">"heart's clearest light"</span>).</div>
+                    </details>
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">'Human beings are connected with hope.' Do you agree or disagree with this statement? Give reasons.</summary>
+                        <div><strong>Introduction:</strong> Based on Ben Okri's "The Awakening Age" and general life experience, I strongly agree that <span class="kw-theme">hope</span> connects <span class="kw-person">human beings</span>.<br><br><strong>Body:</strong> The poem itself shows this connection. Even after suffering <span class="kw-theme">"poverty's rage,"</span> the speaker appeals to a shared <span class="kw-theme">hope</span> for a better <span class="kw-time">future</span>, the <span class="kw-time">"awakening age."</span> He says, "we are all richly linked in <span class="kw-theme">hope</span>, / Woven in history, like a <span class="kw-imagery">mountain rope</span>." This beautiful image shows <span class="kw-theme">hope</span> as a strong tie that binds <span class="kw-person">people</span> together, like a rope helping climbers. In difficult times, shared <span class="kw-theme">hope</span> gives <span class="kw-person">people</span> a common goal and the strength to support each other and work together. <span class="kw-theme">Hope</span> for peace, safety, or a better life for children are feelings almost everyone understands and shares, creating a powerful human connection.<br><br><strong>Conclusion:</strong> Therefore, <span class="kw-theme">hope</span> acts as a vital link, uniting <span class="kw-person">people</span> across different experiences and giving them the collective strength to face hardship and strive for a better <span class="kw-time">future</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines of the poem, 'The Awakening Age' with reference to the context. O ye who travel the meridian line, May the vision of a new world within you shine. May eyes that have lived with poverty's rage, See through to the glory of the awakening age.</summary>
+                        <div><strong>Introduction:</strong> These opening lines from Ben Okri's "The Awakening Age" are a direct address and a hopeful wish. The context is likely aimed at <span class="kw-person">people</span>, perhaps <span class="kw-person">Nigerians</span>, who have <span class="kw-theme">suffered</span> greatly, possibly from <span class="kw-theme">war</span> and hardship.<br><br><strong>Body:</strong> The poet speaks to those who <span class="kw-imagery">"travel the meridian line,"</span> which could mean <span class="kw-person">people</span> crossing geographical lines or, more likely, <span class="kw-person">people</span> moving from a difficult <span class="kw-time">past</span> towards a new <span class="kw-time">future</span>. He wishes for them to hold a bright <span class="kw-concept">"vision of a new world"</span> inside themselves. He hopes that <span class="kw-person">people</span> whose eyes have seen terrible <span class="kw-theme">"poverty's rage"</span> (intense suffering from <span class="kw-theme">poverty</span>) will be able to look past that <span class="kw-theme">pain</span>. He wants them to see and believe in the wonderful potential of a <span class="kw-time">future</span> time, which he calls the <span class="kw-imagery">"glory of the awakening age"</span>-a <span class="kw-time">time</span> of peace, understanding, and prosperity.<br><br><strong>Conclusion:</strong> Therefore, these lines serve as an encouraging call for <span class="kw-theme">suffering people</span> to hold onto <span class="kw-theme">hope</span> and look forward to a positive transformation and a brighter <span class="kw-time">future</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines from the poem 'The Awakening Age' with reference to the context. When perceptions are changed there's much to gain, A flowering of truth instead of pain. There's more to a people than their poverty; There's their work, wisdom, and creativity.</summary>
+                        <div><strong>Introduction:</strong> In Ben Okri's "The Awakening Age," these lines explain the positive results that can come from changing how <span class="kw-person">people</span> think and see the world, especially after times of <span class="kw-theme">suffering</span>.<br><br><strong>Body:</strong> The poet says that if <span class="kw-person">people</span> change their <span class="kw-concept">"perceptions"</span> (their viewpoints or ways of understanding), they have "much to gain." Instead of focusing on <span class="kw-time">past</span> <span class="kw-theme">"pain,"</span> they can experience a <span class="kw-imagery">"flowering of truth."</span> He wants <span class="kw-person">people</span> to realize that a group is not defined only by its difficulties, like <span class="kw-theme">"poverty."</span> He emphasizes that <span class="kw-person">people</span> possess valuable inner qualities: their ability to <span class="kw-concept">"work,"</span> their <span class="kw-concept">"wisdom"</span> (knowledge and good judgment), and their <span class="kw-concept">"creativity"</span> (ability to make new things or have new ideas). Changing <span class="kw-concept">perception</span> helps unlock and value these positive strengths.<br><br><strong>Conclusion:</strong> Thus, these lines argue that shifting perspective is key to overcoming hardship, finding <span class="kw-concept">truth</span>, and recognizing the hidden potential and strengths within <span class="kw-person">people</span>.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Does the poet present migration in a positive light? Why? Why not? (The Aweaking Age)</summary>
+                        <div><strong>Introduction:</strong> Ben Okri's poem "The Awakening Age" does present <span class="kw-theme">migration</span> in a positive light. However, it seems to be mostly a <span class="kw-concept">metaphorical migration</span>-a symbolic journey-rather than just physical travel.<br><br><strong>Body:</strong> The poem speaks positively about moving towards a <span class="kw-concept">"new world"</span> and an <span class="kw-time">"awakening age"</span> filled with <span class="kw-theme">hope</span>, <span class="kw-concept">wisdom</span>, and <span class="kw-concept">unity</span>. This "travel" or movement away from <span class="kw-theme">"poverty's rage"</span> and <span class="kw-time">past</span> <span class="kw-theme">suffering</span> is shown as desirable. The goal is to <span class="kw-imagery">"ascend to a new height."</span> But, the poem focuses more on changing <span class="kw-concept">perceptions</span> and finding inner strength (<span class="kw-imagery">"heart's clearest light"</span>). The <span class="kw-theme">"migration"</span> seems to be about leaving behind old ways of thinking and a state of <span class="kw-theme">suffering</span>, rather than specifically moving to another country.<br><br><strong>Conclusion:</strong> Therefore, the poet portrays <span class="kw-theme">migration</span> positively as a symbolic journey towards a better <span class="kw-time">future</span>, <span class="kw-theme">hope</span>, and <span class="kw-concept">unity</span>, rather than focusing on the literal act of moving places.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+        <div id="soft-storm" class="poem-content space-y-16">
+             <button class="back-button" onclick="showSelection()">← Back to Selection</button>
+             <h2 class="text-4xl md:text-5xl font-semibold text-center text-pink-title mt-8">Poem: Soft Storm</h2>
+            <section class="p-6 md:p-8 content-card sunrise-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-6 text-pink-title">Summary</h3>
+                <div class="space-y-4 text-base md:text-lg">
+                    <p>Abhi Subedi's poem "Soft Storm" describes the <span class="kw-person">speaker's</span> inner feelings while observing the <span class="kw-theme">chaos</span> and problems of his city (likely <span class="kw-place">Kathmandu</span>) and <span class="kw-time">time</span>. He feels a <span class="kw-imagery">"soft storm"</span> inside him - meaning he's deeply <span class="kw-theme">disturbed</span> and <span class="kw-theme">sad</span>, but in a quiet, internal way.</p>
+                    <p>This feeling comes from seeing many troubling things: <span class="kw-theme">political confusion</span>, <span class="kw-person">homeless children</span> crying from <span class="kw-theme">hunger</span>, history and culture being ignored (<span class="kw-imagery">"unwedded gardens of history"</span>), and senseless <span class="kw-theme">violence</span> (like a <span class="kw-person">man</span> being beaten for no reason, or another <span class="kw-person">victim</span> silenced with a <span class="kw-imagery">"blood-stained shirt"</span>). He notices that <span class="kw-concept">nature</span> also seems <span class="kw-theme">disturbed</span>, reflecting the societal problems.</p>
+                    <p>The <span class="kw-person">speaker</span> feels compassion and <span class="kw-theme">sadness</span> about these <span class="kw-time">"mad times"</span> or <span class="kw-time">"hard times."</span> He wishes he could just <span class="kw-imagery">"melt like a rainbow,"</span> suggesting a desire for peace, escape, and perhaps beauty in the middle of all the ugliness and <span class="kw-concept">absurdity</span> he witnesses.</p>
+                </div>
+            </section>
+            <section class="p-6 md:p-8 content-card sunset-gradient">
+                <h3 class="text-3xl md:text-4xl font-semibold mb-8 text-purple-title">Questions & Answers</h3>
+                 <div class="space-y-5">
+                    <p class="text-lg font-semibold text-gray-300 mb-4">75 Words:</p>
+                    <details>
+                        <summary class="text-lg md:text-xl">Discuss the title's significance in the poem, Soft Storm.</summary>
+                        <div>The title <span class="kw-imagery">"Soft Storm"</span> is significant because it describes the <span class="kw-person">speaker's</span> inner feeling. It's a <span class="kw-imagery">"storm"</span> because he feels very <span class="kw-theme">disturbed</span> and troubled by the <span class="kw-theme">chaos</span> he sees. But it's <span class="kw-imagery">"soft"</span> because his feeling is mostly internal and quiet, perhaps <span class="kw-theme">sad</span> or compassionate, not loud or violent outwardly. The title captures this feeling of being deeply affected inside by the harsh world.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Why is the poet contemplating over the absurdities of tumultuous time?</summary>
+                        <div>The poet contemplates (thinks deeply about) the <span class="kw-concept">absurdities</span> (things that don't make sense) of the <span class="kw-time">tumultuous time</span> (chaotic period) because he is deeply <span class="kw-theme">disturbed</span> by them. He sees <span class="kw-theme">violence</span> without reason, <span class="kw-theme">suffering</span> being ignored, <span class="kw-concept">nature</span> acting strangely, and history forgotten. These contradictions and senseless events cause him inner <span class="kw-theme">pain</span> (the <span class="kw-imagery">"soft storm"</span>), making him reflect on the troubling state of society.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">What is the speaker like? Is he a rebel?</summary>
+                        <div>The <span class="kw-person">speaker</span> seems sensitive, observant, and compassionate. He is deeply affected by the <span class="kw-theme">suffering</span> and <span class="kw-theme">chaos</span> he sees. He is not an openly aggressive <span class="kw-person">rebel</span> who shouts or fights outwardly. However, his deep dissatisfaction with the <span class="kw-time">"mad time"</span> and his clear criticism of the problems show a kind of quiet, internal <span class="kw-theme">rebellion</span> against the injustice and <span class="kw-concept">absurdity</span> he witnesses.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What do you understand by 'the unwedded gardens of history'?</summary>
+                        <div><span class="kw-imagery">"The unwedded gardens of history"</span> likely means parts of the country's <span class="kw-time">past</span> culture or history that are not properly cared for or acknowledged. Like a garden left "unwedded" or untended, these parts might be ignored, neglected, or maybe even related to unpleasant events or traditions from the <span class="kw-time">past</span> that society hasn't dealt with properly.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">When does the speaker grow soft? Enlist the occasions when he grows soft?'</summary>
+                        <div>The <span class="kw-person">speaker</span> grows <span class="kw-imagery">soft</span> (feels deeply <span class="kw-theme">disturbed</span> or <span class="kw-theme">sad</span>) on many occasions. He becomes <span class="kw-imagery">soft</span> when he hears the loud <span class="kw-theme">chaos</span> ("tumult"), sees <span class="kw-person">homeless children</span> crying from <span class="kw-theme">hunger</span>, witnesses a lonely <span class="kw-person">child</span> searching for his mother amidst <span class="kw-theme">violence</span>, sees a <span class="kw-person">man</span> beaten mercilessly, and observes the <span class="kw-imagery">blood-stained shirt</span> of another <span class="kw-theme">suffering</span> <span class="kw-person">person</span>.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">What do you understand by 'this seamless city'?</summary>
+                        <div><span class="kw-imagery">"This seamless city"</span> refers to a memory or idea of the city in the <span class="kw-time">past</span>. "Seamless" means smooth, without problems or breaks. So, the <span class="kw-person">speaker</span> is likely remembering a <span class="kw-time">time</span> when the city felt more peaceful, orderly, and perhaps simpler, contrasting it strongly with the chaotic and troubled city he sees now in the <span class="kw-time">"mad time."</span></div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the poor children portrayed in the poem.</summary>
+                        <div>The poem portrays <span class="kw-person">poor children</span> <span class="kw-theme">suffering</span> greatly. It specifically mentions <span class="kw-person">homeless children</span> in <span class="kw-place">Thamel</span> who were crying loudly because of <span class="kw-theme">hunger</span>. Another picture is of a <span class="kw-imagery">"forlorn child"</span> (sad and lonely) carrying a radio, wailing as he runs around searching desperately for his mother in the midst of <span class="kw-imagery">"violent history."</span></div>
+                    </details>
+                    <p class="text-lg font-semibold text-gray-300 mt-8 mb-4">150 Words / Long Answer:</p>
+                     <details>
+                        <summary class="text-lg md:text-xl">Explain the following lines from the poem 'Soft Storm' with reference to the context. I become soft / When I saw / a blood-stained shirt / speaking in the earth's ears / with bruised human lips / in the far corner / under the moon / of history and dreams / playing hide and seek / in open museums / of human times.</summary>
+                        <div><strong>Introduction:</strong> In Abhi Subedi's "Soft Storm," this stanza shows a powerful reason why the <span class="kw-person">speaker</span> <span class="kw-imagery">"became soft"</span>-deeply affected and compassionate. It describes a disturbing scene of hidden <span class="kw-theme">violence</span> and <span class="kw-theme">suffering</span>.<br><br><strong>Body:</strong> The <span class="kw-person">speaker</span> witnesses someone severely injured, indicated by the <span class="kw-imagery">"blood-stained shirt"</span> and <span class="kw-imagery">"bruised human lips."</span> This <span class="kw-person">person</span> is isolated (<span class="kw-imagery">"in the far corner / under the moon"</span>), suggesting the <span class="kw-theme">suffering</span> happens secretly or is ignored. The phrase <span class="kw-imagery">"speaking in the earth's ears"</span> implies the <span class="kw-person">victim</span> is silenced or unheard by society, their <span class="kw-theme">pain</span> only absorbed by the ground. This <span class="kw-theme">violence</span> occurs even though history and human experience are like <span class="kw-imagery">"open museums."</span> The mention of <span class="kw-imagery">"history and dreams playing hide and seek"</span> suggests that <span class="kw-concept">truth</span> and <span class="kw-theme">hope</span> are hard to find in these violent <span class="kw-time">"human times."</span><br><br><strong>Conclusion:</strong> Therefore, these lines vividly explain the <span class="kw-person">speaker's</span> <span class="kw-imagery">"softness"</span> as a pained reaction to witnessing extreme, ignored human <span class="kw-theme">suffering</span> hidden within the broader context of society and history.</div>
+                    </details>
+                     <details>
+                        <summary class="text-lg md:text-xl">Summarize the poem 'Soft Storm' as a speaker's dissatisfaction towards social, cultural, economic and political issues prevailing in Nepal.</summary>
+                        <div><strong>Introduction:</strong> Abhi Subedi's poem "Soft Storm" shows the <span class="kw-person">speaker</span> feels very unhappy and worried about the many problems happening in his society (likely <span class="kw-place">Nepal</span> now).<br><br><strong>Body:</strong> He feels a kind of <span class="kw-theme">sad</span> storm inside him (<span class="kw-imagery">"soft storm"</span>) because he sees bad things everywhere. He sees confusing <span class="kw-theme">politics</span>, history being forgotten, <span class="kw-person">poor children</span> crying because they are <span class="kw-theme">hungry</span>, and <span class="kw-person">people</span> being hurt. He mentions a <span class="kw-person">man</span> beaten badly for no reason and another hurt <span class="kw-person">person</span> who seems unable to speak about their <span class="kw-theme">pain</span>. It feels like <span class="kw-person">people's</span> <span class="kw-theme">suffering</span> is ignored. He thinks it's a <span class="kw-time">"mad time"</span> and <span class="kw-time">"hard times"</span> because everything seems unfair and chaotic.<br><br><strong>Conclusion:</strong> So, the poem is about the <span class="kw-person">speaker's</span> deep <span class="kw-theme">sadness</span> regarding the different problems and unfairness he sees all around him in society.</div>
+                    </details>
+                    <details>
+                        <summary class="text-lg md:text-xl">Describe the main aspects dealt with in the poem.</summary>
+                        <div><strong>Introduction:</strong> Abhi Subedi's poem "Soft Storm" mainly deals with the <span class="kw-person">speaker's</span> inner feelings as he reacts to the chaotic world around him, likely reflecting modern <span class="kw-place">Nepal</span>.<br><br><strong>Body:</strong> A key aspect is the <span class="kw-person">speaker's</span> deep disturbance the <span class="kw-imagery">"soft storm"</span> inside him-caused by seeing social problems. He observes <span class="kw-theme">political confusion</span>, <span class="kw-theme">poverty</span> (like <span class="kw-person">homeless children</span>), <span class="kw-theme">violence</span> (a <span class="kw-person">man</span> beaten), and <span class="kw-person">people's</span> <span class="kw-theme">suffering</span> being ignored. Another aspect is the connection between <span class="kw-concept">nature</span> and society; the poem shows <span class="kw-concept">nature</span> also seems <span class="kw-theme">disturbed</span> (crocuses growing strangely, sad birds). The poem also touches on history and culture being forgotten (<span class="kw-imagery">"unwedded gardens of history"</span>). Finally, it deals with the <span class="kw-person">speaker's</span> personal feeling of <span class="kw-theme">sadness</span> and his desire for peace and escape (<span class="kw-imagery">"melt like a rainbow"</span>) in these <span class="kw-time">"hard times."</span><br><br><strong>Conclusion:</strong> Therefore, the main aspects are the <span class="kw-person">speaker's</span> pained reaction to social <span class="kw-theme">chaos</span>, the link between <span class="kw-concept">nature</span> and society's problems, and his personal longing for peace and understanding.</div>
+                    </details>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Poem Analysis | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+    <script>
+        // Get references to the sections
+        const selectionSection = document.getElementById('poem-selection');
+        const poemContentDivs = document.querySelectorAll('.poem-content');
+
+        // Function to show a specific poem's content
+        function showPoem(poemId) {
+            // Hide the selection section
+            selectionSection.style.display = 'none';
+
+            // Hide all poem content sections first
+            poemContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selected poem's content section
+            const selectedPoem = document.getElementById(poemId);
+            if (selectedPoem) {
+                selectedPoem.style.display = 'block';
+                window.scrollTo(0, 0); // Scroll to top
+            }
+        }
+
+        // Function to show the selection section and hide poem content
+        function showSelection() {
+            // Hide all poem content sections
+            poemContentDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show the selection section
+            selectionSection.style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        // Initially, ensure only the selection is visible (optional, CSS handles this)
+        // showSelection(); // Call this if you want JS to explicitly set the initial state
+
+    </script>
+
+</body>
+</html>

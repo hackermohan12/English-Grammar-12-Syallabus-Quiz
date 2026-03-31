@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Unit 12: Prepositions Quiz</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 750px; /* Adjusted width */
+            text-align: center; /* Center align container content */
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #3498db;
+            font-size: 1.2em;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        #quiz {
+            text-align: left; /* Align question/options left */
+        }
+
+        #question-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        #question-number {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #question-text {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 15px; /* Added margin below question */
+        }
+
+        #options-container {
+            display: grid; /* Use grid for potentially 2 columns */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
+            gap: 10px; /* Space between buttons */
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            background-color: #ffffff;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 12px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            text-align: center; /* Center text within button */
+            width: 100%; /* Make buttons full width */
+            box-sizing: border-box; /* Include padding/border in width */
+        }
+
+        .option-button:hover:not(:disabled) {
+            background-color: #ecf0f1;
+            border-color: #95a5a6;
+        }
+
+        .option-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .option-button.correct {
+            background-color: #d4edda; /* Light green */
+            border-color: #c3e6cb;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .option-button.incorrect {
+            background-color: #f8d7da; /* Light red */
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        #feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden initially */
+            text-align: center;
+        }
+
+        #feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        #feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        #explanation {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #444;
+            text-align: left;
+            line-height: 1.5;
+        }
+        #explanation strong {
+             color: #3498db; /* Highlight keywords */
+        }
+
+
+        #next-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: none; /* Hidden initially */
+            margin-top: 20px;
+            float: right; /* Position button to the right */
+        }
+
+        #next-button:hover {
+            background-color: #2980b9;
+        }
+
+        #score {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+            text-align: center; /* Center score */
+            clear: both; /* Clear float */
+            padding-top: 20px; /* Add space above score */
+            border-top: 1px solid #eee; /* Separator */
+        }
+
+        #results {
+            text-align: center;
+            padding: 20px;
+            background-color: #eaf2f8;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #results h2 {
+            color: #2c3e50;
+            border-bottom: none;
+        }
+        #results p {
+            font-size: 1.2em;
+            color: #3498db;
+        }
+
+    </style>
+</head>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+<body>
+
+    <div class="quiz-container">
+        <h1>Unit 12 Quiz</h1>
+        <h2>Prepositions</h2>
+
+        <div id="quiz">
+            <div id="question-header">
+                <span id="question-number"></span>
+                <p id="question-text"></p>
+            </div>
+            <div id="options-container">
+                <!-- Option buttons will be generated here -->
+            </div>
+            <div id="feedback">
+                <span id="feedback-text"></span>
+                <div id="explanation"></div> <!-- Explanation moved inside feedback -->
+            </div>
+             <button id="next-button">Next Question</button>
+        </div>
+
+        <div id="results" style="display: none;">
+            <!-- Results will be shown here -->
+        </div>
+
+        <div id="score">Score: 0 / 0</div>
+    </div>
+
+    <script>
+        // --- Sound Effect Setup ---
+        const correctSound = new Audio('correct.mp3'); // Placeholder path
+        const incorrectSound = new Audio('incorrect.mp3'); // Placeholder path
+        correctSound.preload = 'auto';
+        incorrectSound.preload = 'auto';
+
+        const quizData = [
+            // Section A: Complete with the correct prepositions.
+            {
+                section: "A - Complete",
+                question: "The relationship ___ the two boys has changed.",
+                options: ["among", "between", "of", "with"],
+                correctAnswer: "between",
+                explanation: "'<strong>Between</strong>' is used when referring to a relationship or comparison involving <strong>two</strong> distinct people, groups, or things. 'Among' is used for more than two."
+            },
+            {
+                section: "A - Complete",
+                question: "___ Nepal, many girls get married ___ an early age.",
+                options: ["At / at", "In / at", "On / in", "In / in"],
+                correctAnswer: "In / at",
+                explanation: "'<strong>In</strong>' is used for larger geographical areas like countries ('In Nepal'). '<strong>At</strong>' is used with specific ages or points in time ('at an early age', 'at 18', 'at noon')."
+            },
+            {
+                section: "A - Complete",
+                question: "I'm not ___ the mood for such silly games.",
+                options: ["at", "on", "in", "with"],
+                correctAnswer: "in",
+                explanation: "The fixed expression is '<strong>in the mood for</strong> something'."
+            },
+            {
+                section: "A - Complete",
+                question: "There were no security personnel ___ duty at that time.",
+                options: ["at", "in", "with", "on"],
+                correctAnswer: "on",
+                explanation: "The fixed expression is '<strong>on duty</strong>', meaning actively working or assigned to a task."
+            },
+            {
+                section: "A - Complete",
+                question: "The new smartphone is similar ___ the one I bought.",
+                options: ["with", "as", "to", "like"],
+                correctAnswer: "to",
+                explanation: "The adjective '<strong>similar</strong>' is followed by the preposition '<strong>to</strong>'."
+            },
+            {
+                section: "A - Complete",
+                question: "My dad insisted ___ taking the later train.",
+                options: ["at", "to", "for", "on"],
+                correctAnswer: "on",
+                explanation: "The verb '<strong>insist</strong>' is followed by the preposition '<strong>on</strong>' + gerund (-ing form) or noun."
+            },
+            {
+                section: "A - Complete",
+                question: "We bought the TV because it was ___ sale.",
+                options: ["at", "for", "on", "in"],
+                correctAnswer: "on",
+                explanation: "The fixed expression '<strong>on sale</strong>' means available for purchase, often at a reduced price. 'For sale' means available to be bought (not necessarily discounted)."
+            },
+            {
+                section: "A - Complete",
+                question: "She has no understanding ___ how computers really work.",
+                options: ["of", "for", "about", "on"],
+                correctAnswer: "of",
+                explanation: "The noun '<strong>understanding</strong>' is typically followed by '<strong>of</strong>' when specifying the subject matter being understood."
+            },
+            {
+                section: "A - Complete",
+                question: "I gave him my new T-shirt ___ exchange ___ a few cigarettes.",
+                options: ["in / for", "for / in", "at / for", "in / to"],
+                correctAnswer: "in / for",
+                explanation: "The fixed expression is '<strong>in exchange for</strong>', meaning giving one thing to receive another."
+            },
+            {
+                section: "A - Complete",
+                question: "He was vaccinated ___ Covid-19.",
+                options: ["for", "with", "against", "from"],
+                correctAnswer: "against",
+                explanation: "Vaccination provides protection '<strong>against</strong>' a disease."
+            },
+
+            // Section B: Fill in the blanks with appropriate prepositions.
+             {
+                section: "B - Fill",
+                question: "I was accompanied to the hospital ___ my friend.",
+                options: ["with", "by", "from", "of"],
+                correctAnswer: "by",
+                explanation: "In the <strong>passive voice</strong> ('was accompanied'), the agent (the person doing the accompanying) is introduced by '<strong>by</strong>'."
+            },
+            {
+                section: "B - Fill",
+                question: "I have great respect ___ my teachers.",
+                options: ["to", "with", "for", "about"],
+                correctAnswer: "for",
+                explanation: "The noun '<strong>respect</strong>' is typically followed by '<strong>for</strong>' when indicating who or what is respected."
+            },
+            {
+                section: "B - Fill",
+                question: "The culprit was sentenced ___ death.",
+                options: ["for", "to", "with", "by"],
+                correctAnswer: "to",
+                explanation: "The verb '<strong>sentence</strong>' is followed by '<strong>to</strong>' when specifying the punishment."
+            },
+            {
+                section: "B - Fill",
+                question: "His arguments are not based ___ truth.",
+                options: ["in", "at", "with", "on"],
+                correctAnswer: "on",
+                explanation: "The phrasal verb '<strong>base on</strong>' means to use something as the foundation or evidence for something else."
+            },
+            {
+                section: "B - Fill",
+                question: "He has not contributed ___ the development of our nation.",
+                options: ["for", "in", "to", "at"],
+                correctAnswer: "to",
+                explanation: "The verb '<strong>contribute</strong>' is followed by '<strong>to</strong>' when indicating what is being contributed towards."
+            },
+            {
+                section: "B - Fill",
+                question: "He died ___ Corona ___ the age ___ thirty-five.",
+                options: ["from / at / of", "of / in / at", "with / on / for", "by / at / in"],
+                correctAnswer: "from / at / of",
+                explanation: "One 'dies <strong>from</strong>' or 'dies <strong>of</strong>' a disease (usage varies, 'from' often implies external cause/consequence). One dies '<strong>at</strong>' a specific age. 'The age <strong>of</strong> thirty-five' is the full phrase."
+            },
+            {
+                section: "B - Fill",
+                question: "The young generation ___ Nepali people don't take interest ___ politics.",
+                options: ["of / in", "in / of", "for / at", "with / on"],
+                correctAnswer: "of / in",
+                explanation: "'Generation <strong>of</strong>' specifies the group. 'Take interest <strong>in</strong>' is the fixed collocation."
+            },
+            {
+                section: "B - Fill",
+                question: "Our village was not infected ___ Corona.",
+                options: ["by", "from", "with", "of"],
+                correctAnswer: "with",
+                explanation: "One is typically 'infected <strong>with</strong>' a virus or disease. ('By' might refer to the agent causing infection if passive, e.g., 'infected by mosquitoes')."
+            },
+            {
+                section: "B - Fill",
+                question: "Why do you sneer ___ me?",
+                options: ["on", "to", "at", "about"],
+                correctAnswer: "at",
+                explanation: "The verb '<strong>sneer</strong>' is followed by '<strong>at</strong>' when indicating the target of the contemptuous smile or remark."
+            },
+            {
+                section: "B - Fill",
+                question: "My sister always complains ___ her job.",
+                options: ["for", "at", "of", "about"],
+                correctAnswer: "about",
+                explanation: "One 'complains <strong>about</strong>' something they are unhappy with. ('Complain of' is usually for ailments like 'complain of a headache')."
+            },
+            {
+                section: "B - Fill",
+                question: "He is fond ___ cricket.",
+                options: ["for", "with", "of", "in"],
+                correctAnswer: "of",
+                explanation: "The adjective '<strong>fond</strong>' is followed by '<strong>of</strong>'."
+            },
+            {
+                section: "B - Fill",
+                question: "You should not joke ___ his physical appearance.",
+                options: ["on", "at", "for", "about"],
+                correctAnswer: "about",
+                explanation: "One 'jokes <strong>about</strong>' a topic. ('Joke with' someone; 'joke at' someone's expense can imply mocking)."
+            },
+            {
+                section: "B - Fill",
+                question: "She is allergic ___ perfume.",
+                options: ["with", "against", "to", "for"],
+                correctAnswer: "to",
+                explanation: "The adjective '<strong>allergic</strong>' is followed by '<strong>to</strong>'."
+            },
+
+            // Section C: Fill in the blanks with for, since, until, by or in.
+            {
+                section: "C - Time Prepositions",
+                question: "The classes will be over ___ 5 PM.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "by",
+                explanation: "'<strong>By</strong> 5 PM' means <strong>not later than</strong> 5 PM, indicating the deadline or latest time for completion."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "Karma Sherpa reached the top of Mt. Everest ___ 8 hours.",
+                options: ["since", "for", "by", "in"],
+                correctAnswer: "in",
+                explanation: "'<strong>In</strong> 8 hours' indicates the <strong>time taken</strong> to complete the action."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "We kept on talking ___ three in the morning.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "until",
+                explanation: "'<strong>Until</strong> three' indicates the action continued <strong>up to</strong> that specific time."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "She has been living in America ___ she got married.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "since",
+                explanation: "'She got married' is a specific point in the past marking the <strong>starting point</strong>. '<strong>Since</strong>' is used with perfect tenses ('has been living') to indicate a starting point."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "He has been playing video games ___ ten hours.",
+                options: ["since", "for", "by", "in"],
+                correctAnswer: "for",
+                explanation: "'Ten hours' is a <strong>duration</strong> of time. '<strong>For</strong>' is used with perfect tenses ('has been playing') to indicate duration."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "She practices the Sitar every day ___ five hours.",
+                options: ["since", "for", "by", "in"],
+                correctAnswer: "for",
+                explanation: "'Five hours' is a <strong>duration</strong> of time for the daily practice. '<strong>For</strong>' indicates duration."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "He lived in Jumla ___ he passed high school examinations.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "until",
+                explanation: "'He passed...' marks the <strong>end point</strong> of the period. '<strong>Until</strong>' indicates the action continued <strong>up to</strong> that point."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "It has been raining ___ last Saturday.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "since",
+                explanation: "'Last Saturday' is a specific <strong>starting point</strong> in the past. '<strong>Since</strong>' is used with perfect tenses ('has been raining') to indicate the start."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "I can type 120 words ___ a minute.",
+                options: ["since", "for", "by", "in"],
+                correctAnswer: "in",
+                explanation: "'<strong>In</strong> a minute' indicates the <strong>timeframe within which</strong> the action can be completed."
+            },
+            {
+                section: "C - Time Prepositions",
+                question: "We take an early breakfast. It's generally ready ___ six in the morning.",
+                options: ["since", "for", "by", "until"],
+                correctAnswer: "by",
+                explanation: "'<strong>By</strong> six' indicates the <strong>latest time</strong> the breakfast is usually ready."
+            },
+
+             // Section D: Choose the best options
+             {
+                section: "D - Choose",
+                question: "I usually prefer to have my coffee ___ the morning.",
+                options: ["at", "in", "on"],
+                correctAnswer: "in",
+                explanation: "Use '<strong>in</strong>' for parts of the day: '<strong>in</strong> the morning', '<strong>in</strong> the afternoon', '<strong>in</strong> the evening'. (Exception: '<strong>at</strong> night')."
+            },
+            {
+                section: "D - Choose",
+                question: "She is allergic ___ cats.",
+                options: ["to", "with", "in"],
+                correctAnswer: "to",
+                explanation: "The adjective '<strong>allergic</strong>' is followed by '<strong>to</strong>'."
+            },
+            {
+                section: "D - Choose",
+                question: "I am interested ___ learning a new language.",
+                options: ["in", "with", "on"],
+                correctAnswer: "in",
+                explanation: "The adjective '<strong>interested</strong>' is followed by '<strong>in</strong>'."
+            },
+            {
+                section: "D - Choose",
+                question: "She is really good ___ playing the guitar.",
+                options: ["at", "in", "on"],
+                correctAnswer: "at",
+                explanation: "Use 'good <strong>at</strong>' to indicate skill in an activity or subject."
+            },
+            {
+                section: "D - Choose",
+                question: "He was congratulated ___ his success.",
+                options: ["to", "on", "at"],
+                correctAnswer: "on",
+                explanation: "One is 'congratulated <strong>on</strong>' their achievement or success."
+            },
+             {
+                section: "D - Choose",
+                question: "The thief escaped ___ the tunnel.",
+                options: ["through", "onto", "beside", "below"],
+                correctAnswer: "through",
+                explanation: "'<strong>Through</strong>' indicates movement from one end/side to the other <strong>within</strong> an enclosed space or area (like a tunnel, a forest, a crowd)."
+            },
+            {
+                section: "D - Choose",
+                question: "Bears belong ___ the family of mammals.",
+                options: ["on", "in", "to", "with"],
+                correctAnswer: "to",
+                explanation: "The verb '<strong>belong</strong>' is followed by '<strong>to</strong>' when indicating membership in a group or category."
+            },
+            {
+                section: "D - Choose",
+                question: "Be aware ___ the dog.",
+                options: ["from", "to", "of"],
+                correctAnswer: "of",
+                explanation: "The adjective '<strong>aware</strong>' is followed by '<strong>of</strong>'. (The imperative 'Beware <strong>of</strong>' is also common)."
+            },
+            {
+                section: "D - Choose",
+                question: "The restaurant is famous ___ its seafood dishes.",
+                options: ["for", "of", "in"],
+                correctAnswer: "for",
+                explanation: "Use 'famous <strong>for</strong>' to indicate the reason for the fame."
+            },
+            {
+                section: "D - Choose",
+                question: "People should abide ___ the law.",
+                options: ["by", "to", "at"],
+                correctAnswer: "by",
+                explanation: "The phrasal verb 'abide <strong>by</strong>' means to accept or obey a rule, decision, or law."
+            }
+        ];
+
+
+        // --- DOM Elements ---
+        const quizContainer = document.getElementById('quiz');
+        const resultsContainer = document.getElementById('results');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedback-text');
+        const explanationEl = document.getElementById('explanation');
+        const nextButtonEl = document.getElementById('next-button');
+        const scoreEl = document.getElementById('score');
+
+        // --- State Variables ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const totalQuestions = quizData.length;
+
+        // --- Functions ---
+
+        function loadQuestion() {
+            feedbackEl.style.display = 'none';
+            explanationEl.innerHTML = '';
+            nextButtonEl.style.display = 'none';
+            optionsContainerEl.innerHTML = '';
+
+            const currentQuestion = quizData[currentQuestionIndex];
+
+            questionNumberEl.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions} (${currentQuestion.section})`;
+            questionTextEl.textContent = currentQuestion.question; // Use textContent is fine here
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option-button');
+                button.addEventListener('click', () => selectAnswer(option, button));
+                optionsContainerEl.appendChild(button);
+            });
+        }
+
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(error => {
+                 console.warn("Audio playback failed:", error);
+            });
+        }
+
+
+        function selectAnswer(selectedOption, selectedButton) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            const correctOption = currentQuestion.correctAnswer;
+
+            const optionButtons = optionsContainerEl.querySelectorAll('.option-button');
+            optionButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedOption === correctOption) {
+                score++;
+                selectedButton.classList.add('correct');
+                feedbackTextEl.textContent = "Correct!";
+                feedbackEl.className = 'feedback correct';
+                playSound(correctSound);
+            } else {
+                selectedButton.classList.add('incorrect');
+                feedbackTextEl.textContent = "Incorrect!";
+                feedbackEl.className = 'feedback incorrect';
+                playSound(incorrectSound);
+
+                optionButtons.forEach(btn => {
+                    if (btn.textContent === correctOption) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            explanationEl.innerHTML = currentQuestion.explanation || '';
+            feedbackEl.style.display = 'block';
+            updateScore();
+
+            if (currentQuestionIndex < totalQuestions - 1) {
+                nextButtonEl.textContent = "Next Question";
+            } else {
+                nextButtonEl.textContent = "Show Results";
+            }
+            nextButtonEl.style.display = 'inline-block';
+        }
+
+
+        function updateScore() {
+            scoreEl.textContent = `Score: ${score} / ${totalQuestions}`;
+        }
+
+        function showNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizContainer.style.display = 'none';
+            scoreEl.style.display = 'none';
+
+            resultsContainer.innerHTML = `
+                <h2>Quiz Complete!</h2>
+                <p>Your final score is: ${score} out of ${totalQuestions}</p>
+                <button onclick="location.reload()">Restart Quiz</button>
+            `;
+            resultsContainer.style.display = 'block';
+        }
+
+        // --- Initialization ---
+        nextButtonEl.addEventListener('click', showNextQuestion);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateScore();
+            loadQuestion();
+        });
+
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Educational Resources | Created by Mohan Paudel</p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+</html>

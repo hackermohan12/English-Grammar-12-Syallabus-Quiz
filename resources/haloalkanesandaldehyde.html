@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Chemistry: Haloalkanes & Aldehydes</title>
+    <style>
+        /* Modern Layout Fix for Multi-topic Practice Page */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .flashcard-container {
+            width: 100%;
+            height: 350px;
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard-inner {
+            position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px; border-radius: var(--border-radius); background-color: var(--card-bg);
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg); background-color: var(--light-bg);
+            align-items: flex-start; text-align: left;
+        }
+
+        .option-button {
+            display: block; width: 100%; text-align: left; padding: 1.2rem; margin-bottom: 1rem;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            background-color: var(--card-bg); color: var(--text-primary); cursor: pointer; transition: var(--transition);
+        }
+        .option-button:hover:not(:disabled) { background-color: var(--light-bg); transform: translateX(5px); }
+        
+        .correct-option { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .incorrect-option { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+
+        .hidden { display: none !important; }
+        .flex-center { display: flex; flex-direction: column; align-items: center; }
+        .feedback-explanation {
+            margin-top: 1.5rem; padding: 1.5rem; background-color: var(--light-bg);
+            border-radius: var(--border-radius); border-left: 5px solid var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Chemistry Practice</h1>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Haloalkanes & Aldehydes</p>
+
+        <div id="mode-selection" class="mode-selection">
+            <button onclick="selectMode('mcq')" class="btn" style="background-color: #3b82f6;">MCQ Quiz</button>
+            <button onclick="selectMode('flashcard')" class="btn" style="background-color: #10b981;">Flashcards</button>
+        </div>
+
+        <div id="content-area" class="hidden">
+            <div id="topic-indicator" style="text-align: center; font-weight: 500; color: var(--text-secondary); margin-bottom: 1.5rem;"></div>
+
+            <!-- MCQ Mode -->
+            <div id="mcq-mode" class="hidden">
+                <div id="mcq-question" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; padding: 1.5rem; background-color: var(--light-bg); border-radius: var(--border-radius);"></div>
+                <div id="mcq-options"></div>
+                <div id="mcq-feedback" class="feedback-explanation hidden" style="font-weight: 600; margin-bottom: 1rem;"></div>
+                <div id="mcq-explanation" class="feedback-explanation hidden">
+                    <strong>Explanation:</strong> <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <!-- Flashcard Mode -->
+            <div id="flashcard-mode" class="hidden flex-center">
+                 <div class="flashcard-container flashcard cursor-pointer" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p id="flashcard-question" style="font-size: 1.2rem; font-weight: 500;"></p>
+                            <span style="font-size: 0.8rem; color: #94a3b8; margin-top: 2rem;">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                             <p id="flashcard-answer" style="font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;"></p>
+                             <p id="flashcard-explanation" style="font-size: 0.95rem; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="flipCard(document.querySelector('.flashcard'))" class="btn" style="background-color: #f59e0b;">Reveal Answer</button>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                 <button id="next-btn" class="btn" style="min-width: 140px;">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const studyData = [
+            { question: "Chlorination of methane in sunlight proceeds by:", options: ["Nucleophilic substitution", "Electrophilic substitution", "Free radical substitution", "Elimination"], answer: "Free radical substitution", explanation: "Sunlight promotes the homolytic cleavage of the Cl-Cl bond into chlorine free radicals." },
+            { question: "Which gives a primary alcohol when treated with RMgX followed by hydrolysis?", options: ["Formaldehyde (HCHO)", "Acetaldehyde (CH3CHO)", "Acetone (CH3COCH3)", "Ethers"], answer: "Formaldehyde (HCHO)", explanation: "Grignard reagent adds to Formaldehyde to form a primary alcohol after hydrolysis." },
+            { question: "Iodoform is prepared by reacting Ethanol or Acetone with:", options: ["I2 + NaOH", "HI + Red P", "KI + HCl", "I2 + H2SO4"], answer: "I2 + NaOH", explanation: "The Iodoform reaction specifically requires Iodine and a strong base like NaOH." },
+            { question: "Product of heating CHCl3 + Ag powder?", options: ["Ethane", "Ethene", "Ethyne (Acetylene)", "Methane"], answer: "Ethyne (Acetylene)", explanation: "Reaction: 2CHCl3 + 6Ag -> C2H2 + 6AgI." },
+            { question: "Reagent used to convert Carbonyl group (>C=O) to Hydrocarbon (>CH2)?", options: ["LiAlH4", "Zn-Hg / conc. HCl (Clemmensen)", "H2 / Ni", "PCl5"], answer: "Zn-Hg / conc. HCl (Clemmensen)", explanation: "Clemmensen reduction reduces aldehydes/ketones to alkanes." }
+        ];
+
+        let mode = null;
+        let index = 0;
+        let score = 0;
+        let shuffled = [];
+
+        function selectMode(m) {
+            mode = m; index = 0; score = 0;
+            shuffled = [...studyData].sort(() => Math.random() - 0.5);
+            document.getElementById('mode-selection').classList.add('hidden');
+            document.getElementById('content-area').classList.remove('hidden');
+            load();
+        }
+
+        function load() {
+            if (index >= shuffled.length) { finish(); return; }
+            const q = shuffled[index];
+            document.getElementById('topic-indicator').textContent = `${mode === 'mcq' ? 'Question' : 'Card'} ${index + 1} of ${shuffled.length}`;
+            document.getElementById('next-btn').disabled = (mode === 'mcq');
+            document.getElementById('next-btn').textContent = (index === shuffled.length - 1) ? 'Finish' : 'Next →';
+
+            if (mode === 'mcq') {
+                document.getElementById('mcq-mode').classList.remove('hidden');
+                document.getElementById('flashcard-mode').classList.add('hidden');
+                document.getElementById('mcq-question').textContent = q.question;
+                const container = document.getElementById('mcq-options');
+                container.innerHTML = '';
+                document.getElementById('mcq-feedback').classList.add('hidden');
+                document.getElementById('mcq-explanation').classList.add('hidden');
+                
+                [...q.options].sort(() => Math.random() - 0.5).forEach(o => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-button';
+                    btn.textContent = o;
+                    btn.onclick = () => {
+                        const correct = o === q.answer;
+                        document.querySelectorAll('.option-button').forEach(b => {
+                            b.disabled = true;
+                            if (b.textContent === q.answer) b.classList.add('correct-option');
+                            else if (b.textContent === o) b.classList.add('incorrect-option');
+                        });
+                        const f = document.getElementById('mcq-feedback');
+                        f.classList.remove('hidden');
+                        f.textContent = correct ? "Correct!" : "Incorrect.";
+                        f.style.color = correct ? "#10b981" : "#ef4444";
+                        document.getElementById('explanation-text').textContent = q.explanation;
+                        document.getElementById('mcq-explanation').classList.remove('hidden');
+                        if (correct) score++;
+                        document.getElementById('next-btn').disabled = false;
+                    };
+                    container.appendChild(btn);
+                });
+            } else {
+                document.getElementById('mcq-mode').classList.add('hidden');
+                document.getElementById('flashcard-mode').classList.remove('hidden');
+                document.getElementById('flashcard-question').textContent = q.question;
+                document.getElementById('flashcard-answer').textContent = q.answer;
+                document.getElementById('flashcard-explanation').textContent = q.explanation;
+                document.querySelector('.flashcard').classList.remove('flipped');
+            }
+        }
+
+        function finish() {
+            document.getElementById('content-area').classList.add('hidden');
+            const res = document.createElement('div');
+            res.className = 'flex-center';
+            res.innerHTML = `
+                <h2 class="section-title">Session Complete</h2>
+                <p style="margin: 1rem 0;">${mode === 'mcq' ? `Score: ${score} / ${shuffled.length}` : 'Completed all cards.'}</p>
+                <button onclick="location.reload()" class="btn">Start Over</button>
+            `;
+            document.querySelector('.main-container').appendChild(res);
+        }
+
+        function flipCard(el) { el.classList.toggle('flipped'); }
+        document.getElementById('next-btn').onclick = () => { index++; load(); };
+    </script>
+    <script src="../js/main.js"></script>
+</body>
+</html>

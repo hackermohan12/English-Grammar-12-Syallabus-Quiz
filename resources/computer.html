@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Class 12 Computer Science Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="card-btn" style="background-color: transparent; border: 1px solid white;">← Back to Home</a>
+            <button id="themeToggle" class="theme-toggle" style="margin-left: auto;">🌙</button>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 2rem;">
+        <div id="home" class="flex-center flex-column">
+            <h1>Class 12 Computer Science Quiz</h1>
+            <div class="topic-selection">
+                <h2>Select a Topic:</h2>
+                <div class="topics">
+                    <button class="topic-btn" data-topic="programming">Programming in C</button>
+                    <button class="topic-btn" data-topic="oop">Object-Oriented Programming</button>
+                    <button class="topic-btn" data-topic="database">Database Management System</button>
+                    <button class="topic-btn" data-topic="web">Web Technology I</button>
+                    <button class="topic-btn" data-topic="scripting">Scripting Language</button>
+                    <button class="topic-btn" data-topic="all">All Topics</button>
+                </div>
+            </div>
+            <div class="difficulty-selection">
+                <h2>Select Difficulty:</h2>
+                <div class="difficulties">
+                    <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+                    <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                    <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                    <button class="difficulty-btn" data-difficulty="mixed">Mixed</button>
+                </div>
+            </div>
+            <button id="start-btn" class="btn" disabled>Start Quiz</button>
+            <div class="instructions">
+                <h3>Instructions:</h3>
+                <ul>
+                    <li>Select a topic and difficulty level to begin</li>
+                    <li>Each question has a time limit of 60 seconds</li>
+                    <li>You cannot change your answer once submitted</li>
+                    <li>Your final score will be displayed at the end</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="quiz" class="hide">
+            <div id="hud">
+                <div id="hud-item">
+                    <p class="hud-prefix">Question</p>
+                    <h2 class="hud-main-text" id="question-counter"></h2>
+                </div>
+                <div id="hud-item">
+                    <p class="hud-prefix">Score</p>
+                    <h2 class="hud-main-text" id="score">0</h2>
+                </div>
+                <div id="hud-item">
+                    <p class="hud-prefix">Time</p>
+                    <h2 class="hud-main-text" id="timer">60</h2>
+                </div>
+            </div>
+            <div id="topic-indicator"></div>
+            <h2 id="question">What is the answer to this question?</h2>
+            <div class="choice-container">
+                <p class="choice-prefix">A</p>
+                <p class="choice-text" data-number="1">Choice 1</p>
+            </div>
+            <div class="choice-container">
+                <p class="choice-prefix">B</p>
+                <p class="choice-text" data-number="2">Choice 2</p>
+            </div>
+            <div class="choice-container">
+                <p class="choice-prefix">C</p>
+                <p class="choice-text" data-number="3">Choice 3</p>
+            </div>
+            <div class="choice-container">
+                <p class="choice-prefix">D</p>
+                <p class="choice-text" data-number="4">Choice 4</p>
+            </div>
+            <div id="explanation-container" class="hide">
+                <h3>Explanation:</h3>
+                <p id="explanation-text"></p>
+            </div>
+            <div class="quiz-footer">
+                <button id="next-btn" class="btn hide">Next Question →</button>
+            </div>
+        </div>
+
+        <div id="end" class="flex-center flex-column hide">
+            <h1>Quiz Completed!</h1>
+            <h2 id="final-score">Your score: 0</h2>
+            <div id="result-details">
+                <p>Correct answers: <span id="correct-count">0</span></p>
+                <p>Incorrect answers: <span id="incorrect-count">0</span></p>
+                <p>Unanswered: <span id="unanswered-count">0</span></p>
+            </div>
+            <div id="topic-performance"></div>
+            <div class="end-buttons">
+                <button id="play-again" class="btn">Play Again</button>
+                <button id="go-home" class="btn">Go Home</button>
+                <button id="show-answers" class="btn">Review Answers</button>
+            </div>
+        </div>
+
+        <div id="review" class="flex-center flex-column hide">
+            <h1>Review Answers</h1>
+            <div id="review-container"></div>
+            <button id="back-to-end" class="btn">Back to Results</button>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2026 Class 12 Computer Science Quiz | Created for NEB Curriculum</p>
+    </footer>
+    <script src="../js/main.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
